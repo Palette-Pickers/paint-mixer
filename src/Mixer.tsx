@@ -22,7 +22,8 @@ export default function Mixer () {
         ['Burnt Umber', '#4e2a04', 0]])
     return (
     <div className='mixer'>
-        <div style= {{backgroundColor: currentColor}} className='color-box'></div>
+            <div style={{backgroundColor: currentColor}} className='color-box'></div>
+            
     </div>
     );
 }
