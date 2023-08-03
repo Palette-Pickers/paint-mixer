@@ -40,7 +40,6 @@ export default function Mixer () {
     }
 
     useEffect(() => {
-        console.log(palette[0].color);
         makeColorSwatches();
     }, [palette]);
 
@@ -50,7 +49,6 @@ export default function Mixer () {
             <div className='swatches'>
                 {paletteSwatches}
             </div>
-
     </div>
     );
 }
