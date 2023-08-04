@@ -25,7 +25,6 @@ export default function Mixer () {
     const makeColorSwatches = () => {
         if (palette.length) {
             return palette.map((swatch, i) => {
-                console.log(swatch);
                 return (
                     <div key={i} className="swatch" style={{ backgroundColor: `${swatch.color}`}}>
                     </div>
@@ -33,15 +32,28 @@ export default function Mixer () {
             })
         }
     }
+
+    const mixColors = (color1, color2, mixingRatio) => {
+        let mixed = mixbox.lerp(color1, color2, mixingRatio);
+        console.log('Current color + first swatch makes '+mixed);
+    }
+
     let paletteSwatches = makeColorSwatches();
-    const addCurrentToPalette = () => {
+
+    const addToPalette = () => {
         const newPalette = mixbox(currentColor, 13);
         setPalette(newPalette);
     }
 
+    // useEffect(() => {
+    //     makeColorSwatches();
+    // }, [palette]);
+
+
     useEffect(() => {
-        makeColorSwatches();
-    }, [palette]);
+        //Todo: combine the clicked swatch with the current color
+        mixColors(currentColor, palette[0].color, 0.5);
+    }, []);
 
     return (
     <div className='mixer'>
