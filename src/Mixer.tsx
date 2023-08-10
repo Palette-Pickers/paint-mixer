@@ -22,6 +22,9 @@ export default function Mixer () {
         {"label": "Burnt Sienna", "color": "rgb(123, 72, 0)", "partsInMix": 0}
     ];
     const [palette, setPalette] = useState(paletteColors);
+    const numPigments = palette.length;
+
+    let mix_t = []
 
     const makeColorSwatches = () => {
         if (palette.length) {
@@ -44,8 +47,25 @@ export default function Mixer () {
         let totalParts = 0;
         for (let i = 0; i < palette.length; i++) {
             totalParts += palette[i].partsInMix;
+            mix_t.push(0);
         }
-        console.log('Total parts of paint used is' + totalParts);
+        console.log('Total parts of paint used is ' + totalParts);
+        if (totalParts > 0.000001) {
+            let latent_mix = [0, 0, 0, 0, 0, 0, 0];
+            for (let j = 0; j < palette.length; j++) {
+                if(palette[j].partsInMix > 0.000001) {
+                    let latent = mixbox.rgbToLatent(palette[j].color);
+                    console.log('latent is ' + latent);
+                    let percentageUsedInMix = palette[j].partsInMix / totalParts;
+                    for (let k = 0; k < latent.length; k++) {
+                        latent_mix[k] += latent[k] * percentageUsedInMix;
+                    }
+                }
+            }
+            let mixed_color = mixbox.latentToRgb(latent_mix);
+            console.log('Mixed color is ' + mixed_color);
+            return mixed_color;
+        }
     }
 
     let paletteSwatches = makeColorSwatches();
@@ -55,9 +75,9 @@ export default function Mixer () {
         setPalette(newPalette);
     }
 
-    // useEffect(() => {
-    //     makeColorSwatches();
-    // }, [palette]);
+useEffect(() => {
+    mixColorFromPalette(palette);
+}, [palette]);
 
 
     useEffect(() => {
