@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import mixbox from 'mixbox';
 
-import './style.css';
+import './Mixer.scss';
 
 export default function Mixer () {
     const [currentColor, setCurrentColor] = useState('rgb(0, 0, 0)');
@@ -46,13 +46,12 @@ export default function Mixer () {
             totalParts += palette[i].partsInMix;
         }
         console.log('Total parts of paint used is' + totalParts);
-        
     }
 
     let paletteSwatches = makeColorSwatches();
 
-    const addToPalette = (color) => {
-        const newPalette = mixbox(color, 13);
+    const addToPalette = (color, palette) => {
+        const newPalette = mixbox(color, palette.length + 1);
         setPalette(newPalette);
     }
 
@@ -67,7 +66,7 @@ export default function Mixer () {
     }, []);
 
     return (
-    <div className='mixer'>
+    <div className='Mixer'>
             <div style={{backgroundColor: currentColor}} className='color-box'></div>
             <div className='swatches'>
                 {paletteSwatches}

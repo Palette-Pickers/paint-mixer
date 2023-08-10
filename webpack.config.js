@@ -24,6 +24,29 @@ module.exports = {
                 include: path.resolve(__dirname, 'src'),
                 use: ['style-loader', 'css-loader', 'postcss-loader'],
             },
+            {
+                test: /\.module\.scss$/,  // match files with .module.scss
+                include: path.resolve(__dirname, 'src'),
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: {
+                                localIdentName: '[name]__[local]__[hash:base64:5]'
+                            }
+                        }
+                    },
+                    'postcss-loader',
+                    'sass-loader'
+                ],
+            },
+            {
+                test: /\.scss$/,  // for non-module scss
+                exclude: /\.module\.scss$/,
+                include: path.resolve(__dirname, 'src'),
+                use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
+            },
         ],
     },
     resolve: {
