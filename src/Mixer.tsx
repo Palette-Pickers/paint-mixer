@@ -36,12 +36,22 @@ const Mixer: React.FC = () => {
         if (palette.length) {
             return palette.map((swatch, i) => {
                 return (
-                    <div
-                        key={i}
-                        className="swatch"
-                        style={{backgroundColor: `${swatch.color}`}}
-                        onClick={() => handleSwatchIncrementClick(i)}>
-                        <div className="partsInMix">{swatch.partsInMix}</div>
+                    <div className="swatch-container">
+                        <div
+                            key={i}
+                            className="swatch"
+                            style={{backgroundColor: `${swatch.color}`}}
+                        >
+                            <div className="partsInMix">{swatch.partsInMix}</div>
+                            <div className='label'>{swatch.label}</div>
+                            <div className="swatch-ui">
+                                <div className= "change-parts">
+                                    <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
+                                    <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 )
             })
@@ -51,6 +61,13 @@ const Mixer: React.FC = () => {
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
         updatedPalette[index].partsInMix++;  // Increment partsInMix for the clicked swatch
+        setPalette(updatedPalette);
+    }
+
+    const handleSwatchDecrementClick = (index: number) => {
+        const updatedPalette = [...palette];
+        if (updatedPalette[index].partsInMix > 0)
+            updatedPalette[index].partsInMix--;  // Decrement partsInMix for the clicked swatch
         setPalette(updatedPalette);
     }
 
