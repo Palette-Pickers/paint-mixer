@@ -3,29 +3,29 @@ import mixbox from 'mixbox';
 import './Mixer.scss';
 
 interface ColorPart {
-    label?: string;
+    label: string;
     partsInMix: number;
     color: string;
 }
 
 const Mixer: React.FC = () => {
-    const [mixedColor, setMixedColor] = useState('rgb(0, 0, 0)');
+    const [mixedColor, setMixedColor] = useState('rgb(0,0,0)');
     const paletteColors = [
-        {"label": "White", "color": "rgb(255, 255, 255)", "partsInMix": 0},
-        {"label": "Cadmium Yellow", "color": "rgb(254, 236, 0)", "partsInMix": 0},
-        {"label": "Hansa Yellow", "color": "rgb(252, 211, 0)", "partsInMix": 0},
-        {"label": "Cadmium Orange", "color": "rgb(255, 105, 0)", "partsInMix": 0},
-        {"label": "Cadmium Red", "color": "rgb(255, 39, 2)", "partsInMix": 0},
-        {"label": "Quinacridone Magenta", "color": "rgb(78, 0, 66)", "partsInMix": 0},
-        {"label": "Cobalt Violet", "color": "rgb(150, 0, 255)", "partsInMix": 0},
-        {"label": "Ultramarine Blue", "color": "rgb(25, 0, 89)", "partsInMix": 0},
-        {"label": "Cerulean Blue", "color": "rgb(0, 33, 133)", "partsInMix": 0},
-        {"label": "Phthalo Blue", "color": "rgb(13, 27, 68)", "partsInMix": 0},
-        {"label": "Phthalo Green", "color": "rgb(0, 60, 50)", "partsInMix": 0},
-        {"label": "Permanent Green", "color": "rgb(7, 109, 22)", "partsInMix": 0},
-        {"label": "Sap Green", "color": "rgb(107, 148, 4)", "partsInMix": 0},
-        {"label": "Burnt Sienna", "color": "rgb(123, 72, 0)", "partsInMix": 0},
-        {"label": "Black", "color": "rgb(0, 0, 0)", "partsInMix": 0},
+        {"label": "White", "color": "rgb(255,255,255)", "partsInMix": 0},
+        {"label": "Cadmium Yellow", "color": "rgb(254,236,0)", "partsInMix": 0},
+        {"label": "Hansa Yellow", "color": "rgb(252,211,0)", "partsInMix": 0},
+        {"label": "Cadmium Orange", "color": "rgb(255,105,0)", "partsInMix": 0},
+        {"label": "Cadmium Red", "color": "rgb(255,39,2)", "partsInMix": 0},
+        {"label": "Quinacridone Magenta", "color": "rgb(78,0,66)", "partsInMix": 0},
+        {"label": "Cobalt Violet", "color": "rgb(150,0,255)", "partsInMix": 0},
+        {"label": "Ultramarine Blue", "color": "rgb(25,0,89)", "partsInMix": 0},
+        {"label": "Cerulean Blue", "color": "rgb(0,33,133)", "partsInMix": 0},
+        {"label": "Phthalo Blue", "color": "rgb(13,27,68)", "partsInMix": 0},
+        {"label": "Phthalo Green", "color": "rgb(0,60,50)", "partsInMix": 0},
+        {"label": "Permanent Green", "color": "rgb(7,109,22)", "partsInMix": 0},
+        {"label": "Sap Green", "color": "rgb(107,148,4)", "partsInMix": 0},
+        {"label": "Burnt Sienna", "color": "rgb(123,72,0)", "partsInMix": 0},
+        {"label": "Black", "color": "rgb(0,0,0)", "partsInMix": 0},
     ];
 
     const [palette, setPalette] = useState(paletteColors);
@@ -44,13 +44,13 @@ const Mixer: React.FC = () => {
                         >
 
                             <div className="swatch-ui">
-                            <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
+                                <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
                                 <div className='label'>{swatch.label}</div>
-                            <div className='change-parts-qty'>
-                                <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
-                                <div className="partsInMix">{swatch.partsInMix}</div>
-                                <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
-                            </div>
+                                <div className='change-parts-qty'>
+                                    <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
+                                    <div className="partsInMix">{swatch.partsInMix}</div>
+                                    <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -104,10 +104,33 @@ const Mixer: React.FC = () => {
 
     let paletteSwatches = makeColorSwatches();
 
-    const addToPalette = (color, palette) => {
-        let updatedPalette = [...palette];
-        updatedPalette.push({"color": color, "partsInMix": 0});
-        setPalette(updatedPalette);
+    const normalizeRGB = (color: any): string => {
+        if (Array.isArray(color) && color.length >= 3) {
+            return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+        } else if (typeof color === 'string') {
+            const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+            if (match) {
+                return `rgb(${match[1]}, ${match[2]}, ${match[3]})`;
+            }
+            return color;
+        } else {
+            console.error('Unexpected format for color:', color);
+            return '';
+        }
+    }
+
+    // Helper function to check if a color is already in the palette
+    const isColorInPalette = (color: string, palette: ColorPart[]): boolean => {
+        const normalizedColor = normalizeRGB(color);
+        return palette.some(swatch => normalizeRGB(swatch.color) === normalizedColor);
+    }
+
+    const addToPalette = (color: string, palette: ColorPart[]) => {
+        if (!isColorInPalette(color, palette)) { // Only add if the color is not in the palette
+            let updatedPalette = [...palette];
+            updatedPalette.push({ "color": color, "label": "Custom Color", "partsInMix": 0 });
+            setPalette(updatedPalette);
+        }
     }
 
     const resetMix = () => {
@@ -117,7 +140,6 @@ const Mixer: React.FC = () => {
         }));
         setPalette(resetPalette);
     }
-
 
     useEffect(() => {
         setMixedColor(getMixedColorFromPalette(palette));
