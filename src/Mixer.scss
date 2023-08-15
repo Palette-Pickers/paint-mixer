@@ -1,0 +1,60 @@
+.Mixer {
+    .color-box {
+        border: 2px solid black;
+        height: 50vh;
+        display: flex;
+        align-items: end;
+        justify-content: end;
+    }
+
+    .swatches {
+        display: flex;
+        flex-wrap: wrap;
+
+        .swatch {
+            position: relative;
+            width: 8rem;
+            height: 8rem;
+            margin: 5px 5px 5px 0;
+            border-radius: 0 0 20% 20%;
+            border: 1px solid black;
+            justify-content: center;
+            align-content: center;
+
+            .partsInMix {
+                padding: 0;
+                font-size: 2rem;
+                width: auto;
+            }
+            .label {
+                display: none;
+            }
+            .swatch-ui {
+                display: flex;
+                flex-direction: row;
+                flex-break: wrap;
+                align-items: center;
+                justify-content: space-between;
+                position: relative;
+                background-color: rgba(255, 255, 255, 0.5);
+                border: solid 1px black;
+                width: 100%;
+                bottom: 0;
+                right: 0;
+                left: 0;
+            }
+            button {
+                font-size: 2rem;
+                border: none;
+                background-color: transparent;
+            }
+            .add-parts {
+
+            }
+        }
+    }
+
+
+
+
+}
