@@ -1,10 +1,27 @@
 .Mixer {
+    .is-hidden {
+        display: none;
+    }
+
+    .is-visible {
+        display: block;
+    }
+
     .color-box {
         border: 2px solid black;
         height: 50vh;
         display: flex;
         align-items: end;
         justify-content: end;
+        position: relative;
+
+        .transparency-box{
+            width: 100%;
+            height: 100%;
+            background-image: url("../src/assets/transparent.png");
+            position: absolute;
+            z-index: -9999999;
+        }
     }
 
     .swatches {
@@ -13,7 +30,7 @@
 
         .swatch {
             position: relative;
-            width: 8rem;
+            width: 10rem;
             height: 8rem;
             margin: 5px 5px 5px 0;
             border-radius: 0 0 20% 20%;
@@ -21,40 +38,49 @@
             justify-content: center;
             align-content: center;
 
+            .remove-from-palette {
+                position: absolute;
+                top: 1px;
+                right: 0;
+                background-color: transparent;
+                border: none;
+                font-size: 1rem;
+            }
+
             .partsInMix {
                 padding: 0;
-                font-size: 2rem;
+                font-size: 1.5rem;
                 width: auto;
             }
             .label {
-                display: none;
+                display: block;
+                margin: 0.2rem 1rem 0.5rem 0.4rem;
             }
             .swatch-ui {
                 display: flex;
                 flex-direction: row;
-                flex-break: wrap;
+                flex-wrap: wrap;
                 align-items: center;
                 justify-content: space-between;
                 position: relative;
-                background-color: rgba(255, 255, 255, 0.5);
-                border: solid 1px black;
+                background-color: rgba(255, 255, 255, 0.35);
+                border: solid 1px rgba(0, 0, 0, 0.5);;
                 width: 100%;
                 bottom: 0;
                 right: 0;
                 left: 0;
             }
+            .change-parts-qty {
+                display: flex;
+                width: 100%;
+                justify-content: space-around;
+                padding: 0 2rem;
+            }
             button {
-                font-size: 2rem;
+                font-size: 1.6rem;
                 border: none;
                 background-color: transparent;
             }
-            .add-parts {
-
-            }
         }
     }
-
-
-
-
 }
