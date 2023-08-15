@@ -43,11 +43,14 @@ const Mixer: React.FC = () => {
                             style={{backgroundColor: `${swatch.color}`}}
                         >
 
-                            <div className='label'>{swatch.label}</div>
                             <div className="swatch-ui">
+                            <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
+                                <div className='label'>{swatch.label}</div>
+                            <div className='change-parts-qty'>
                                 <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
                                 <div className="partsInMix">{swatch.partsInMix}</div>
                                 <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -66,6 +69,12 @@ const Mixer: React.FC = () => {
         const updatedPalette = [...palette];
         if (updatedPalette[index].partsInMix > 0)
             updatedPalette[index].partsInMix--;  // Decrement partsInMix for the clicked swatch
+        setPalette(updatedPalette);
+    }
+
+    const handleRemoveFromPaletteClick = (index: number) => {
+        const updatedPalette = [...palette];
+        updatedPalette.splice(index, 1);  // Remove swatch from palette
         setPalette(updatedPalette);
     }
 
