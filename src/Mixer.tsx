@@ -42,16 +42,14 @@ const Mixer: React.FC = () => {
                             className="swatch"
                             style={{backgroundColor: `${swatch.color}`}}
                         >
-                            <div className="partsInMix">{swatch.partsInMix}</div>
+
                             <div className='label'>{swatch.label}</div>
                             <div className="swatch-ui">
-                                <div className= "change-parts">
-                                    <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
-                                    <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
-                                </div>
+                                <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
+                                <div className="partsInMix">{swatch.partsInMix}</div>
+                                <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
                             </div>
                         </div>
-
                     </div>
                 )
             })
@@ -97,8 +95,9 @@ const Mixer: React.FC = () => {
     let paletteSwatches = makeColorSwatches();
 
     const addToPalette = (color, palette) => {
-        const newPalette = mixbox(color, palette.length + 1);
-        setPalette(newPalette);
+        let updatedPalette = [...palette];
+        updatedPalette.push({"color": color, "partsInMix": 0});
+        setPalette(updatedPalette);
     }
 
     useEffect(() => {
@@ -107,7 +106,11 @@ const Mixer: React.FC = () => {
 
     return (
     <div className='Mixer'>
-            <div style={{backgroundColor: mixedColor}} className='color-box'></div>
+            <div style={{backgroundColor: mixedColor}} className='color-box'>
+                <div className='color-box-ui'>
+                    <button className="add-to-palette" onClick={() => addToPalette(mixedColor, palette)}>Add to Palette</button>
+                </div>
+            </div>
             <div className='swatches'>
                 {paletteSwatches}
             </div>

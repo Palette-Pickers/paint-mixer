@@ -1,7 +1,10 @@
 .Mixer {
     .color-box {
-    border: 2px solid black;
-    height: 50vh
+        border: 2px solid black;
+        height: 50vh;
+        display: flex;
+        align-items: end;
+        justify-content: end;
     }
 
     .swatches {
@@ -10,37 +13,43 @@
 
         .swatch {
             position: relative;
-            width: 5rem;
-            height: 5rem;
+            width: 8rem;
+            height: 8rem;
             margin: 5px 5px 5px 0;
-            border-radius: 20%;
+            border-radius: 0 0 20% 20%;
             border: 1px solid black;
             justify-content: center;
             align-content: center;
 
             .partsInMix {
                 padding: 0;
-                text-align: center;
-                background-color: rgba(255, 255, 255, 0.5);
+                font-size: 2rem;
+                width: auto;
             }
             .label {
                 display: none;
             }
             .swatch-ui {
-                position: absolute;
-                width: 5rem;
+                display: flex;
+                flex-direction: row;
+                flex-break: wrap;
+                align-items: center;
+                justify-content: space-between;
+                position: relative;
+                background-color: rgba(255, 255, 255, 0.5);
+                border: solid 1px black;
+                width: 100%;
                 bottom: 0;
                 right: 0;
                 left: 0;
             }
             button {
-                background-color: rgba(255, 255, 255, 0.5);
-                font-size: 1.5rem;
+                font-size: 2rem;
                 border: none;
+                background-color: transparent;
             }
             .add-parts {
-                position: absolute;
-                right: 0;
+
             }
         }
     }
