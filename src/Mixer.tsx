@@ -79,7 +79,7 @@ const Mixer: React.FC = () => {
         if (totalParts > 0.000001) {
             let latent_mix = [0, 0, 0, 0, 0, 0, 0];
             for (let j = 0; j < palette.length; j++) {
-                if(palette[j].partsInMix > 0.000001) {
+                if (palette[j].partsInMix > 0.000001) {
                     const latent = mixbox.rgbToLatent(palette[j].color);
                     const percentageUsedInMix = palette[j].partsInMix / totalParts;
                     for (let k = 0; k < latent.length; k++) {
@@ -90,6 +90,7 @@ const Mixer: React.FC = () => {
             const mixed_color = mixbox.latentToRgb(latent_mix);
             return mixed_color;
         }
+        else return 'rgba(0,0,0,0)';
     }
 
     let paletteSwatches = makeColorSwatches();
@@ -100,6 +101,15 @@ const Mixer: React.FC = () => {
         setPalette(updatedPalette);
     }
 
+    const resetMix = () => {
+        const resetPalette = palette.map(color => ({
+            ...color,
+            partsInMix: 0
+        }));
+        setPalette(resetPalette);
+    }
+
+
     useEffect(() => {
         setMixedColor(getMixedColorFromPalette(palette));
     }, [palette]);
@@ -107,12 +117,15 @@ const Mixer: React.FC = () => {
     return (
     <div className='Mixer'>
             <div style={{backgroundColor: mixedColor}} className='color-box'>
+
                 <div className='color-box-ui'>
                     <button className="add-to-palette" onClick={() => addToPalette(mixedColor, palette)}>Add to Palette</button>
                 </div>
+                <div className='transparency-box'></div>
             </div>
             <div className='swatches'>
                 {paletteSwatches}
+                <button className="reset-mix" onClick={resetMix}>Reset</button>
             </div>
     </div>
     );
