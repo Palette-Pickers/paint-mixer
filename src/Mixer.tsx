@@ -128,7 +128,7 @@ const Mixer: React.FC = () => {
     const addToPalette = (color: string, palette: ColorPart[]) => {
         if (!isColorInPalette(color, palette)) { // Only add if the color is not in the palette
             let updatedPalette = [...palette];
-            updatedPalette.push({ "color": color, "label": "Custom Color", "partsInMix": 0 });
+            updatedPalette.push({ "color": color, "label": normalizeRGB(color), "partsInMix": 0 });
             setPalette(updatedPalette);
         }
     }
