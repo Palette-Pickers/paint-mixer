@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import mixbox from 'mixbox';
 import './Mixer.scss';
+import { SketchPicker } from 'react-color'; // Import the color picker
 
 interface ColorPart {
     label: string;
     partsInMix: number;
     color: string;
+}
+
+interface RGBColor {
+    r: number;
+    g: number;
+    b: number;
+    a?: number;
 }
 
 const Mixer: React.FC = () => {
@@ -29,6 +37,8 @@ const Mixer: React.FC = () => {
     ];
 
     const [palette, setPalette] = useState(paletteColors);
+    const [showColorPicker, setShowColorPicker] = useState(false); // State to toggle color picker
+    const [selectedColor, setSelectedColor] = useState<RGBColor>({ r: 255, g: 255, b: 255 });
 
     const makeColorSwatches = () => {
         if (palette.length) {
@@ -123,12 +133,32 @@ const Mixer: React.FC = () => {
     }
 
     const addToPalette = (color: string, palette: ColorPart[]) => {
+        console.log("Attempting to add color:", color);
         if (!isColorInPalette(color, palette)) { // Only add if the color is not in the palette
+            console.log("Adding color to palette:", color);
             let updatedPalette = [...palette];
             updatedPalette.push({ "color": color, "label": normalizeRGB(color), "partsInMix": 0 });
             setPalette(updatedPalette);
+        } else {
+            console.log("Color already in palette:", color);
         }
     }
+
+
+    const handleColorChange = (color: { rgb: RGBColor }) => {
+        console.log("Color selected:", color.rgb);
+        setSelectedColor(color.rgb);
+    }
+
+
+    const confirmColor = () => {
+        console.log("Confirming color:", selectedColor);
+        if (selectedColor) {
+            addToPalette(`rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`, palette);
+            setShowColorPicker(false); // Close the color picker after adding
+        }
+    }
+
 
     const resetMix = () => {
         const resetPalette = palette.map(color => ({
@@ -146,14 +176,25 @@ const Mixer: React.FC = () => {
         <div className='Mixer'>
             <div style={{backgroundColor: mixedColor}} className='color-box'>
                 <div className='color-box-ui'>
+                    <button className="reset-mix" onClick={resetMix}>Reset</button>
                     <button className="add-to-palette" onClick={() => addToPalette(mixedColor, palette)}>Add to Palette</button>
                 </div>
                 <div className='transparency-box'></div>
             </div>
+
             <div className='swatches'>
                 {paletteSwatches}
-                <button className="reset-mix" onClick={resetMix}>Reset</button>
-            </div>
+                <button onClick={() => setShowColorPicker(!showColorPicker)}>Open Color Picker</button>
+                {showColorPicker && (
+                    <div style={{ position: 'absolute', zIndex: 2 }} onClick={(e) => e.stopPropagation()}>
+                        <div style={{ position: 'fixed', top: '0px', right: '0px', bottom: '0px', left: '0px' }} onClick={confirmColor} />
+                        <SketchPicker color={`rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`} onChange={handleColorChange} />
+                            <button onClick={confirmColor}>Confirm Color</button>
+                        </div>
+                    )}
+
+                </div>
+
         </div>
     );
 }
