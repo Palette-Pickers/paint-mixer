@@ -28,6 +28,14 @@
         display: flex;
         flex-wrap: wrap;
 
+        > button {
+            font-size: 3rem;
+            align-content: center;
+            width: 10rem;
+            margin: 5px 5px 5px 0;
+            border-radius: 0 0 20% 20%;
+            border: 1px solid black;
+        }
         .swatch {
             position: relative;
             width: 10rem;

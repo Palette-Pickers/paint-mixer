@@ -184,15 +184,14 @@ const Mixer: React.FC = () => {
 
             <div className='swatches'>
                 {paletteSwatches}
-                <button onClick={() => setShowColorPicker(!showColorPicker)}>Open Color Picker</button>
+                <button onClick={() => setShowColorPicker(!showColorPicker)}>+</button>
                 {showColorPicker && (
                     <div style={{ position: 'absolute', zIndex: 2 }} onClick={(e) => e.stopPropagation()}>
                         <div style={{ position: 'fixed', top: '0px', right: '0px', bottom: '0px', left: '0px' }} onClick={confirmColor} />
                         <SketchPicker color={`rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`} onChange={handleColorChange} />
-                            <button onClick={confirmColor}>Confirm Color</button>
+                            <button onClick={confirmColor}>Add Color</button>
                         </div>
                     )}
-
                 </div>
 
         </div>
