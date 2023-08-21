@@ -30,30 +30,27 @@ const Mixer: React.FC = () => {
 
     const [palette, setPalette] = useState(paletteColors);
 
-    let mix_t: number[] = [];
-
     const makeColorSwatches = () => {
         if (palette.length) {
             return palette.map((swatch, i) => {
                 return (
-                    <div className="swatch-container">
-                        <div
-                            key={i}
-                            className="swatch"
-                            style={{backgroundColor: `${swatch.color}`}}
-                        >
-
-                            <div className="swatch-ui">
-                                <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
-                                <div className='label'>{swatch.label}</div>
-                                <div className='change-parts-qty'>
-                                    <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
-                                    <div className="partsInMix">{swatch.partsInMix}</div>
-                                    <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
-                                </div>
+                <div className="swatch-container">
+                    <div
+                        key={i}
+                        className="swatch"
+                        style={{backgroundColor: `${swatch.color}`}}
+                    >
+                        <div className="swatch-ui">
+                            <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
+                            <div className='label'>{swatch.label}</div>
+                            <div className='change-parts-qty'>
+                                <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
+                                <div className="partsInMix">{swatch.partsInMix}</div>
+                                <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
                             </div>
                         </div>
                     </div>
+                </div>
                 )
             })
         }
@@ -79,18 +76,18 @@ const Mixer: React.FC = () => {
     }
 
     const getMixedColorFromPalette = (palette) => {
-        let totalParts = 0;
-        for (let i = 0; i < palette.length; i++) {
-            totalParts += palette[i].partsInMix;
-            mix_t.push(0);
-        }
+        let totalParts = palette.reduce((acc, color) => {
+            return acc + color.partsInMix;
+        }, 0);
 
         if (totalParts > 0.000001) {
             let latent_mix = [0, 0, 0, 0, 0, 0, 0];
+
             for (let j = 0; j < palette.length; j++) {
                 if (palette[j].partsInMix > 0.000001) {
                     const latent = mixbox.rgbToLatent(palette[j].color);
                     const percentageUsedInMix = palette[j].partsInMix / totalParts;
+
                     for (let k = 0; k < latent.length; k++) {
                         latent_mix[k] += latent[k] * percentageUsedInMix;
                     }
@@ -146,9 +143,8 @@ const Mixer: React.FC = () => {
     }, [palette]);
 
     return (
-    <div className='Mixer'>
+        <div className='Mixer'>
             <div style={{backgroundColor: mixedColor}} className='color-box'>
-
                 <div className='color-box-ui'>
                     <button className="add-to-palette" onClick={() => addToPalette(mixedColor, palette)}>Add to Palette</button>
                 </div>
@@ -158,7 +154,7 @@ const Mixer: React.FC = () => {
                 {paletteSwatches}
                 <button className="reset-mix" onClick={resetMix}>Reset</button>
             </div>
-    </div>
+        </div>
     );
 }
 
