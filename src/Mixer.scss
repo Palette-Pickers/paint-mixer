@@ -24,6 +24,31 @@
         }
     }
 
+    .popover-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background-color: rgba(0,0,0,0.75);
+        width: 100vw;
+        min-height: 50vh;
+
+        .color-preview {
+            width: 100px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        button {
+            background-color: transparent;
+            border: none;
+            font-size: 1.2rem;
+        }
+    }
+
     .swatches {
         display: flex;
         flex-wrap: wrap;
@@ -36,6 +61,7 @@
             border-radius: 0 0 20% 20%;
             border: 1px solid black;
         }
+
         .swatch {
             position: relative;
             width: 10rem;
@@ -45,6 +71,7 @@
             border: 1px solid black;
             justify-content: center;
             align-content: center;
+
 
             .remove-from-palette {
                 position: absolute;

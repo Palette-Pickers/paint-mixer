@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import mixbox from 'mixbox';
 import './Mixer.scss';
-import { SketchPicker } from 'react-color'; // Import the color picker
+import {SketchPicker} from 'react-color'; // Import the color picker
+import Wheel from "@uiw/react-color-wheel";
+import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
+
+
+
 
 interface ColorPart {
     label: string;
@@ -38,7 +43,8 @@ const Mixer: React.FC = () => {
 
     const [palette, setPalette] = useState(paletteColors);
     const [showColorPicker, setShowColorPicker] = useState(false); // State to toggle color picker
-    const [selectedColor, setSelectedColor] = useState<RGBColor>({ r: 255, g: 255, b: 255 });
+    const [selectedColor, setSelectedColor] = useState<RGBColor>({r: 255, g: 255, b: 255});
+    const [selectedHsva, setSelectedHsva] = useState({ h: 214, s: 43, v: 90, a: 1 });
 
     const makeColorSwatches = () => {
         if (palette.length) {
@@ -133,27 +139,24 @@ const Mixer: React.FC = () => {
     }
 
     const addToPalette = (color: string, palette: ColorPart[]) => {
-        console.log("Attempting to add color:", color);
         if (!isColorInPalette(color, palette)) { // Only add if the color is not in the palette
-            console.log("Adding color to palette:", color);
             let updatedPalette = [...palette];
             updatedPalette.push({ "color": color, "label": normalizeRGB(color), "partsInMix": 0 });
             setPalette(updatedPalette);
         } else {
-            console.log("Color already in palette:", color);
+            console.error("Selected color already in palette", color);
         }
     }
 
 
     const handleColorChange = (color: { rgb: RGBColor }) => {
-        console.log("Color selected:", color.rgb);
         setSelectedColor(color.rgb);
     }
 
 
     const confirmColor = () => {
-        console.log("Confirming color:", selectedColor);
-        if (selectedColor) {
+        if (selectedHsva) {
+            const selectedColor = hsvaToRgba(selectedHsva);
             addToPalette(`rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`, palette);
             setShowColorPicker(false); // Close the color picker after adding
         }
@@ -187,13 +190,15 @@ const Mixer: React.FC = () => {
                 <button onClick={() => setShowColorPicker(!showColorPicker)}>+</button>
                 {showColorPicker && (
                     <div style={{ position: 'absolute', zIndex: 2 }} onClick={(e) => e.stopPropagation()}>
-                        <div style={{ position: 'fixed', top: '0px', right: '0px', bottom: '0px', left: '0px' }} onClick={confirmColor} />
-                        <SketchPicker color={`rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`} onChange={handleColorChange} />
-                            <button onClick={confirmColor}>Add Color</button>
-                        </div>
-                    )}
-                </div>
+                        <div style={{position: 'fixed', top: '0px', right: '0px', bottom: '0px', left: '0px'}} onClick={confirmColor} />
+                        <div className='popover-box'>
+                            <Wheel color={selectedHsva} onChange={(color) => setSelectedHsva({...selectedHsva, ...color.hsva})} />
+                            <div className='color-preview' style={{background: hsvaToRgbaString(selectedHsva) }}><button onClick={confirmColor}>Save</button></div>
 
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
