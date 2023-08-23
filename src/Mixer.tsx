@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import mixbox from 'mixbox';
 import './Mixer.scss';
+import {SketchPicker} from 'react-color'; // Import the color picker
+import Wheel from "@uiw/react-color-wheel";
+import ShadeSlider from '@uiw/react-color-shade-slider';
+import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
+
+
+
 
 interface ColorPart {
     label: string;
     partsInMix: number;
     color: string;
+}
+
+interface RGBColor {
+    r: number;
+    g: number;
+    b: number;
+    a?: number;
 }
 
 const Mixer: React.FC = () => {
@@ -29,31 +43,31 @@ const Mixer: React.FC = () => {
     ];
 
     const [palette, setPalette] = useState(paletteColors);
-
-    let mix_t: number[] = [];
+    const [showColorPicker, setShowColorPicker] = useState(false); // State to toggle color picker
+    const [selectedColor, setSelectedColor] = useState<RGBColor>({r: 255, g: 255, b: 255});
+    const [selectedHsva, setSelectedHsva] = useState({ h: 214, s: 43, v: 90, a: 1 });
 
     const makeColorSwatches = () => {
         if (palette.length) {
             return palette.map((swatch, i) => {
                 return (
-                    <div className="swatch-container">
-                        <div
-                            key={i}
-                            className="swatch"
-                            style={{backgroundColor: `${swatch.color}`}}
-                        >
-
-                            <div className="swatch-ui">
-                                <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
-                                <div className='label'>{swatch.label}</div>
-                                <div className='change-parts-qty'>
-                                    <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
-                                    <div className="partsInMix">{swatch.partsInMix}</div>
-                                    <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
-                                </div>
+                <div className="swatch-container">
+                    <div
+                        key={i}
+                        className="swatch"
+                        style={{backgroundColor: `${swatch.color}`}}
+                    >
+                        <div className="swatch-ui">
+                            <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
+                            <div className='label'>{swatch.label}</div>
+                            <div className='change-parts-qty'>
+                                <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
+                                <div className="partsInMix">{swatch.partsInMix}</div>
+                                <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
                             </div>
                         </div>
                     </div>
+                </div>
                 )
             })
         }
@@ -79,18 +93,18 @@ const Mixer: React.FC = () => {
     }
 
     const getMixedColorFromPalette = (palette) => {
-        let totalParts = 0;
-        for (let i = 0; i < palette.length; i++) {
-            totalParts += palette[i].partsInMix;
-            mix_t.push(0);
-        }
+        let totalParts = palette.reduce((acc, color) => {
+            return acc + color.partsInMix;
+        }, 0);
 
         if (totalParts > 0.000001) {
             let latent_mix = [0, 0, 0, 0, 0, 0, 0];
+
             for (let j = 0; j < palette.length; j++) {
                 if (palette[j].partsInMix > 0.000001) {
                     const latent = mixbox.rgbToLatent(palette[j].color);
                     const percentageUsedInMix = palette[j].partsInMix / totalParts;
+
                     for (let k = 0; k < latent.length; k++) {
                         latent_mix[k] += latent[k] * percentageUsedInMix;
                     }
@@ -130,8 +144,25 @@ const Mixer: React.FC = () => {
             let updatedPalette = [...palette];
             updatedPalette.push({ "color": color, "label": normalizeRGB(color), "partsInMix": 0 });
             setPalette(updatedPalette);
+        } else {
+            console.error("Selected color already in palette", color);
         }
     }
+
+
+    const handleColorChange = (color: { rgb: RGBColor }) => {
+        setSelectedColor(color.rgb);
+    }
+
+
+    const confirmColor = () => {
+        if (selectedHsva) {
+            const selectedColor = hsvaToRgba(selectedHsva);
+            addToPalette(`rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`, palette);
+            setShowColorPicker(false); // Close the color picker after adding
+        }
+    }
+
 
     const resetMix = () => {
         const resetPalette = palette.map(color => ({
@@ -146,19 +177,33 @@ const Mixer: React.FC = () => {
     }, [palette]);
 
     return (
-    <div className='Mixer'>
+        <div className='Mixer'>
             <div style={{backgroundColor: mixedColor}} className='color-box'>
-
                 <div className='color-box-ui'>
+                    <button className="reset-mix" onClick={resetMix}>Reset</button>
                     <button className="add-to-palette" onClick={() => addToPalette(mixedColor, palette)}>Add to Palette</button>
                 </div>
                 <div className='transparency-box'></div>
             </div>
+
             <div className='swatches'>
                 {paletteSwatches}
-                <button className="reset-mix" onClick={resetMix}>Reset</button>
+                <button onClick={() => setShowColorPicker(!showColorPicker)}>+</button>
+                {showColorPicker && (
+                    <div style={{ position: 'absolute', zIndex: 2 }} onClick={(e) => e.stopPropagation()}>
+                        <div style={{position: 'fixed', top: '0px', right: '0px', bottom: '0px', left: '0px'}} onClick={confirmColor} />
+                        <div className='popover-box'>
+                            <Wheel color={selectedHsva} onChange={(color) => setSelectedHsva({...selectedHsva, ...color.hsva})} />
+                            <div className='shade-slider'>
+                                <ShadeSlider hsva={selectedHsva} onChange={(newShade) => {setSelectedHsva({...selectedHsva, ...newShade});}} />
+                            </div>
+                            <div className='color-preview' style={{background: hsvaToRgbaString(selectedHsva) }}><button onClick={confirmColor}>Save</button></div>
+
+                        </div>
+                    </div>
+                )}
             </div>
-    </div>
+        </div>
     );
 }
 
