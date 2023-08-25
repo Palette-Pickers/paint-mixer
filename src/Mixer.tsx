@@ -53,27 +53,48 @@ const Mixer: React.FC = () => {
         if (palette.length) {
             return palette.map((swatch, i) => {
                 return (
-                <div className="swatch-container">
-                    <div
-                        key={i}
-                        className="swatch"
-                        style={{backgroundColor: `${swatch.color}`}}
-                    >
-                        <div className="swatch-ui">
-                            <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
-                            <div className='label'>{swatch.label}</div>
-                            <div className='change-parts-qty'>
-                                <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
-                                <div className="partsInMix">{swatch.partsInMix}</div>
-                                <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
+                    <div className="swatch-container">
+                        <div
+                            key={i}
+                            className="swatch"
+                            style={{backgroundColor: `${swatch.color}`}}
+                        >
+                            <div className="swatch-ui">
+                                <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
+                                {editingLabelIndex === i ? (
+                                    <input
+                                        value={tempLabel}
+                                        onChange={(e) => setTempLabel(e.target.value)}
+                                        onBlur={() => {
+                                            const updatedPalette = [...palette];
+                                            updatedPalette[i].label = tempLabel;
+                                            setPalette(updatedPalette);
+                                            setEditingLabelIndex(null);
+                                        }}
+                                        autoFocus
+                                    />
+                                ) : (
+                                    <div className='label' onClick={() => {
+                                        setEditingLabelIndex(i);
+                                        setTempLabel(swatch.label);
+                                    }}>
+                                        {swatch.label}
+                                    </div>
+                                )}
+                                <div className="partsInMix" onClick={() => handleSwatchIncrementClick(i)}>{swatch.partsInMix}</div>
                             </div>
+
                         </div>
+                        <div className='change-parts-qty'>
+                            <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
+                        </div>
+
                     </div>
-                </div>
                 )
             })
         }
     }
+
 
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
