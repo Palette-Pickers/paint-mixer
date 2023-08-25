@@ -3,10 +3,9 @@ import mixbox from 'mixbox';
 import './Mixer.scss';
 import {SketchPicker} from 'react-color'; // Import the color picker
 import Wheel from "@uiw/react-color-wheel";
-import ShadeSlider from '@uiw/react-color-shade-slider';
-import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
-
-
+import ShadeSlider from '@uiw/react-color-shade-slider'
+import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
+import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
 
 
 interface ColorPart {
@@ -193,12 +192,30 @@ const Mixer: React.FC = () => {
                     <div style={{ position: 'absolute', zIndex: 2 }} onClick={(e) => e.stopPropagation()}>
                         <div style={{position: 'fixed', top: '0px', right: '0px', bottom: '0px', left: '0px'}} onClick={confirmColor} />
                         <div className='popover-box'>
+
                             <Wheel color={selectedHsva} onChange={(color) => setSelectedHsva({...selectedHsva, ...color.hsva})} />
                             <div className='shade-slider'>
-                                <ShadeSlider hsva={selectedHsva} onChange={(newShade) => {setSelectedHsva({...selectedHsva, ...newShade});}} />
+                                <ShadeSlider
+                                    hsva={selectedHsva}
+                                    onChange={(newShade) => {
+                                        setSelectedHsva({...selectedHsva, ...newShade});
+                                    }}
+                                />
                             </div>
-                            <div className='color-preview' style={{background: hsvaToRgbaString(selectedHsva) }}><button onClick={confirmColor}>Save</button></div>
 
+
+                                <EditableInputRGBA
+                                    hsva={selectedHsva}
+                                    placement="top"
+                                    onChange={(color) => {
+                                        setSelectedHsva({...selectedHsva, ...color.hsva});
+                                    }}
+                                />
+
+
+                            <div className='color-preview' style={{background: hsvaToRgbaString(selectedHsva)}}>
+                                <button onClick={confirmColor}>Save</button>
+                            </div>
                         </div>
                     </div>
                 )}

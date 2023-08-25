@@ -44,9 +44,19 @@
             margin: 1rem 0;
         }
 
+        .w-color-editable-input {
+            width: 2rem;
+        }
+
+        .w-color-editable-input:nth-of-type(4) {
+            visibility: hidden;
+            display: none !important;
+        }
+
         .color-preview {
             width: 100px;
             margin: 1rem 0;
+            padding: 0.5rem 0.25rem;
             display: flex;
             align-items: center;
             justify-content: center;
