@@ -35,8 +35,8 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        background-color: rgba(0,0,0,0);
-        width: 100vw;
+        background-color: rgb(86, 75, 75);
+        width: auto;
         min-height: 50vh;
 
         .shade-slider {
@@ -46,6 +46,10 @@
 
         .w-color-editable-input {
             width: 2rem;
+            input {
+                color: white;
+            }
+
         }
 
         .w-color-editable-input:nth-of-type(4) {
@@ -74,13 +78,13 @@
         display: flex;
         flex-wrap: wrap;
 
-        > button {
+        .add-color-ui > button {
+            position: absolute;
             font-size: 3rem;
-            align-content: center;
-            width: 10rem;
-            margin: 5px 5px 5px 0;
-            border-radius: 0 0 20% 20%;
-            border: 1px solid black;
+            width: 5rem;
+            height: 8.6rem;
+            background-color: transparent;
+            border: 0;
         }
 
         .swatch {
