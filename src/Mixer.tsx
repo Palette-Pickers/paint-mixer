@@ -3,10 +3,9 @@ import mixbox from 'mixbox';
 import './Mixer.scss';
 import {SketchPicker} from 'react-color'; // Import the color picker
 import Wheel from "@uiw/react-color-wheel";
-import ShadeSlider from '@uiw/react-color-shade-slider';
-import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
-
-
+import ShadeSlider from '@uiw/react-color-shade-slider'
+import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
+import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
 
 
 interface ColorPart {
@@ -45,33 +44,57 @@ const Mixer: React.FC = () => {
     const [palette, setPalette] = useState(paletteColors);
     const [showColorPicker, setShowColorPicker] = useState(false); // State to toggle color picker
     const [selectedColor, setSelectedColor] = useState<RGBColor>({r: 255, g: 255, b: 255});
-    const [selectedHsva, setSelectedHsva] = useState({ h: 214, s: 43, v: 90, a: 1 });
+    const [selectedHsva, setSelectedHsva] = useState({h: 214, s: 43, v: 90, a: 1});
+    const [editingLabelIndex, setEditingLabelIndex] = useState<number | null>(null);
+    const [tempLabel, setTempLabel] = useState<string>('');
+
 
     const makeColorSwatches = () => {
         if (palette.length) {
             return palette.map((swatch, i) => {
                 return (
-                <div className="swatch-container">
-                    <div
-                        key={i}
-                        className="swatch"
-                        style={{backgroundColor: `${swatch.color}`}}
-                    >
-                        <div className="swatch-ui">
-                            <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
-                            <div className='label'>{swatch.label}</div>
-                            <div className='change-parts-qty'>
-                                <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
-                                <div className="partsInMix">{swatch.partsInMix}</div>
-                                <button className="add-parts" onClick={() => handleSwatchIncrementClick(i)}>+</button>
+                    <div className="swatch-container">
+                        <div
+                            key={i}
+                            className="swatch"
+                            style={{backgroundColor: `${swatch.color}`}}
+                        >
+                            <div className="swatch-ui">
+                                <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
+                                {editingLabelIndex === i ? (
+                                    <input
+                                        value={tempLabel}
+                                        onChange={(e) => setTempLabel(e.target.value)}
+                                        onBlur={() => {
+                                            const updatedPalette = [...palette];
+                                            updatedPalette[i].label = tempLabel;
+                                            setPalette(updatedPalette);
+                                            setEditingLabelIndex(null);
+                                        }}
+                                        autoFocus
+                                    />
+                                ) : (
+                                    <div className='label' onClick={() => {
+                                        setEditingLabelIndex(i);
+                                        setTempLabel(swatch.label);
+                                    }}>
+                                        {swatch.label}
+                                    </div>
+                                )}
+                                <div className="partsInMix" onClick={() => handleSwatchIncrementClick(i)}>{swatch.partsInMix}</div>
                             </div>
+
                         </div>
+                        <div className='change-parts-qty'>
+                            <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
+                        </div>
+
                     </div>
-                </div>
                 )
             })
         }
     }
+
 
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
@@ -177,33 +200,52 @@ const Mixer: React.FC = () => {
     }, [palette]);
 
     return (
-        <div className='Mixer'>
-            <div style={{backgroundColor: mixedColor}} className='color-box'>
+        <main className='Mixer'>
+            <section style={{backgroundColor: mixedColor}} className='color-box'>
                 <div className='color-box-ui'>
-                    <button className="reset-mix" onClick={resetMix}>Reset</button>
+                    <button className="reset-mix" onClick={resetMix}>Reset Mix</button>
                     <button className="add-to-palette" onClick={() => addToPalette(mixedColor, palette)}>Add to Palette</button>
                 </div>
                 <div className='transparency-box'></div>
-            </div>
+            </section>
 
-            <div className='swatches'>
+            <section className='swatches'>
                 {paletteSwatches}
-                <button onClick={() => setShowColorPicker(!showColorPicker)}>+</button>
-                {showColorPicker && (
-                    <div style={{ position: 'absolute', zIndex: 2 }} onClick={(e) => e.stopPropagation()}>
-                        <div style={{position: 'fixed', top: '0px', right: '0px', bottom: '0px', left: '0px'}} onClick={confirmColor} />
-                        <div className='popover-box'>
-                            <Wheel color={selectedHsva} onChange={(color) => setSelectedHsva({...selectedHsva, ...color.hsva})} />
-                            <div className='shade-slider'>
-                                <ShadeSlider hsva={selectedHsva} onChange={(newShade) => {setSelectedHsva({...selectedHsva, ...newShade});}} />
-                            </div>
-                            <div className='color-preview' style={{background: hsvaToRgbaString(selectedHsva) }}><button onClick={confirmColor}>Save</button></div>
+                <div className="add-color-ui">
+                    <button onClick={() => setShowColorPicker(!showColorPicker)}>+</button>
+                    {showColorPicker && (
+                        <>
+                            <div className='popover-box'>
 
-                        </div>
-                    </div>
-                )}
+                                <Wheel color={selectedHsva} onChange={(color) => setSelectedHsva({...selectedHsva, ...color.hsva})} />
+                                <div className='shade-slider'>
+                                    <ShadeSlider
+                                        hsva={selectedHsva}
+                                        onChange={(newShade) => {
+                                            setSelectedHsva({...selectedHsva, ...newShade});
+                                        }}
+                                    />
+                                </div>
+
+
+                                    <EditableInputRGBA
+                                        hsva={selectedHsva}
+                                        placement="top"
+                                        onChange={(color) => {
+                                            setSelectedHsva({...selectedHsva, ...color.hsva});
+                                        }}
+                                    />
+
+
+                                <div className='color-preview' style={{background: hsvaToRgbaString(selectedHsva)}}>
+                                    <button onClick={confirmColor}>Save</button>
+                                </div>
+                            </div>
+                        </>
+                    )}
             </div>
-        </div>
+            </section>
+            </main>
     );
 }
 
