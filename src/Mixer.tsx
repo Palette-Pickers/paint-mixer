@@ -6,7 +6,7 @@ import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider'
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
 import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
-import {isDark} from '../utils/isDark';
+import {isDark} from './utils/isDark';
 
 
 interface ColorPart {
