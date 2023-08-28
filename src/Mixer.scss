@@ -35,8 +35,8 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        background-color: rgba(0,0,0,0);
-        width: 100vw;
+        background-color: rgb(86, 75, 75);
+        width: auto;
         min-height: 50vh;
 
         .shade-slider {
@@ -44,9 +44,23 @@
             margin: 1rem 0;
         }
 
+        .w-color-editable-input {
+            width: 2rem;
+            input {
+                color: white;
+            }
+
+        }
+
+        .w-color-editable-input:nth-of-type(4) {
+            visibility: hidden;
+            display: none !important;
+        }
+
         .color-preview {
             width: 100px;
             margin: 1rem 0;
+            padding: 0.5rem 0.25rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -64,13 +78,23 @@
         display: flex;
         flex-wrap: wrap;
 
-        > button {
+        .swatch-container {
+            .change-parts-qty {
+                display: flex;
+                width: 100%;
+                justify-content: space-around;
+                align-items: center;
+                padding: 0;
+            }
+        }
+
+        .add-color-ui > button {
+            position: absolute;
             font-size: 3rem;
-            align-content: center;
-            width: 10rem;
-            margin: 5px 5px 5px 0;
-            border-radius: 0 0 20% 20%;
-            border: 1px solid black;
+            width: 5rem;
+            height: 8.6rem;
+            background-color: transparent;
+            border: 0;
         }
 
         .swatch {
@@ -96,9 +120,17 @@
             .partsInMix {
                 padding: 0;
                 font-size: 1.5rem;
-                width: auto;
+                width: 100%;
+                top: 6rem;
+                position: relative;
+                display: flex;
+                justify-content: center;
+
             }
             .label {
+                position: absolute;
+                top: 1px;
+                z-index: 2;
                 display: block;
                 margin: 0.2rem 1rem 0.5rem 0.4rem;
             }
@@ -115,12 +147,13 @@
                 bottom: 0;
                 right: 0;
                 left: 0;
-            }
-            .change-parts-qty {
-                display: flex;
-                width: 100%;
-                justify-content: space-around;
-                padding: 0 2rem;
+
+                > input {
+                    position: absolute;
+                    padding: 0.2rem 0.4rem 0 0.2rem;
+                    top: 0;
+
+                }
             }
             button {
                 font-size: 1.6rem;
