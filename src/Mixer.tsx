@@ -6,7 +6,7 @@ import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider'
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
 import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
-import {isDark} from './utils/isDark';
+import isDark from "./utils/isDark";
 
 
 interface ColorPart {
@@ -20,6 +20,32 @@ interface RGBColor {
     g: number;
     b: number;
     a?: number;
+}
+const normalizeRGB = (color: any): string => {
+    if (Array.isArray(color) && color.length >= 3) {
+        return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+    } else if (typeof color === 'string') {
+        const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (match) {
+            return `rgb(${match[1]}, ${match[2]}, ${match[3]})`;
+        }
+        return color;
+    } else {
+        console.error('Unexpected format for color:', color);
+        return '';
+    }
+}
+
+const rgbStringToRgb = (rgbString: string): RGBColor => {
+    const match = rgbString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (match) {
+        return {
+            r: parseInt(match[1]),
+            g: parseInt(match[2]),
+            b: parseInt(match[3]),
+        };
+    }
+    return {r: 0, g: 0, b: 0};
 }
 
 const Mixer: React.FC = () => {
@@ -49,54 +75,6 @@ const Mixer: React.FC = () => {
     const [editingLabelIndex, setEditingLabelIndex] = useState<number | null>(null);
     const [tempLabel, setTempLabel] = useState<string>('');
 
-
-    const makeColorSwatches = () => {
-        if (palette.length) {
-            return palette.map((swatch, i) => {
-                return (
-                    <div className="swatch-container">
-                        <div
-                            key={i}
-                            className="swatch"
-                            style={{backgroundColor: `${swatch.color}`}}
-                        >
-                            <div className="swatch-ui">
-                                <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
-                                {editingLabelIndex === i ? (
-                                    <input
-                                        value={tempLabel}
-                                        onChange={(e) => setTempLabel(e.target.value)}
-                                        onBlur={() => {
-                                            const updatedPalette = [...palette];
-                                            updatedPalette[i].label = tempLabel;
-                                            setPalette(updatedPalette);
-                                            setEditingLabelIndex(null);
-                                        }}
-                                        autoFocus
-                                    />
-                                ) : (
-                                    <div className='label' onClick={() => {
-                                        setEditingLabelIndex(i);
-                                        setTempLabel(swatch.label);
-                                    }}>
-                                        {swatch.label}
-                                    </div>
-                                )}
-                                <div className="partsInMix" onClick={() => handleSwatchIncrementClick(i)}>{swatch.partsInMix}</div>
-                            </div>
-
-                        </div>
-                        <div className='change-parts-qty'>
-                            <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
-                        </div>
-
-                    </div>
-                )
-            })
-        }
-    }
-
-
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
         updatedPalette[index].partsInMix++;  // Increment partsInMix for the clicked swatch
@@ -106,7 +84,7 @@ const Mixer: React.FC = () => {
     const handleSwatchDecrementClick = (index: number) => {
         const updatedPalette = [...palette];
         if (updatedPalette[index].partsInMix > 0)
-            updatedPalette[index].partsInMix--;  // Decrement partsInMix for the clicked swatch
+            updatedPalette[index].partsInMix--;
         setPalette(updatedPalette);
     }
 
@@ -135,27 +113,71 @@ const Mixer: React.FC = () => {
                 }
             }
             const mixed_color = mixbox.latentToRgb(latent_mix);
-            return mixed_color;
+            return normalizeRGB(mixed_color);
         }
         else return 'rgba(0,0,0,0)';
     }
 
-    let paletteSwatches = makeColorSwatches();
+    const makeColorSwatches = () => {
+        if (palette.length) {
+            return palette.map((swatch, i) => {
+                return (
+                    <div className="swatch-container">
+                        <div
+                            key={i}
+                            className="swatch"
+                            style={{backgroundColor: `${swatch.color}`}}
+                        >
+                            <div className="swatch-ui">
+                                <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}
+                                style={{color: isDark(rgbStringToRgb(swatch.color)) ? 'white' : 'black'}}>X</button>
+                                {editingLabelIndex === i ? (
+                                    <input
+                                        value={tempLabel}
+                                        onChange={(e) => setTempLabel(e.target.value)}
+                                        onBlur={() => {
+                                            const updatedPalette = [...palette];
+                                            updatedPalette[i].label = tempLabel;
+                                            setPalette(updatedPalette);
+                                            setEditingLabelIndex(null);
+                                        }}
+                                        autoFocus
+                                    />
+                                ) : (
+                                        <div className='label'
+                                            onClick={() => {
+                                                setEditingLabelIndex(i);
+                                                setTempLabel(swatch.label);
+                                            }}
+                                            style={{color: isDark(rgbStringToRgb(swatch.color)) ? 'white' : 'black'}}
+                                        >
 
-    const normalizeRGB = (color: any): string => {
-        if (Array.isArray(color) && color.length >= 3) {
-            return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-        } else if (typeof color === 'string') {
-            const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-            if (match) {
-                return `rgb(${match[1]}, ${match[2]}, ${match[3]})`;
-            }
-            return color;
-        } else {
-            console.error('Unexpected format for color:', color);
-            return '';
+                                                {swatch.label}
+
+
+
+                                        </div>
+                                )}
+                                <div
+                                    className="partsInMix"
+                                    onClick={() => handleSwatchIncrementClick(i)}
+                                    style={{color: isDark(rgbStringToRgb(swatch.color)) ? 'white' : 'black'}}>
+                                    {swatch.partsInMix}
+                                </div>
+                            </div>
+
+                        </div>
+                        <div className='change-parts-qty'>
+                            <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
+                        </div>
+
+                    </div>
+                )
+            })
         }
     }
+
+    let paletteSwatches = makeColorSwatches();
 
     // Helper function to check if a color is already in the palette
     const isColorInPalette = (color: string, palette: ColorPart[]): boolean => {
@@ -166,6 +188,7 @@ const Mixer: React.FC = () => {
     const addToPalette = (color: string, palette: ColorPart[]) => {
         if (!isColorInPalette(color, palette)) { // Only add if the color is not in the palette
             let updatedPalette = [...palette];
+            console.log(color);
             updatedPalette.push({ "color": color, "label": normalizeRGB(color), "partsInMix": 0 });
             setPalette(updatedPalette);
         } else {
@@ -199,6 +222,8 @@ const Mixer: React.FC = () => {
     useEffect(() => {
         setMixedColor(getMixedColorFromPalette(palette));
     }, [palette]);
+
+
 
     return (
         <main className='Mixer'>
