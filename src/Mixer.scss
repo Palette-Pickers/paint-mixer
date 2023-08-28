@@ -74,19 +74,30 @@
         }
     }
 
+    .swatch-container {
+        .change-parts-qty {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0;
+
+            .subtract-parts {
+                cursor: pointer;
+                user-select: none;
+                font-size: 1.5rem;
+                border-radius: 50%;
+                padding: 0 0.5rem;
+                width: 2rem;
+            }
+        }
+    }
+
     .swatches {
         display: flex;
         flex-wrap: wrap;
 
-        .swatch-container {
-            .change-parts-qty {
-                display: flex;
-                width: 100%;
-                justify-content: space-around;
-                align-items: center;
-                padding: 0;
-            }
-        }
+
 
         .add-color-ui > button {
             position: absolute;
@@ -115,18 +126,22 @@
                 background-color: transparent;
                 border: none;
                 font-size: 1rem;
+                cursor: pointer;
+                user-select: none;
             }
 
             .partsInMix {
-                padding: 0;
+                padding: 2rem 0 1rem 0;
                 font-size: 2rem;
                 width: 100%;
-                top: 3rem;
+                top: 1rem;
                 position: relative;
                 display: flex;
                 justify-content: center;
-
+                cursor: pointer;
+                user-select: none;
             }
+
             .label {
                 position: absolute;
                 top: 1px;
