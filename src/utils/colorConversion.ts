@@ -84,4 +84,3 @@ export const deltaE94 = (lab1: LAB, lab2: LAB): number => {
 
     return Math.sqrt(l * l + c * c + h * h);
 }
-
