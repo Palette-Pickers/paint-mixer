@@ -1,6 +1,6 @@
 type RGB = { r: number, g: number, b: number };
 type XYZ = { x: number, y: number, z: number };
-type LAB = {l: number, a: number, b: number;};
+type LAB = { l: number, a: number, b: number };
 
 
 export const sRGBToLinear = (value: number): number =>{
@@ -54,9 +54,34 @@ export const xyzToLab = (xyz: XYZ): LAB => {
         z = (7.787 * z) + (16 / 116);
     }
 
-    let l = (116 * y) - 16;
-    let a = 500 * (x - y);
-    let b = 200 * (y - z);
+    const l = (116 * y) - 16;
+    const a = 500 * (x - y);
+    const b = 200 * (y - z);
 
     return { l, a, b };
 }
+
+export const deltaE94 = (lab1: LAB, lab2: LAB): number => {
+    const kL = 1;
+    const kC = 1;
+    const kH = 1;
+    const K1 = 0.045;
+    const K2 = 0.015;
+    const SL = 1;
+    const SC = 1 + K1 * Math.sqrt(lab1.a * lab1.a + lab1.b * lab1.b);
+    const SH = 1 + K2 * Math.sqrt(lab1.a * lab1.a + lab1.b * lab1.b);
+
+    const deltaL = lab1.l - lab2.l;
+    const deltaA = lab1.a - lab2.a;
+    const deltaB = lab1.b - lab2.b;
+    const deltaC = Math.sqrt(lab1.a * lab1.a + lab1.b * lab1.b) - Math.sqrt(lab2.a * lab2.a + lab2.b * lab2.b);
+    const deltaH2 = deltaA * deltaA + deltaB * deltaB - deltaC * deltaC;
+    const deltaH = deltaH2 < 0 ? 0 : Math.sqrt(deltaH2);
+
+    const l = deltaL / (kL * SL);
+    const c = deltaC / (kC * SC);
+    const h = deltaH / (kH * SH);
+
+    return Math.sqrt(l * l + c * c + h * h);
+}
+
