@@ -35,9 +35,9 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        background-color: rgb(86, 75, 75);
         width: auto;
         min-height: 50vh;
+        padding: 0.5rem 1rem;
 
         .shade-slider {
             width: 200px;
@@ -71,6 +71,7 @@
             background-color: transparent;
             border: none;
             font-size: 1.2rem;
+            border-radius: 50%;
         }
     }
 
