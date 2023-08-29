@@ -1,4 +1,4 @@
-const { sRGBToLinear, rgbToXyz, xyzToLab, deltaE94 } = require('../utils/colorConversion');
+import { sRGBToLinear, rgbToXyz, xyzToLab, deltaE94 } from '../utils/colorConversion';
 
 
 describe('sRGBToLinear', () => {
