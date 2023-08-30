@@ -31,23 +31,31 @@
     }
 
     .popover-box {
-        display: flex;
         align-items: center;
-        justify-content: center;
+        border-radius: 0 0 20% 20%;
+        border: 1px solid black;
+        display: flex;
         flex-direction: column;
-        width: auto;
-        min-height: 50vh;
+        justify-content: center;
+        margin: 5px 0 0 0;
         padding: 0.5rem 1rem;
+        width: auto;
+
+        .w-color-wheel {
+            border-radius: 50%;
+            border: white solid 0.25px;
+        }
 
         .shade-slider {
-            width: 200px;
             margin: 1rem 0;
+            width: 200px;
         }
 
         .w-color-editable-input {
             width: 2rem;
             input {
-                color: white;
+                background-color: rgb(61, 61, 61) !important;
+                color: rgb(255, 255, 255) !important;
             }
 
         }
@@ -58,37 +66,37 @@
         }
 
         .color-preview {
-            width: 100px;
+            align-items: center;
+            display: flex;
+            justify-content: center;
             margin: 1rem 0;
             padding: 0.5rem 0.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 100px;
         }
 
 
         button {
-            font-size: 1.2rem;
             border-radius: 10%;
+            font-size: 1.2rem;
             margin: 0.5rem;
-            padding: 0.5rem;
+            padding: 0.5rem 1rem;
         }
     }
 
     .swatch-container {
         .change-parts-qty {
-            display: flex;
-            width: 100%;
-            justify-content: space-around;
             align-items: center;
+            display: flex;
+            justify-content: space-around;
             padding: 0;
+            width: 100%;
 
             .subtract-parts {
-                cursor: pointer;
-                user-select: none;
-                font-size: 1.5rem;
                 border-radius: 50%;
+                cursor: pointer;
+                font-size: 1.5rem;
                 padding: 0 0.5rem;
+                user-select: none;
                 width: 2rem;
             }
         }
@@ -101,80 +109,79 @@
 
         .add-color-ui {
             > button {
-                position: absolute;
-                font-size: 3rem;
-                width: 5rem;
-                height: 8.6rem;
                 background-color: transparent;
                 border: 0;
+                font-size: 3rem;
+                height: 8.6rem;
+                position: absolute;
+                width: 5rem;
             }
         }
 
         .swatch {
-            position: relative;
-            width: 10rem;
-            height: 6rem;
-            margin: 5px 5px 5px 0;
+            align-content: center;
             border-radius: 0 0 20% 20%;
             border: 1px solid black;
+            height: 6rem;
             justify-content: center;
-            align-content: center;
+            margin: 5px 5px 5px 0;
+            position: relative;
+            width: 10rem;
 
 
             .remove-from-palette {
-                position: absolute;
-                top: 1px;
-                right: 0;
                 background-color: transparent;
                 border: none;
-                font-size: 1rem;
                 cursor: pointer;
+                font-size: 1rem;
+                position: absolute;
+                right: 0;
+                top: 1px;
                 user-select: none;
             }
 
             .partsInMix {
-                padding: 2rem 0 1rem 0;
-                font-size: 2rem;
-                width: 100%;
-                top: 1rem;
-                position: relative;
-                display: flex;
-                justify-content: center;
                 cursor: pointer;
+                display: flex;
+                font-size: 2rem;
+                justify-content: center;
+                padding: 2rem 0 1rem 0;
+                position: relative;
+                top: 1rem;
                 user-select: none;
+                width: 100%;
             }
 
             .label {
+                display: block;
+                font-size: 0.8rem;
+                margin: 0.2rem 1rem 0.5rem 0.4rem;
                 position: absolute;
                 top: 1px;
                 z-index: 2;
-                display: block;
-                margin: 0.2rem 1rem 0.5rem 0.4rem;
-                font-size: 0.8rem
             }
             .swatch-ui {
+                align-items: center;
+                bottom: 0;
                 display: flex;
                 flex-direction: row;
                 flex-wrap: wrap;
-                align-items: center;
                 justify-content: space-between;
-                position: relative;
-                width: 100%;
-                bottom: 0;
-                right: 0;
                 left: 0;
+                position: relative;
+                right: 0;
+                width: 100%;
 
                 > input {
-                    position: absolute;
                     padding: 0.2rem 0.4rem 0 0.2rem;
+                    position: absolute;
                     top: 0;
-
                 }
             }
             button {
-                font-size: 1.6rem;
-                border: none;
                 background-color: transparent;
+                border: none;
+                font-size: 1.6rem;
             }
         }
     }

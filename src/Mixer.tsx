@@ -54,7 +54,6 @@ const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState('rgb(0,0,0)');
     const [palette, setPalette] = useState(defaultPalette);
     const [showColorPicker, setShowColorPicker] = useState(false); // State to toggle color picker
-    const [selectedRgb, setSelectedRgb] = useState<RGBColor>({r: 255, g: 255, b: 255});
     const [selectedHsva, setSelectedHsva] = useState({h: 214, s: 43, v: 90, a: 1});
     const [editingLabelIndex, setEditingLabelIndex] = useState<number | null>(null);
     const [tempLabel, setTempLabel] = useState<string>('');
@@ -180,12 +179,6 @@ const Mixer: React.FC = () => {
         }
     }
 
-
-    const handleColorChange = (color: { rgb: RGBColor }) => {
-        setSelectedRgb(color.rgb);
-    }
-
-
     const confirmColor = () => {
         if (selectedHsva) {
             const selectedColor = hsvaToRgba(selectedHsva);
@@ -225,7 +218,8 @@ const Mixer: React.FC = () => {
                 <div className="add-color-ui">
                     <button
                         style={{
-                            visibility: (showColorPicker) ? 'hidden' : 'visible'
+                            visibility: (showColorPicker) ? 'hidden' : 'visible',
+                            display: (showColorPicker) ? 'none' : 'block'
                         }}
                         onClick={() => setShowColorPicker(!showColorPicker)}
                     >
@@ -255,7 +249,7 @@ const Mixer: React.FC = () => {
                                             setSelectedHsva({...selectedHsva, ...color.hsva});
                                         }}
                                     />
-                                <button onClick={confirmColor}>Save</button>
+                                <button onClick={confirmColor}>Add</button>
                             </div>
                         </>
                     )}
