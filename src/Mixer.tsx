@@ -12,7 +12,7 @@ import isDark from "./utils/isDark";
 interface ColorPart {
     label: string;
     partsInMix: number;
-    color: string;
+    rgbString: string;
 }
 
 interface RGBColor {
@@ -51,26 +51,26 @@ const rgbStringToRgb = (rgbString: string): RGBColor => {
 const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState('rgb(0,0,0)');
     const paletteColors = [
-        {"label": "White", "color": "rgb(255,255,255)", "partsInMix": 0},
-        {"label": "Cadmium Yellow", "color": "rgb(254,236,0)", "partsInMix": 0},
-        {"label": "Hansa Yellow", "color": "rgb(252,211,0)", "partsInMix": 0},
-        {"label": "Cadmium Orange", "color": "rgb(255,105,0)", "partsInMix": 0},
-        {"label": "Cadmium Red", "color": "rgb(255,39,2)", "partsInMix": 0},
-        {"label": "Quinacridone Magenta", "color": "rgb(78,0,66)", "partsInMix": 0},
-        {"label": "Cobalt Violet", "color": "rgb(150,0,255)", "partsInMix": 0},
-        {"label": "Ultramarine Blue", "color": "rgb(25,0,89)", "partsInMix": 0},
-        {"label": "Cerulean Blue", "color": "rgb(0,33,133)", "partsInMix": 0},
-        {"label": "Phthalo Blue", "color": "rgb(13,27,68)", "partsInMix": 0},
-        {"label": "Phthalo Green", "color": "rgb(0,60,50)", "partsInMix": 0},
-        {"label": "Permanent Green", "color": "rgb(7,109,22)", "partsInMix": 0},
-        {"label": "Sap Green", "color": "rgb(107,148,4)", "partsInMix": 0},
-        {"label": "Burnt Sienna", "color": "rgb(123,72,0)", "partsInMix": 0},
-        {"label": "Black", "color": "rgb(0,0,0)", "partsInMix": 0},
+        {"label": "White", "rgbString": "rgb(255,255,255)", "partsInMix": 0},
+        {"label": "Cadmium Yellow", "rgbString": "rgb(254,236,0)", "partsInMix": 0},
+        {"label": "Hansa Yellow", "rgbString": "rgb(252,211,0)", "partsInMix": 0},
+        {"label": "Cadmium Orange", "rgbString": "rgb(255,105,0)", "partsInMix": 0},
+        {"label": "Cadmium Red", "rgbString": "rgb(255,39,2)", "partsInMix": 0},
+        {"label": "Quinacridone Magenta", "rgbString": "rgb(78,0,66)", "partsInMix": 0},
+        {"label": "Cobalt Violet", "rgbString": "rgb(150,0,255)", "partsInMix": 0},
+        {"label": "Ultramarine Blue", "rgbString": "rgb(25,0,89)", "partsInMix": 0},
+        {"label": "Cerulean Blue", "rgbString": "rgb(0,33,133)", "partsInMix": 0},
+        {"label": "Phthalo Blue", "rgbString": "rgb(13,27,68)", "partsInMix": 0},
+        {"label": "Phthalo Green", "rgbString": "rgb(0,60,50)", "partsInMix": 0},
+        {"label": "Permanent Green", "rgbString": "rgb(7,109,22)", "partsInMix": 0},
+        {"label": "Sap Green", "rgbString": "rgb(107,148,4)", "partsInMix": 0},
+        {"label": "Burnt Sienna", "rgbString": "rgb(123,72,0)", "partsInMix": 0},
+        {"label": "Black", "rgbString": "rgb(0,0,0)", "partsInMix": 0},
     ];
 
     const [palette, setPalette] = useState(paletteColors);
     const [showColorPicker, setShowColorPicker] = useState(false); // State to toggle color picker
-    const [selectedColor, setSelectedColor] = useState<RGBColor>({r: 255, g: 255, b: 255});
+    const [selectedRgb, setSelectedRgb] = useState<RGBColor>({r: 255, g: 255, b: 255});
     const [selectedHsva, setSelectedHsva] = useState({h: 214, s: 43, v: 90, a: 1});
     const [editingLabelIndex, setEditingLabelIndex] = useState<number | null>(null);
     const [tempLabel, setTempLabel] = useState<string>('');
@@ -126,11 +126,11 @@ const Mixer: React.FC = () => {
                         <div
                             key={i}
                             className="swatch"
-                            style={{backgroundColor: `${swatch.color}`}}
+                            style={{backgroundColor: `${swatch.rgbString}`}}
                         >
                             <div className="swatch-ui">
                                 <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}
-                                style={{color: isDark(rgbStringToRgb(swatch.color)) ? 'white' : 'black'}}>X</button>
+                                style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}>X</button>
                                 {editingLabelIndex === i ? (
                                     <input
                                         value={tempLabel}
@@ -149,7 +149,7 @@ const Mixer: React.FC = () => {
                                                 setEditingLabelIndex(i);
                                                 setTempLabel(swatch.label);
                                             }}
-                                            style={{color: isDark(rgbStringToRgb(swatch.color)) ? 'white' : 'black'}}
+                                            style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}
                                         >
 
                                                 {swatch.label}
@@ -161,7 +161,7 @@ const Mixer: React.FC = () => {
                                 <div
                                     className="partsInMix"
                                     onClick={() => handleSwatchIncrementClick(i)}
-                                    style={{color: isDark(rgbStringToRgb(swatch.color)) ? 'white' : 'black'}}>
+                                    style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}>
                                     {swatch.partsInMix}
                                 </div>
                             </div>
@@ -182,23 +182,22 @@ const Mixer: React.FC = () => {
     // Helper function to check if a color is already in the palette
     const isColorInPalette = (color: string, palette: ColorPart[]): boolean => {
         const normalizedColor = normalizeRGB(color);
-        return palette.some(swatch => normalizeRGB(swatch.color) === normalizedColor);
+        return palette.some(swatch => normalizeRGB(swatch.rgbString) === normalizedColor);
     }
 
-    const addToPalette = (color: string, palette: ColorPart[]) => {
-        if (!isColorInPalette(color, palette)) { // Only add if the color is not in the palette
+    const addToPalette = (rgbString: string, palette: ColorPart[]) => {
+        if (!isColorInPalette(rgbString, palette)) { // Only add if the color is not in the palette
             let updatedPalette = [...palette];
-            console.log(color);
-            updatedPalette.push({ "color": color, "label": normalizeRGB(color), "partsInMix": 0 });
+            updatedPalette.push({ "rgbString": rgbString, "label": normalizeRGB(rgbString), "partsInMix": 0 });
             setPalette(updatedPalette);
         } else {
-            console.error("Selected color already in palette", color);
+            console.error("Selected color already in palette", rgbString);
         }
     }
 
 
     const handleColorChange = (color: { rgb: RGBColor }) => {
-        setSelectedColor(color.rgb);
+        setSelectedRgb(color.rgb);
     }
 
 
