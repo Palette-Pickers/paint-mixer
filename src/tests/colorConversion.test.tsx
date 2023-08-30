@@ -139,7 +139,7 @@ describe('deltaE94', () => {
         const lab1 = { l: 10, a: 20, b: 10 };
         const lab2 = { l: 90, a: 80, b: 90 };
         const difference = deltaE94(lab1, lab2);
-        expect(difference).toBeGreaterThan(0);
-        expect(difference).toBeGreaterThan(94); // This is just an example; adjust based on your understanding of the function.
+        expect(difference).toBeGreaterThan(92);
+        expect(difference).toBeLessThan(96);
     });
 });

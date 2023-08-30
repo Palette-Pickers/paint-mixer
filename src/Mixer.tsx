@@ -14,6 +14,7 @@ interface ColorPart {
     label: string;
     partsInMix: number;
     rgbString: string;
+    recipe?: ColorPart[];
 }
 
 interface RGBColor {
@@ -77,8 +78,7 @@ const Mixer: React.FC = () => {
         setPalette(updatedPalette);
     }
 
-    const getMixedColorFromPalette = (palette) => {
-        console.log('palette', palette)
+    const getMixedColorFromPalette = (palette: ColorPart[]): string => {
         let totalParts = palette.reduce((acc, color) => {
             return acc + color.partsInMix;
         }, 0);
@@ -172,7 +172,13 @@ const Mixer: React.FC = () => {
     const addToPalette = (rgbString: string, palette: ColorPart[]) => {
         if (!isColorInPalette(rgbString, palette)) { // Only add if the color is not in the palette
             let updatedPalette = [...palette];
-            updatedPalette.push({ "rgbString": rgbString, "label": normalizeRGB(rgbString), "partsInMix": 0 });
+            const recipe= palette.filter(color => color.partsInMix > 0);
+            updatedPalette.push({
+                "rgbString": rgbString,
+                "label": normalizeRGB(rgbString),
+                "partsInMix": 0,
+                "recipe": recipe //records colors used in a mix so it can be reconstructed
+            });
             setPalette(updatedPalette);
         } else {
             console.error("Selected color already in palette", rgbString);
@@ -204,10 +210,23 @@ const Mixer: React.FC = () => {
 
     return (
         <main className='Mixer'>
-            <section style={{backgroundColor: mixedColor}} className='color-box'>
+            <section
+                style={{backgroundColor: mixedColor}}
+                className='color-box'
+            >
                 <div className='color-box-ui'>
-                    <button className="reset-mix" onClick={resetMix}>Reset Mix</button>
-                    <button className="add-to-palette" onClick={() => addToPalette(mixedColor, palette)}>Add to Palette</button>
+                    <button
+                        className="reset-mix"
+                        onClick={resetMix}
+                    >
+                        Reset Mix
+                    </button>
+                    <button
+                        className="add-to-palette"
+                        onClick={() => addToPalette(mixedColor, palette)}
+                    >
+                        Add to Palette
+                    </button>
                 </div>
                 <div className='transparency-box'></div>
             </section>
@@ -249,7 +268,9 @@ const Mixer: React.FC = () => {
                                             setSelectedHsva({...selectedHsva, ...color.hsva});
                                         }}
                                     />
-                                <button onClick={confirmColor}>Add</button>
+                                <button onClick={confirmColor}>
+                                    Add
+                                </button>
                             </div>
                         </>
                     )}
