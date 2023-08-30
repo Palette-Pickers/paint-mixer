@@ -68,10 +68,10 @@
 
 
         button {
-            background-color: transparent;
-            border: none;
             font-size: 1.2rem;
-            border-radius: 50%;
+            border-radius: 10%;
+            margin: 0.5rem;
+            padding: 0.5rem;
         }
     }
 
@@ -99,14 +99,15 @@
         flex-wrap: wrap;
 
 
-
-        .add-color-ui > button {
-            position: absolute;
-            font-size: 3rem;
-            width: 5rem;
-            height: 8.6rem;
-            background-color: transparent;
-            border: 0;
+        .add-color-ui {
+            > button {
+                position: absolute;
+                font-size: 3rem;
+                width: 5rem;
+                height: 8.6rem;
+                background-color: transparent;
+                border: 0;
+            }
         }
 
         .swatch {
