@@ -1,5 +1,50 @@
-import { sRGBToLinear, rgbToXyz, xyzToLab, deltaE94 } from '../utils/colorConversion';
+import {
+    rgbStringToRgb,
+    normalizeRGB,
+    sRGBToLinear,
+    rgbToXyz,
+    xyzToLab,
+    deltaE94
+} from '../utils/colorConversion';
 
+describe('normalizeRGB', () => {
+    it('should normalize an RGB array to a string', () => {
+        const colorArray: [number, number, number] = [255, 128, 64];
+        expect(normalizeRGB(colorArray)).toBe('rgb(255, 128, 64)');
+    });
+
+    it('should normalize an RGB string with spaces', () => {
+        const colorString = 'rgb(255,   128, 64)';
+        expect(normalizeRGB(colorString)).toBe('rgb(255, 128, 64)');
+    });
+
+    it('should return the same string for already normalized strings', () => {
+        const colorString = 'rgb(255, 128, 64)';
+        expect(normalizeRGB(colorString)).toBe('rgb(255, 128, 64)');
+    });
+
+    it('should return the input string if it does not match the RGB format', () => {
+        const invalidString = 'rgba(255, 128, 64, 0.5)';
+        expect(normalizeRGB(invalidString)).toBe(invalidString);
+    });
+});
+
+describe('rgbStringToRgb', () => {
+    it('should convert an RGB string to an RGB object', () => {
+        const colorString = 'rgb(255, 128, 64)';
+        expect(rgbStringToRgb(colorString)).toEqual({ r: 255, g: 128, b: 64 });
+    });
+
+    it('should handle RGB strings with spaces', () => {
+        const colorString = 'rgb(255,   128, 64)';
+        expect(rgbStringToRgb(colorString)).toEqual({ r: 255, g: 128, b: 64 });
+    });
+
+    it('should return {r: 0, g: 0, b: 0} for invalid strings', () => {
+        const invalidString = 'rgba(255, 128, 64, 0.5)';
+        expect(rgbStringToRgb(invalidString)).toEqual({ r: 0, g: 0, b: 0 });
+    });
+});
 
 describe('sRGBToLinear', () => {
     it('should convert sRGB values below or equal to 0.04045 correctly', () => {

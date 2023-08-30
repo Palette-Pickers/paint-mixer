@@ -1,6 +1,33 @@
-type RGB = { r: number, g: number, b: number };
-type XYZ = { x: number, y: number, z: number };
-type LAB = { l: number, a: number, b: number };
+type Rgb = { r: number, g: number, b: number };
+type Xyz = { x: number, y: number, z: number };
+type Lab = { l: number, a: number, b: number };
+
+export const normalizeRGB = (color: Rgb|number[]|string): string => {
+    if (Array.isArray(color) && color.length >= 3) {
+        return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+    } else if (typeof color === 'string') {
+        const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (match) {
+            return `rgb(${match[1]}, ${match[2]}, ${match[3]})`;
+        }
+        return color;
+    } else {
+        console.error('Unexpected format for color:', color);
+        return '';
+    }
+}
+
+export const rgbStringToRgb = (rgbString:string): Rgb => {
+    const match = rgbString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (match) {
+        return {
+            r: parseInt(match[1]),
+            g: parseInt(match[2]),
+            b: parseInt(match[3]),
+        };
+    }
+    return {r: 0, g: 0, b: 0};
+}
 
 
 export const sRGBToLinear = (value: number): number => {
@@ -14,7 +41,7 @@ export const sRGBToLinear = (value: number): number => {
     }
 }
 
-export const rgbToXyz = (rgb: RGB): XYZ =>{
+export const rgbToXyz = (rgb: Rgb): Xyz =>{
     // Convert sRGB to linear RGB
     let rLinear = sRGBToLinear(rgb.r / 255.0);
     let gLinear = sRGBToLinear(rgb.g / 255.0);
@@ -29,7 +56,7 @@ export const rgbToXyz = (rgb: RGB): XYZ =>{
     return { x: x * 100, y: y * 100, z: z * 100 };
 }
 
-export const xyzToLab = (xyz: XYZ): LAB => {
+export const xyzToLab = (xyz: Xyz): Lab => {
     // Reference-X, Y and Z refer to specific illuminants and observers. D65 is the standard, and the only one we'll use.
     let refX = 95.047;
     let refY = 100.000;
@@ -64,7 +91,7 @@ export const xyzToLab = (xyz: XYZ): LAB => {
     return { l, a, b };
 }
 
-export const deltaE94 = (lab1: LAB, lab2: LAB): number => {
+export const deltaE94 = (lab1: Lab, lab2: Lab): number => {
     const kL = 1;
     const kC = 1;
     const kH = 1;
