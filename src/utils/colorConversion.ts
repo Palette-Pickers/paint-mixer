@@ -3,7 +3,10 @@ type XYZ = { x: number, y: number, z: number };
 type LAB = { l: number, a: number, b: number };
 
 
-export const sRGBToLinear = (value: number): number =>{
+export const sRGBToLinear = (value: number): number => {
+    if (value <= 0) return 0; // Clamp values below 0
+    if (value >= 1) return 1; // Clamp values above 1
+
     if (value <= 0.04045) {
         return value / 12.92;
     } else {
