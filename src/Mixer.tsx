@@ -56,6 +56,10 @@ const Mixer: React.FC = () => {
         setPalette(updatedPalette);
     }
 
+    const toggleUseTargetColor = () => {
+        setUseTargetColor(!useTargetColor);
+    }
+
     const handleRemoveFromPaletteClick = (index: number) => {
         const updatedPalette = [...palette];
         updatedPalette.splice(index, 1);  // Remove swatch from palette
@@ -159,7 +163,7 @@ const Mixer: React.FC = () => {
             const recipe= palette.filter(color => color.partsInMix > 0);
             updatedPalette.push({
                 "rgbString": rgbString,
-                "label": normalizeRGB(rgbString),
+                "label": rgbString,
                 "partsInMix": 0,
                 "recipe": recipe //records colors used in a mix so it can be reconstructed
             });
@@ -187,7 +191,7 @@ const Mixer: React.FC = () => {
     }
 
     useEffect(() => {
-        setMixedColor(getMixedColorFromPalette(defaultPalette));
+        setMixedColor(getMixedColorFromPalette(palette));
     }, [palette]);
 
 
@@ -204,14 +208,20 @@ const Mixer: React.FC = () => {
                             className="reset-mix"
                             onClick={resetMix}
                         >
-                            Reset Mix
+                            🔄 Reset Mix
                         </button>
                         <button
                             className="add-to-palette"
                             onClick={() => addToPalette(mixedColor, palette)}
                         >
-                            Add to Palette
+                            Add ⬇️
                         </button>
+                        <button
+                            className="toggle-target-color"
+                            onClick={toggleUseTargetColor}
+                            style={{
+                                background: useTargetColor ? 'rgb(255, 152, 9)' : 'darkgray'}}
+                        >Use Target Color</button>
                     </div>
                     <div className='transparency-box'></div>
                 </section>
