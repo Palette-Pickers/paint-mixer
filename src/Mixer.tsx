@@ -8,13 +8,6 @@ import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
 import {hsvaToRgba, hsvaToRgbaString, hsvaToHex} from '@uiw/color-convert';
 import isDark from "./utils/isDark";
 import {defaultPalette} from './utils/palettes/defaultPalette';
-import {IoColorPalette} from 'react-icons/io5';
-import {VscDebugRestart} from 'react-icons/vsc';
-import {MdAddCircleOutline} from 'react-icons/md';
-import {FaHandPointUp, FaHandPointDown} from 'react-icons/fa';
-import {HiBeaker} from 'react-icons/hi';
-import {BsPalette} from 'react-icons/bs';
-import {BiTargetLock} from 'react-icons/bi';
 import {
     rgbStringToRgb,
     normalizeRGB,
@@ -23,6 +16,15 @@ import {
     xyzToLab,
     deltaE94
 } from './utils/colorConversion';
+
+import {IoColorPalette} from 'react-icons/io5';
+import {VscDebugRestart} from 'react-icons/vsc';
+import {MdAddCircleOutline} from 'react-icons/md';
+import {FaHandPointUp, FaHandPointDown} from 'react-icons/fa';
+import {HiBeaker} from 'react-icons/hi';
+import {BsPalette} from 'react-icons/bs';
+import {BiTargetLock} from 'react-icons/bi';
+import {FaArrowDown} from 'react-icons/fa';
 
 
 interface ColorPart {
@@ -264,13 +266,14 @@ const Mixer: React.FC = () => {
                             className="reset-mix"
                             onClick={resetMix}
                         >
-                            <HiBeaker/><VscDebugRestart />
+                            <VscDebugRestart />RESET
                         </button>
                         <button
                             className="add-to-palette"
                             onClick={() => addToPalette(mixedColor, palette)}
                         >
-                            <HiBeaker/><FaHandPointUp/> to <BsPalette/><FaHandPointDown/>
+                        <FaArrowDown />SAVE
+
                         </button>
 
                         <button
@@ -280,7 +283,7 @@ const Mixer: React.FC = () => {
                                 background: useTargetHsva ? hsvaToRgbaString(targetHsva) : '#999',
                                 color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')}}
                         >
-                            <BiTargetLock/>{useTargetHsva ? hsvaToHex(targetHsva) : 'OFF'}
+                            <BiTargetLock/>TARGET {useTargetHsva ? hsvaToHex(targetHsva) : 'OFF'}
                         </button>
 
                     </div>
