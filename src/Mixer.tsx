@@ -5,9 +5,16 @@ import {SketchPicker} from 'react-color'; // Import the color picker
 import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider'
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
-import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
+import {hsvaToRgba, hsvaToRgbaString, hsvaToHex} from '@uiw/color-convert';
 import isDark from "./utils/isDark";
 import {defaultPalette} from './utils/palettes/defaultPalette';
+import {IoColorPalette} from 'react-icons/io5';
+import {VscDebugRestart} from 'react-icons/vsc';
+import {MdAddCircleOutline} from 'react-icons/md';
+import {FaHandPointUp, FaHandPointDown} from 'react-icons/fa';
+import {HiBeaker} from 'react-icons/hi';
+import {BsPalette} from 'react-icons/bs';
+import {BiTargetLock} from 'react-icons/bi';
 import {
     rgbStringToRgb,
     normalizeRGB,
@@ -58,13 +65,26 @@ const Mixer: React.FC = () => {
 
     const toggleUseTargetColor = () => {
         setUseTargetHsva(!useTargetHsva);
-        setShowTargetHsvaPicker(!showTargetHsvaPicker);
+        setShowTargetHsvaPicker(true);
     }
 
     const handleRemoveFromPaletteClick = (index: number) => {
         const updatedPalette = [...palette];
         updatedPalette.splice(index, 1);  // Remove swatch from palette
         setPalette(updatedPalette);
+    }
+
+    const confirmTargetColor = () => {
+        setShowTargetHsvaPicker(false);
+
+    }
+
+    const confirmColor = () => {
+        if (selectedHsva) {
+            const selectedColor = hsvaToRgba(selectedHsva);
+            addToPalette(`rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`, palette);
+            setShowColorPicker(false); // Close the color picker after adding
+        }
     }
 
     const getMixedColorFromPalette = (palette: ColorPart[]): string => {
@@ -174,18 +194,7 @@ const Mixer: React.FC = () => {
         }
     }
 
-    const confirmTargetColor = () => {
-        setShowTargetHsvaPicker(false);
-        setUseTargetHsva(true);
-    }
 
-    const confirmColor = () => {
-        if (selectedHsva) {
-            const selectedColor = hsvaToRgba(selectedHsva);
-            addToPalette(`rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`, palette);
-            setShowColorPicker(false); // Close the color picker after adding
-        }
-    }
 
 
     const resetMix = () => {
@@ -213,51 +222,67 @@ const Mixer: React.FC = () => {
                             <>
                                 <div
                                     className='target-color-box'
-                                    style={{background: hsvaToRgbaString(targetHsva)}}>
-                                        <Wheel
-                                            color={targetHsva}
-                                            onChange={(color) => setTargetHsva({...targetHsva, ...color.hsva})}
-                                        />
-                                        <div className='shade-slider'>
-                                            <ShadeSlider
-                                                hsva={targetHsva}
-                                                onChange={(newShade) => {
-                                                    setTargetHsva({...targetHsva, ...newShade});
-                                                }}
-                                            />
-                                        </div>
-                                        <EditableInputRGBA
+                                style={{
+                                    background: hsvaToRgbaString(targetHsva),
+                                    color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')
+                                }}
+                                >
+                                <button
+                                    className='close-button'
+                                    onClick={() => setShowTargetHsvaPicker(false)}
+                                    style={{
+                                        color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')
+                                    }}
+                                >
+                                    x
+                                </button>
+
+                                    <Wheel
+                                        color={targetHsva}
+                                        onChange={(color) => setTargetHsva({...targetHsva, ...color.hsva})}
+                                    />
+                                    <div className='shade-slider'>
+                                        <ShadeSlider
                                             hsva={targetHsva}
-                                            placement="top"
-                                            onChange={(color) => {
-                                                setTargetHsva({...targetHsva, ...color.hsva});
+                                            onChange={(newShade) => {
+                                                setTargetHsva({...targetHsva, ...newShade});
                                             }}
                                         />
-                                    <button onClick={confirmTargetColor}>
-                                        Close
-                                    </button>
+                                    </div>
+                                    <EditableInputRGBA
+                                        hsva={targetHsva}
+                                        placement="top"
+                                        onChange={(color) => {
+                                            setTargetHsva({...targetHsva, ...color.hsva});
+                                        }}
+                                    />
                                 </div>
-                            </>
+                        </>
                         )}
                     <div className='color-box-ui'>
                         <button
                             className="reset-mix"
                             onClick={resetMix}
                         >
-                            🔄 Reset Mix
+                            <HiBeaker/><VscDebugRestart />
                         </button>
                         <button
                             className="add-to-palette"
                             onClick={() => addToPalette(mixedColor, palette)}
                         >
-                            Add ⬇️
+                            <HiBeaker/><FaHandPointUp/> to <BsPalette/><FaHandPointDown/>
                         </button>
+
                         <button
                             className="toggle-target-color"
                             onClick={toggleUseTargetColor}
-                            style={{background: useTargetHsva ? hsvaToRgbaString(targetHsva) : '#999'}}
+                            style={{
+                                background: useTargetHsva ? hsvaToRgbaString(targetHsva) : '#999',
+                                color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')}}
                         >
-                            {useTargetHsva ? 'Using Target Color' : 'Not Using Target Color'}</button>
+                            <BiTargetLock/>{useTargetHsva ? hsvaToHex(targetHsva) : 'OFF'}
+                        </button>
+
                     </div>
                     <div className='transparency-box'></div>
                 </section>
@@ -273,7 +298,7 @@ const Mixer: React.FC = () => {
                             }}
                             onClick={() => setShowColorPicker(!showColorPicker)}
                         >
-                            +
+                            <MdAddCircleOutline/>
                         </button>
 
                         {showColorPicker && (

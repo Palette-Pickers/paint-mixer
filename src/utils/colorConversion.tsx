@@ -1,6 +1,12 @@
 type Rgb = { r: number, g: number, b: number };
 type Xyz = { x: number, y: number, z: number };
-type Lab = { l: number, a: number, b: number };
+type Lab = {l: number, a: number, b: number;};
+type Hsla = {
+    h: number; // [0, 360]
+    s: number; // [0, 1]
+    l: number; // [0, 1]
+    a?: number; // [0, 1]
+};
 
 export const normalizeRGB = (color: Rgb|number[]|string): string => {
     if (Array.isArray(color) && color.length >= 3) {
@@ -28,6 +34,40 @@ export const rgbStringToRgb = (rgbString:string): Rgb => {
     }
     return {r: 0, g: 0, b: 0};
 }
+
+export const hslaToHex = (hsla: Hsla): string => {
+    const h = hsla.h / 360;
+    let r: number, g: number, b: number;
+
+    const hue2rgb = (p: number, q: number, t: number) => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+    };
+
+    if (hsla.s === 0) {
+        r = g = b = hsla.l; // achromatic
+    } else {
+        const q = hsla.l < 0.5 ? hsla.l * (1 + hsla.s) : hsla.l + hsla.s - hsla.l * hsla.s;
+        const p = 2 * hsla.l - q;
+        r = hue2rgb(p, q, h + 1 / 3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1 / 3);
+    }
+
+    const toHex = (x: number) => {
+        const hex = Math.round(x * 255).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    };
+
+    const alpha = (hsla.a < 1) ? (Math.round(hsla.a * 255).toString(16).padStart(2, '0')) : '';
+
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}${alpha}`;
+}
+
 
 
 export const sRGBToLinear = (value: number): number => {

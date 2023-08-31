@@ -1,6 +1,7 @@
 import {
     rgbStringToRgb,
     normalizeRGB,
+    hslaToHex,
     sRGBToLinear,
     rgbToXyz,
     xyzToLab,
@@ -45,6 +46,39 @@ describe('rgbStringToRgb', () => {
         expect(rgbStringToRgb(invalidString)).toEqual({ r: 0, g: 0, b: 0 });
     });
 });
+
+describe('hslaToHex', () => {
+    it('should convert a basic Hsla color to HEX correctly', () => {
+        const hslaColor = { h: 180, s: 0.5, l: 0.5, a: 0.8 };
+        expect(hslaToHex(hslaColor)).toBe('#40bfbfcc');
+    });
+
+    it('should handle achromatic colors correctly', () => {
+        const hslaColor = { h: 0, s: 0, l: 0.5, a: 1 };
+        expect(hslaToHex(hslaColor)).toBe('#808080');
+    });
+
+    it('should handle full saturation and lightness correctly', () => {
+        const hslaColor = { h: 240, s: 1, l: 1, a: 1 };
+        expect(hslaToHex(hslaColor)).toBe('#ffffff');
+    });
+
+    it('should handle zero saturation and lightness correctly', () => {
+        const hslaColor = { h: 240, s: 0, l: 0, a: 1 };
+        expect(hslaToHex(hslaColor)).toBe('#000000');
+    });
+
+    it('should handle transparency correctly', () => {
+        const hslaColor = { h: 120, s: 0.5, l: 0.5, a: 0.5 };
+        expect(hslaToHex(hslaColor)).toBe('#80bf7f80');
+    });
+
+    it('should handle full transparency correctly', () => {
+        const hslaColor = { h: 120, s: 0.5, l: 0.5, a: 0 };
+        expect(hslaToHex(hslaColor)).toBe('#80bf7f00');
+    });
+});
+
 
 describe('sRGBToLinear', () => {
     it('should convert sRGB values below or equal to 0.04045 correctly', () => {
