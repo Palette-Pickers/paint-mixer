@@ -39,9 +39,9 @@ const Mixer: React.FC = () => {
     const [selectedHsva, setSelectedHsva] = useState({h: 214, s: 43, v: 90, a: 1});
     const [editingLabelIndex, setEditingLabelIndex] = useState<number | null>(null);
     const [tempLabel, setTempLabel] = useState<string>('');
-    const [targetColor, setTargetColor] = useState<string>('rgb(0,0,0)');
-    const [useTargetColor, setUseTargetColor] = useState<boolean>(false);
-    const [showTargetColorPicker, setShowTargetColorPicker] = useState<boolean>(false); // State to toggle color picker
+    const [targetHsva, setTargetHsva] = useState({h: 214, s: 43, v: 90, a: 1});
+    const [useTargetHsva, setUseTargetHsva] = useState<boolean>(false);
+    const [showTargetHsvaPicker, setShowTargetHsvaPicker] = useState<boolean>(false); // State to toggle color picker
 
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
@@ -57,7 +57,8 @@ const Mixer: React.FC = () => {
     }
 
     const toggleUseTargetColor = () => {
-        setUseTargetColor(!useTargetColor);
+        setUseTargetHsva(!useTargetHsva);
+        setShowTargetHsvaPicker(!showTargetHsvaPicker);
     }
 
     const handleRemoveFromPaletteClick = (index: number) => {
@@ -173,6 +174,11 @@ const Mixer: React.FC = () => {
         }
     }
 
+    const confirmTargetColor = () => {
+        setShowTargetHsvaPicker(false);
+        setUseTargetHsva(true);
+    }
+
     const confirmColor = () => {
         if (selectedHsva) {
             const selectedColor = hsvaToRgba(selectedHsva);
@@ -203,6 +209,36 @@ const Mixer: React.FC = () => {
                     style={{backgroundColor: mixedColor}}
                     className='color-box'
                 >
+                    {showTargetHsvaPicker && (
+                            <>
+                                <div
+                                    className='target-color-box'
+                                    style={{background: hsvaToRgbaString(targetHsva)}}>
+                                        <Wheel
+                                            color={targetHsva}
+                                            onChange={(color) => setTargetHsva({...targetHsva, ...color.hsva})}
+                                        />
+                                        <div className='shade-slider'>
+                                            <ShadeSlider
+                                                hsva={targetHsva}
+                                                onChange={(newShade) => {
+                                                    setTargetHsva({...targetHsva, ...newShade});
+                                                }}
+                                            />
+                                        </div>
+                                        <EditableInputRGBA
+                                            hsva={targetHsva}
+                                            placement="top"
+                                            onChange={(color) => {
+                                                setTargetHsva({...targetHsva, ...color.hsva});
+                                            }}
+                                        />
+                                    <button onClick={confirmTargetColor}>
+                                        Close
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     <div className='color-box-ui'>
                         <button
                             className="reset-mix"
@@ -219,9 +255,9 @@ const Mixer: React.FC = () => {
                         <button
                             className="toggle-target-color"
                             onClick={toggleUseTargetColor}
-                            style={{
-                                background: useTargetColor ? 'rgb(255, 152, 9)' : 'darkgray'}}
-                        >Use Target Color</button>
+                            style={{background: useTargetHsva ? hsvaToRgbaString(targetHsva) : '#999'}}
+                        >
+                            {useTargetHsva ? 'Using Target Color' : 'Not Using Target Color'}</button>
                     </div>
                     <div className='transparency-box'></div>
                 </section>
@@ -244,7 +280,8 @@ const Mixer: React.FC = () => {
                             <>
                                 <div
                                     className='popover-box'
-                                    style={{background: hsvaToRgbaString(selectedHsva)}}>
+                                    style={{background: hsvaToRgbaString(selectedHsva)}}
+                                >
                                         <Wheel
                                             color={selectedHsva}
                                             onChange={(color) => setSelectedHsva({...selectedHsva, ...color.hsva})}
