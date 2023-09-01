@@ -1,4 +1,4 @@
-type Rgb = { r: number, g: number, b: number };
+type Rgb = { r: number, g: number, b: number, a?: number };
 type Xyz = { x: number, y: number, z: number };
 type Lab = {l: number, a: number, b: number;};
 type Hsla = {
@@ -30,9 +30,10 @@ export const rgbStringToRgb = (rgbString:string): Rgb => {
             r: parseInt(match[1]),
             g: parseInt(match[2]),
             b: parseInt(match[3]),
+            a: parseInt(match[4]),
         };
     }
-    return {r: 0, g: 0, b: 0};
+    return {r: 0, g: 0, b: 0, a: 0};
 }
 
 export const hslaToHex = (hsla: Hsla): string => {
