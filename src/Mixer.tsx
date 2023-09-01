@@ -18,6 +18,7 @@ import {
 } from './utils/colorConversion';
 
 import {IoColorPalette} from 'react-icons/io5';
+import {TbTargetArrow, TbTargetOff, TbTarget} from 'react-icons/tb';
 import {VscDebugRestart} from 'react-icons/vsc';
 import {MdAddCircleOutline} from 'react-icons/md';
 import {FaHandPointUp, FaHandPointDown} from 'react-icons/fa';
@@ -216,14 +217,40 @@ const Mixer: React.FC = () => {
     return (
         <>
             <main className='Mixer'>
-                <section
-                    style={{backgroundColor: mixedColor}}
+                <div
+
                     className='color-box'
                 >
+                    <section className='mixed-color-container'
+                        style={{
+                            backgroundColor: mixedColor,
+                            width: '100%',
+                            top: '0px',
+                            bottom: '0px',
+                            left: '0px',
+                            position: 'absolute',
+                            zIndex: -1
+                        }}
+                    >
+
+                    </section>
+                    <section className='target-color-container'
+                        style={{
+                            background: hsvaToRgbaString(targetHsva),
+                            color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black'),
+                            display: (useTargetHsva ? 'block' : 'none'),
+                            width: '40%',
+                            minWidth: '200px',
+                            position: 'absolute',
+                            top: '0px',
+                            bottom: '0px',
+                            right: '0px',
+                            zIndex: 0
+                        }}
+                    >
                     {showTargetHsvaPicker && (
                             <>
-                                <div
-                                    className='target-color-box'
+                                <div className='target-color-box'
                                 style={{
                                     background: hsvaToRgbaString(targetHsva),
                                     color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')
@@ -261,34 +288,42 @@ const Mixer: React.FC = () => {
                                 </div>
                         </>
                         )}
+                        </section>
                     <div className='color-box-ui'>
-                        <button
-                            className="reset-mix"
-                            onClick={resetMix}
-                        >
-                            <VscDebugRestart />RESET
-                        </button>
+                        <div>
+                            <button
+                                className='reset-mix'
+                                onClick={resetMix}
+                                id='reset-mix'
+                            >
+                                <VscDebugRestart />
+                                <label className='button-reset-mix'>Reset</label>
+                            </button>
+                        </div>
+
+                        <div className='color-box-label'>
                         <button
                             className="add-to-palette"
                             onClick={() => addToPalette(mixedColor, palette)}
                         >
-                        <FaArrowDown />SAVE
-
-                        </button>
+                                <FaArrowDown />
+                                <label className='button-save'>Save</label>
+                            </button>
+                            </div>
 
                         <button
                             className="toggle-target-color"
                             onClick={toggleUseTargetColor}
                             style={{
-                                background: useTargetHsva ? hsvaToRgbaString(targetHsva) : '#999',
-                                color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')}}
+                                color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black'),
+                            }}
                         >
-                            <BiTargetLock/>TARGET {useTargetHsva ? hsvaToHex(targetHsva) : 'OFF'}
+                            {(useTargetHsva ? <TbTargetArrow /> : <TbTargetOff />)}
+                            <label className='button-target-color'>Target</label>
                         </button>
-
                     </div>
                     <div className='transparency-box'></div>
-                </section>
+                </div>
 
                 <section className='swatches'>
                     {paletteSwatches}
@@ -297,7 +332,8 @@ const Mixer: React.FC = () => {
                         <button
                             style={{
                                 visibility: (showColorPicker) ? 'hidden' : 'visible',
-                                display: (showColorPicker) ? 'none' : 'block'
+                                display: (showColorPicker) ? 'none' : 'block',
+                                cursor: (showColorPicker) ? 'default' : 'pointer'
                             }}
                             onClick={() => setShowColorPicker(!showColorPicker)}
                         >

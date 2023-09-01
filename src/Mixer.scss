@@ -21,15 +21,32 @@
             height: 100%;
             background-image: url("../src/assets/transparent.png");
             position: absolute;
-            z-index: -9999999;
+            z-index: -99;
         }
 
         .color-box-ui {
             display: flex;
+            position: absolute;
+            bottom: 0;
             justify-content: space-between;
             width: 100%;
+
+            label {
+                display: flex;
+                flex-direction: column;
+                margin: 0 0.5rem 0 0.5rem;
+            }
+
             button {
-                font-size: 1.5rem;
+                padding: 0;
+                background-color: transparent;
+                border: 0;
+                text-transform: uppercase;
+
+                svg {
+                    height: 1.6rem;
+                    width: 1.6rem;
+                }
             }
         }
 
@@ -93,6 +110,8 @@
             font-size: 1.2rem;
             margin: 0.5rem;
             padding: 0.5rem 1rem;
+
+
         }
     }
     .target-color-container {
