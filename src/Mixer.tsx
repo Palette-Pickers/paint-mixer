@@ -5,7 +5,7 @@ import {SketchPicker} from 'react-color'; // Import the color picker
 import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider'
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
-import {hsvaToRgba, hsvaToRgbaString, hsvaToHex} from '@uiw/color-convert';
+import {hsvaToRgba, hsvaToRgbaString, hsvaToHex, rgbaStringToHsva} from '@uiw/color-convert';
 import isDark from "./utils/isDark";
 import {defaultPalette} from './utils/palettes/defaultPalette';
 import {
@@ -111,7 +111,7 @@ const Mixer: React.FC = () => {
             const mixed_color = mixbox.latentToRgb(latent_mix);
             return normalizeRGB(mixed_color);
         }
-        else return 'rgba(0,0,0,0)';
+        else return 'rgba(255,255,255,0)';
     }
 
     const makeColorSwatches = () => {
@@ -197,6 +197,11 @@ const Mixer: React.FC = () => {
         }
     }
 
+    const compareRgbColors = (color1: string, color2: string): number => {
+        const color1Lab = xyzToLab(rgbToXyz(rgbStringToRgb(color1)));
+        const color2Lab = xyzToLab(rgbToXyz(rgbStringToRgb(color2)));
+        return deltaE94(color1Lab, color2Lab);
+    }
 
 
 
@@ -217,10 +222,7 @@ const Mixer: React.FC = () => {
     return (
         <>
             <main className='Mixer'>
-                <div
-
-                    className='color-box'
-                >
+                <div className='color-box'>
                     <section className='mixed-color-container'
                         style={{
                             backgroundColor: mixedColor,
@@ -232,6 +234,12 @@ const Mixer: React.FC = () => {
                             zIndex: -1
                         }}
                     >
+                        <p className='match-pct' style={{
+                            color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                        }}>
+                            <label>Match:</label>
+                            {(compareRgbColors(mixedColor, hsvaToRgbaString(targetHsva)).toFixed(2))}%
+                        </p>
 
                     </section>
                     <section className='target-color-container'
@@ -295,6 +303,9 @@ const Mixer: React.FC = () => {
                                 className='reset-mix'
                                 onClick={resetMix}
                                 id='reset-mix'
+                                style={{
+                                    color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                                }}
                             >
                                 <VscDebugRestart />
                                 <label className='button-reset-mix'>Reset</label>
@@ -305,6 +316,9 @@ const Mixer: React.FC = () => {
                         <button
                             className="add-to-palette"
                             onClick={() => addToPalette(mixedColor, palette)}
+                            style={{
+                                color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                            }}
                         >
                                 <FaArrowDown />
                                 <label className='button-save'>Save</label>
@@ -315,7 +329,7 @@ const Mixer: React.FC = () => {
                             className="toggle-target-color"
                             onClick={toggleUseTargetColor}
                             style={{
-                                color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black'),
+                                color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
                             }}
                         >
                             {(useTargetHsva ? <TbTargetArrow /> : <TbTargetOff />)}
