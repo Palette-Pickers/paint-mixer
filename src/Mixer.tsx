@@ -43,7 +43,7 @@ interface Rgb {
 }
 
 const Mixer: React.FC = () => {
-    const [mixedColor, setMixedColor] = useState<string>('rgb(0,0,0)');
+    const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
     const [palette, setPalette] = useState<ColorPart[]>(defaultPalette);
     const [showColorPicker, setShowColorPicker] = useState(false); // State to toggle color picker
     const [selectedHsva, setSelectedHsva] = useState({h: 214, s: 43, v: 90, a: 1});
@@ -242,6 +242,7 @@ const Mixer: React.FC = () => {
                         </p>
 
                     </section>
+                    {useTargetHsva && (
                     <section className='target-color-container'
                         style={{
                             background: hsvaToRgbaString(targetHsva),
@@ -256,6 +257,7 @@ const Mixer: React.FC = () => {
                             zIndex: 0
                         }}
                     >
+
                     {showTargetHsvaPicker && (
                             <>
                                 <div className='target-color-box'
@@ -297,6 +299,7 @@ const Mixer: React.FC = () => {
                         </>
                         )}
                         </section>
+                        )}
                     <div className='color-box-ui'>
                         <div>
                             <button
