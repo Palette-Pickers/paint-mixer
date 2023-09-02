@@ -8,6 +8,84 @@ type Hsla = {
     a?: number; // [0, 1]
 };
 
+import tinycolor from 'tinycolor2';
+/**
+ * Converts RGB color to CIE 1931 XYZ color space.
+ * https://www.image-engineering.de/library/technotes/958-how-to-convert-between-srgb-and-ciexyz
+ * @param  {string} hex
+ * @return {number[]}
+ */
+7
+
+/**
+ * Converts RGB color to CIE 1931 XYZ color space.
+ * https://www.image-engineering.de/library/technotes/958-how-to-convert-between-srgb-and-ciexyz
+ * @param  {string} hex
+ * @return {number[]}
+ */
+export function hexToXyz(hex) {
+    const [r, g, b] = hexToRgb(hex).map(_ => _ / 255).map(sRGBtoLinearRGB)
+    const X =  0.4124 * r + 0.3576 * g + 0.1805 * b
+    const Y =  0.2126 * r + 0.7152 * g + 0.0722 * b
+    const Z =  0.0193 * r + 0.1192 * g + 0.9505 * b
+    // For some reason, X, Y and Z are multiplied by 100.
+    return [X, Y, Z].map(_ => _ * 100)
+}
+
+/**
+ * Undoes gamma-correction from an RGB-encoded color.
+ * https://en.wikipedia.org/wiki/SRGB#Specification_of_the_transformation
+ * https://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
+ * @param  {number}
+ * @return {number}
+ */
+function sRGBtoLinearRGB(color) {
+    // Send this function a decimal sRGB gamma encoded color value
+    // between 0.0 and 1.0, and it returns a linearized value.
+    if (color <= 0.04045) {
+        return color / 12.92
+    } else {
+        return Math.pow((color + 0.055) / 1.055, 2.4)
+    }
+}
+
+/**
+ * Converts hex color to RGB.
+ * https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+ * @param  {string} hex
+ * @return {number[]} [rgb]
+ */
+function hexToRgb(hex) {
+    const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+    if (match) {
+        match.shift()
+        return match.map(_ => parseInt(_, 16))
+    }
+}
+
+/**
+ * Converts CIE 1931 XYZ colors to CIE L*a*b*.
+ * The conversion formula comes from <http://www.easyrgb.com/en/math.php>.
+ * https://github.com/cangoektas/xyz-to-lab/blob/master/src/index.js
+ * @param   {number[]} color The CIE 1931 XYZ color to convert which refers to
+ *                           the D65/2° standard illuminant.
+ * @returns {number[]}       The color in the CIE L*a*b* color space.
+ */
+// X, Y, Z of a "D65" light source.
+// "D65" is a standard 6500K Daylight light source.
+// https://en.wikipedia.org/wiki/Illuminant_D65
+const D65 = [95.047, 100, 108.883]
+export function xyzToLab([x, y, z]) {
+  [x, y, z] = [x, y, z].map((v, i) => {
+    v = v / D65[i]
+    return v > 0.008856 ? Math.pow(v, 1 / 3) : v * 7.787 + 16 / 116
+  })
+  const l = 116 * y - 16
+  const a = 500 * (x - y)
+  const b = 200 * (y - z)
+  return [l, a, b]
+}
+
 export const normalizeRGB = (color: Rgb|number[]|string): string => {
     if (Array.isArray(color) && color.length >= 3) {
         return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
@@ -82,55 +160,55 @@ export const sRGBToLinear = (value: number): number => {
     }
 }
 
-export const rgbToXyz = (rgb: Rgb): Xyz =>{
-    // Convert sRGB to linear RGB
-    let rLinear = sRGBToLinear(rgb.r / 255.0);
-    let gLinear = sRGBToLinear(rgb.g / 255.0);
-    let bLinear = sRGBToLinear(rgb.b / 255.0);
+// export const rgbToXyz = (rgb: Rgb): Xyz =>{
+//     // Convert sRGB to linear RGB
+//     let rLinear = sRGBToLinear(rgb.r / 255.0);
+//     let gLinear = sRGBToLinear(rgb.g / 255.0);
+//     let bLinear = sRGBToLinear(rgb.b / 255.0);
 
-    // Apply the transformation matrix for D65 illuminant
-    let x = rLinear * 0.4124564 + gLinear * 0.3575761 + bLinear * 0.1804375;
-    let y = rLinear * 0.2126729 + gLinear * 0.7151522 + bLinear * 0.0721750;
-    let z = rLinear * 0.0193339 + gLinear * 0.1191920 + bLinear * 0.9503041;
+//     // Apply the transformation matrix for D65 illuminant
+//     let x = rLinear * 0.4124564 + gLinear * 0.3575761 + bLinear * 0.1804375;
+//     let y = rLinear * 0.2126729 + gLinear * 0.7151522 + bLinear * 0.0721750;
+//     let z = rLinear * 0.0193339 + gLinear * 0.1191920 + bLinear * 0.9503041;
 
-    // The XYZ values are typically within the range [0, 1]. If you need them to be in the range [0, 100], you can scale them.
-    return { x: x * 100, y: y * 100, z: z * 100 };
-}
+//     // The XYZ values are typically within the range [0, 1]. If you need them to be in the range [0, 100], you can scale them.
+//     return { x: x * 100, y: y * 100, z: z * 100 };
+// }
 
-export const xyzToLab = (xyz: Xyz): Lab => {
-    // Reference-X, Y and Z refer to specific illuminants and observers. D65 is the standard, and the only one we'll use.
-    let refX = 95.047;
-    let refY = 100.000;
-    let refZ = 108.883;
+// export const xyzToLab = (xyz: Xyz): Lab => {
+//     // Reference-X, Y and Z refer to specific illuminants and observers. D65 is the standard, and the only one we'll use.
+//     let refX = 95.047;
+//     let refY = 100.000;
+//     let refZ = 108.883;
 
-    let x = xyz.x / refX;
-    let y = xyz.y / refY;
-    let z = xyz.z / refZ;
+//     let x = xyz.x / refX;
+//     let y = xyz.y / refY;
+//     let z = xyz.z / refZ;
 
-    if (x > 0.008856) {
-        x = Math.pow(x, 1 / 3);
-    } else {
-        x = (7.787 * x) + (16 / 116);
-    }
+//     if (x > 0.008856) {
+//         x = Math.pow(x, 1 / 3);
+//     } else {
+//         x = (7.787 * x) + (16 / 116);
+//     }
 
-    if (y > 0.008856) {
-        y = Math.pow(y, 1 / 3);
-    } else {
-        y = (7.787 * y) + (16 / 116);
-    }
+//     if (y > 0.008856) {
+//         y = Math.pow(y, 1 / 3);
+//     } else {
+//         y = (7.787 * y) + (16 / 116);
+//     }
 
-    if (z > 0.008856) {
-        z = Math.pow(z, 1 / 3);
-    } else {
-        z = (7.787 * z) + (16 / 116);
-    }
+//     if (z > 0.008856) {
+//         z = Math.pow(z, 1 / 3);
+//     } else {
+//         z = (7.787 * z) + (16 / 116);
+//     }
 
-    const l = (116 * y) - 16;
-    const a = 500 * (x - y);
-    const b = 200 * (y - z);
+//     const l = (116 * y) - 16;
+//     const a = 500 * (x - y);
+//     const b = 200 * (y - z);
 
-    return { l, a, b };
-}
+//     return { l, a, b };
+// }
 
 export const deltaE94 = (lab1: Lab, lab2: Lab): number => {
     const kL = 1;
