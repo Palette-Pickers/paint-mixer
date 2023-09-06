@@ -30,7 +30,6 @@ export const rgbStringToRgb = (rgbString:string): Rgb => {
             r: parseInt(match[1]),
             g: parseInt(match[2]),
             b: parseInt(match[3]),
-            a: parseInt(match[4]),
         };
     }
     return {r: 0, g: 0, b: 0, a: 0};

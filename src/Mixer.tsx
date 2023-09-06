@@ -75,8 +75,7 @@ const Mixer: React.FC = () => {
 
     const confirmColor = () => {
         if(selectedHsva) {
-            const selectedColor = hsvaToRgba(selectedHsva);	            //const selectedColor = hsvaToRgba(selectedHsva);
-            addToPalette(`rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`, palette);	            const selectedRgbString = tinycolor(selectedHsva).toRgbString();
+            const selectedRgbString = tinycolor(selectedHsva).toRgbString();
             addToPalette(selectedRgbString, palette);
             setShowColorPicker(false); // Close the color picker after adding	            setShowColorPicker(false); // Close the color picker after adding
         }
@@ -134,7 +133,10 @@ const Mixer: React.FC = () => {
                                             setPalette(updatedPalette);
                                             setEditingLabelIndex(null);
                                         }}
-                                        style={{color: (tinycolor(swatch.rgbString).isDark()) ? 'white' : 'black'}}
+                                        style={{
+                                            color: (tinycolor(swatch.rgbString).isDark()) ? 'white' : 'black',
+                                            backgroundColor: (tinycolor(swatch.rgbString).isDark()) ? 'black' : 'white'
+                                        }}
                                         autoFocus
                                     />
                                 ) : (
@@ -185,7 +187,7 @@ const Mixer: React.FC = () => {
             const recipe= palette.filter(color => color.partsInMix > 0);
             updatedPalette.push({
                 "rgbString": rgbString,
-                "label": rgbString,
+                "label": tinycolor(rgbString).toHexString(),
                 "partsInMix": 0,
                 "recipe": recipe //records colors used in a mix so it can be reconstructed
             });
@@ -195,10 +197,10 @@ const Mixer: React.FC = () => {
         }
     }
 
-    const compareRgbColors = (color1: string, color2: string): number => {
+    const getRgbColorMatch = (color1: string, color2: string): number => {
         const color1Lab = xyzToLab(rgbToXyz(tinycolor(color1).toRgb()));
         const color2Lab = xyzToLab(rgbToXyz(tinycolor(color2).toRgb()));
-        return deltaE94(color1Lab, color2Lab);
+        return (100-deltaE94(color1Lab, color2Lab)); //convert % difference to % match
     }
 
 
@@ -216,7 +218,7 @@ const Mixer: React.FC = () => {
     }, [palette]);
 
     useEffect(() => {
-        setMatchPercentage((compareRgbColors((normalizeRGB(mixedColor)), (normalizeRGB(hsvaToRgbaString(targetHsva)))).toFixed(2)));
+        setMatchPercentage(getRgbColorMatch((mixedColor), (hsvaToRgbaString(targetHsva))).toFixed(2));
     }, [mixedColor, targetHsva]);
 
 
@@ -235,12 +237,14 @@ const Mixer: React.FC = () => {
                             zIndex: -1
                         }}
                     >
-                        <p className='match-pct' style={{
-                            color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
-                        }}>
-                            <label>Match:</label>
-                            {matchPercentage}%
-                        </p>
+                        {useTargetHsva && (
+                            <p className='match-pct' style={{
+                                color: (tinycolor(rgbStringToRgb(mixedColor)).isLight ? 'black' : 'white'),
+                            }}>
+                                <label>Match:</label>
+                                {matchPercentage}%
+                            </p>
+                        )}
 
                     </section>
                     {useTargetHsva && (
