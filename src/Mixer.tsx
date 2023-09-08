@@ -10,7 +10,7 @@ import tinycolor from "tinycolor2";
 import {defaultPalette} from './utils/palettes/defaultPalette';
 import {
     rgbStringToRgb,
-    normalizeRGB,
+    normalizeRgbString,
     sRGBToLinear,
     rgbToXyz,
     xyzToLab,
@@ -100,7 +100,7 @@ const Mixer: React.FC = () => {
                 }
             }
             const mixed_color = mixbox.latentToRgb(latent_mix);
-            return tinycolor(normalizeRGB(mixed_color)).toRgbString();
+            return tinycolor(normalizeRgbString(mixed_color)).toRgbString();
         }
         else return tinycolor('rgba(255,255,255,0)').toRgbString();
     }
@@ -177,8 +177,8 @@ const Mixer: React.FC = () => {
 
     // Helper function to check if a color is already in the palette
     const isColorInPalette = (rgbString: string, palette: ColorPart[]): boolean => {
-        const normalizedColor = normalizeRGB(rgbString);
-        return palette.some(swatch => normalizeRGB(swatch.rgbString) === normalizedColor);
+        const normalizedColor = normalizeRgbString(rgbString);
+        return palette.some(swatch => normalizeRgbString(swatch.rgbString) === normalizedColor);
     }
 
     const addToPalette = (rgbString: string, palette: ColorPart[]) => {

@@ -1,6 +1,6 @@
 import {
     rgbStringToRgb,
-    normalizeRGB,
+    normalizeRgbString,
     hslaToHex,
     sRGBToLinear,
     rgbToXyz,
@@ -8,25 +8,25 @@ import {
     deltaE94
 } from '../utils/colorConversion';
 
-describe('normalizeRGB', () => {
+describe('normalizeRgbString', () => {
     it('should normalize an RGB array to a string', () => {
         const colorArray: [number, number, number] = [255, 128, 64];
-        expect(normalizeRGB(colorArray)).toBe('rgb(255, 128, 64)');
+        expect(normalizeRgbString(colorArray)).toBe('rgb(255, 128, 64)');
     });
 
     it('should normalize an RGB string with spaces', () => {
         const colorString = 'rgb(255,   128, 64)';
-        expect(normalizeRGB(colorString)).toBe('rgb(255, 128, 64)');
+        expect(normalizeRgbString(colorString)).toBe('rgb(255, 128, 64)');
     });
 
     it('should return the same string for already normalized strings', () => {
         const colorString = 'rgb(255, 128, 64)';
-        expect(normalizeRGB(colorString)).toBe('rgb(255, 128, 64)');
+        expect(normalizeRgbString(colorString)).toBe('rgb(255, 128, 64)');
     });
 
     it('should return the input string if it does not match the RGB format', () => {
         const invalidString = 'rgba(255, 128, 64, 0.5)';
-        expect(normalizeRGB(invalidString)).toBe(invalidString);
+        expect(normalizeRgbString(invalidString)).toBe(invalidString);
     });
 });
 

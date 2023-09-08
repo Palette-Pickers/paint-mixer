@@ -1,14 +1,9 @@
 type Rgb = { r: number, g: number, b: number, a?: number };
 type Xyz = { x: number, y: number, z: number };
-type Lab = {l: number, a: number, b: number;};
-type Hsla = {
-    h: number; // [0, 360]
-    s: number; // [0, 1]
-    l: number; // [0, 1]
-    a?: number; // [0, 1]
-};
+type Lab = { l: number, a: number, b: number };
+type Hsla = { h: number, s: number, l: number, a?: number };
 
-export const normalizeRGB = (color: Rgb|number[]|string): string => {
+export const normalizeRgbString = (color: Rgb|number[]|string): string => {
     if (Array.isArray(color) && color.length >= 3) {
         return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
     } else if (typeof color === 'string') {
@@ -32,7 +27,7 @@ export const rgbStringToRgb = (rgbString:string): Rgb => {
             b: parseInt(match[3]),
         };
     }
-    return {r: 0, g: 0, b: 0, a: 0};
+    return {r: 0, g: 0, b: 0, a: 0}; //return transparent black if no match
 }
 
 export const hslaToHex = (hsla: Hsla): string => {
