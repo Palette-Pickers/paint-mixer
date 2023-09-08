@@ -4,10 +4,11 @@ import './Mixer.scss';
 import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider'
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
-import {hsvaToRgba, hsvaToRgbaString, hsvaToHex, rgbaStringToHsva} from '@uiw/color-convert';
+import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
 import isDark from "./utils/isDark";
 import tinycolor from "tinycolor2";
 import {defaultPalette} from './utils/palettes/defaultPalette';
+import {fetchColorName} from './data/hooks/fetchColorName';
 import {
     rgbStringToRgb,
     normalizeRgbString,
@@ -181,13 +182,15 @@ const Mixer: React.FC = () => {
         return palette.some(swatch => normalizeRgbString(swatch.rgbString) === normalizedColor);
     }
 
-    const addToPalette = (rgbString: string, palette: ColorPart[]) => {
+    const addToPalette = async (rgbString: string, palette: ColorPart[]) => {
         if (!isColorInPalette(rgbString, palette)) { // Only add if the color is not in the palette
             let updatedPalette = [...palette];
-            const recipe= palette.filter(color => color.partsInMix > 0);
+            const hexColor = tinycolor(rgbString).toHexString();
+            const colorName = await fetchColorName(hexColor.substring(1)); // Remove the '#'
+            const recipe = palette.filter(color => color.partsInMix > 0);
             updatedPalette.push({
                 "rgbString": rgbString,
-                "label": tinycolor(rgbString).toHexString(),
+                "label": colorName,
                 "partsInMix": 0,
                 "recipe": recipe //records colors used in a mix so it can be reconstructed
             });
@@ -195,7 +198,7 @@ const Mixer: React.FC = () => {
         } else {
             console.error("Selected color already in palette", rgbString);
         }
-    }
+    };
 
     const getRgbColorMatch = (color1: string, color2: string): number => {
         const color1Lab = xyzToLab(rgbToXyz(tinycolor(color1).toRgb()));
