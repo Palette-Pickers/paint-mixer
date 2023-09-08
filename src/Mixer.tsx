@@ -1,20 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import mixbox from 'mixbox';
 import './Mixer.scss';
-import {SketchPicker} from 'react-color'; // Import the color picker
 import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider'
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
-import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
+import {hsvaToRgba, hsvaToRgbaString, hsvaToHex, rgbaStringToHsva} from '@uiw/color-convert';
+import isDark from "./utils/isDark";
+import tinycolor from "tinycolor2";
+import {defaultPalette} from './utils/palettes/defaultPalette';
+import {
+    rgbStringToRgb,
+    normalizeRgbString,
+    sRGBToLinear,
+    rgbToXyz,
+    xyzToLab,
+    deltaE94
+} from './utils/colorConversion';
+
+import {TbTargetArrow, TbTargetOff, TbTarget} from 'react-icons/tb';
+import {VscDebugRestart} from 'react-icons/vsc';
+import {MdAddCircleOutline} from 'react-icons/md';
+import {FaArrowDown} from 'react-icons/fa';
 
 
 interface ColorPart {
     label: string;
     partsInMix: number;
-    color: string;
+    rgbString: string;
+    recipe?: ColorPart[];
 }
 
-interface RGBColor {
+interface Rgb {
     r: number;
     g: number;
     b: number;
@@ -22,32 +38,72 @@ interface RGBColor {
 }
 
 const Mixer: React.FC = () => {
-    const [mixedColor, setMixedColor] = useState('rgb(0,0,0)');
-    const paletteColors = [
-        {"label": "White", "color": "rgb(255,255,255)", "partsInMix": 0},
-        {"label": "Cadmium Yellow", "color": "rgb(254,236,0)", "partsInMix": 0},
-        {"label": "Hansa Yellow", "color": "rgb(252,211,0)", "partsInMix": 0},
-        {"label": "Cadmium Orange", "color": "rgb(255,105,0)", "partsInMix": 0},
-        {"label": "Cadmium Red", "color": "rgb(255,39,2)", "partsInMix": 0},
-        {"label": "Quinacridone Magenta", "color": "rgb(78,0,66)", "partsInMix": 0},
-        {"label": "Cobalt Violet", "color": "rgb(150,0,255)", "partsInMix": 0},
-        {"label": "Ultramarine Blue", "color": "rgb(25,0,89)", "partsInMix": 0},
-        {"label": "Cerulean Blue", "color": "rgb(0,33,133)", "partsInMix": 0},
-        {"label": "Phthalo Blue", "color": "rgb(13,27,68)", "partsInMix": 0},
-        {"label": "Phthalo Green", "color": "rgb(0,60,50)", "partsInMix": 0},
-        {"label": "Permanent Green", "color": "rgb(7,109,22)", "partsInMix": 0},
-        {"label": "Sap Green", "color": "rgb(107,148,4)", "partsInMix": 0},
-        {"label": "Burnt Sienna", "color": "rgb(123,72,0)", "partsInMix": 0},
-        {"label": "Black", "color": "rgb(0,0,0)", "partsInMix": 0},
-    ];
-
-    const [palette, setPalette] = useState(paletteColors);
+    const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
+    const [palette, setPalette] = useState<ColorPart[]>(defaultPalette);
     const [showColorPicker, setShowColorPicker] = useState(false); // State to toggle color picker
-    const [selectedColor, setSelectedColor] = useState<RGBColor>({r: 255, g: 255, b: 255});
     const [selectedHsva, setSelectedHsva] = useState({h: 214, s: 43, v: 90, a: 1});
     const [editingLabelIndex, setEditingLabelIndex] = useState<number | null>(null);
     const [tempLabel, setTempLabel] = useState<string>('');
+    const [targetHsva, setTargetHsva] = useState({h: 214, s: 43, v: 90, a: 1});
+    const [useTargetHsva, setUseTargetHsva] = useState<boolean>(false);
+    const [showTargetHsvaPicker, setShowTargetHsvaPicker] = useState<boolean>(false); // State to toggle color picker
+    const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
 
+    const handleSwatchIncrementClick = (index: number) => {
+        const updatedPalette = [...palette];
+        updatedPalette[index].partsInMix++;  // Increment partsInMix for the clicked swatch
+        setPalette(updatedPalette);
+    }
+
+    const handleSwatchDecrementClick = (index: number) => {
+        const updatedPalette = [...palette];
+        if (updatedPalette[index].partsInMix > 0)
+            updatedPalette[index].partsInMix--;
+        setPalette(updatedPalette);
+    }
+
+    const toggleUseTargetColor = () => {
+        setUseTargetHsva(!useTargetHsva);
+        setShowTargetHsvaPicker(true);
+    }
+
+    const handleRemoveFromPaletteClick = (index: number) => {
+        const updatedPalette = [...palette];
+        updatedPalette.splice(index, 1);  // Remove swatch from palette
+        setPalette(updatedPalette);
+    }
+
+    const confirmColor = () => {
+        if(selectedHsva) {
+            const selectedRgbString = tinycolor(selectedHsva).toRgbString();
+            addToPalette(selectedRgbString, palette);
+            setShowColorPicker(false); // Close the color picker after adding	            setShowColorPicker(false); // Close the color picker after adding
+        }
+    }
+
+    const getMixedRgbStringFromPalette = (palette: ColorPart[]): string => {
+        let totalParts = palette.reduce((acc, color) => {
+            return acc + color.partsInMix;
+        }, 0);
+
+        if (totalParts > 0.000001) {
+            let latent_mix = [0, 0, 0, 0, 0, 0, 0];
+
+            for (let j = 0; j < palette.length; j++) {
+                if (palette[j].partsInMix > 0.000001) {
+                    const latent = mixbox.rgbToLatent(palette[j].rgbString);
+                    const percentageUsedInMix = palette[j].partsInMix / totalParts;
+
+                    for (let k = 0; k < latent.length; k++) {
+                        latent_mix[k] += latent[k] * percentageUsedInMix;
+                    }
+                }
+            }
+            const mixed_color = mixbox.latentToRgb(latent_mix);
+            return tinycolor(normalizeRgbString(mixed_color)).toRgbString();
+        }
+        else return tinycolor('rgba(255,255,255,0)').toRgbString();
+    }
 
     const makeColorSwatches = () => {
         if (palette.length) {
@@ -57,10 +113,16 @@ const Mixer: React.FC = () => {
                         <div
                             key={i}
                             className="swatch"
-                            style={{backgroundColor: `${swatch.color}`}}
+                            style={{backgroundColor: `${swatch.rgbString}`}}
                         >
                             <div className="swatch-ui">
-                                <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}>X</button>
+                                <button
+                                    className="remove-from-palette"
+                                    onClick={() => handleRemoveFromPaletteClick(i)}
+                                    style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}
+                                >
+                                    X
+                                </button>
                                 {editingLabelIndex === i ? (
                                     <input
                                         value={tempLabel}
@@ -71,17 +133,33 @@ const Mixer: React.FC = () => {
                                             setPalette(updatedPalette);
                                             setEditingLabelIndex(null);
                                         }}
+                                        style={{
+                                            color: (tinycolor(swatch.rgbString).isDark()) ? 'white' : 'black',
+                                            backgroundColor: (tinycolor(swatch.rgbString).isDark()) ? 'black' : 'white'
+                                        }}
                                         autoFocus
                                     />
                                 ) : (
-                                    <div className='label' onClick={() => {
-                                        setEditingLabelIndex(i);
-                                        setTempLabel(swatch.label);
-                                    }}>
-                                        {swatch.label}
-                                    </div>
+                                        <div className='label'
+                                            onClick={() => {
+                                                setEditingLabelIndex(i);
+                                                setTempLabel(swatch.label);
+                                            }}
+                                            style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}
+                                        >
+
+                                                {swatch.label}
+
+
+
+                                        </div>
                                 )}
-                                <div className="partsInMix" onClick={() => handleSwatchIncrementClick(i)}>{swatch.partsInMix}</div>
+                                <div
+                                    className="partsInMix"
+                                    onClick={() => handleSwatchIncrementClick(i)}
+                                    style={{color: (tinycolor(swatch.rgbString).isDark()) ? 'white' : 'black'}}>
+                                    {swatch.partsInMix}
+                                </div>
                             </div>
 
                         </div>
@@ -95,96 +173,36 @@ const Mixer: React.FC = () => {
         }
     }
 
-
-    const handleSwatchIncrementClick = (index: number) => {
-        const updatedPalette = [...palette];
-        updatedPalette[index].partsInMix++;  // Increment partsInMix for the clicked swatch
-        setPalette(updatedPalette);
-    }
-
-    const handleSwatchDecrementClick = (index: number) => {
-        const updatedPalette = [...palette];
-        if (updatedPalette[index].partsInMix > 0)
-            updatedPalette[index].partsInMix--;  // Decrement partsInMix for the clicked swatch
-        setPalette(updatedPalette);
-    }
-
-    const handleRemoveFromPaletteClick = (index: number) => {
-        const updatedPalette = [...palette];
-        updatedPalette.splice(index, 1);  // Remove swatch from palette
-        setPalette(updatedPalette);
-    }
-
-    const getMixedColorFromPalette = (palette) => {
-        let totalParts = palette.reduce((acc, color) => {
-            return acc + color.partsInMix;
-        }, 0);
-
-        if (totalParts > 0.000001) {
-            let latent_mix = [0, 0, 0, 0, 0, 0, 0];
-
-            for (let j = 0; j < palette.length; j++) {
-                if (palette[j].partsInMix > 0.000001) {
-                    const latent = mixbox.rgbToLatent(palette[j].color);
-                    const percentageUsedInMix = palette[j].partsInMix / totalParts;
-
-                    for (let k = 0; k < latent.length; k++) {
-                        latent_mix[k] += latent[k] * percentageUsedInMix;
-                    }
-                }
-            }
-            const mixed_color = mixbox.latentToRgb(latent_mix);
-            return mixed_color;
-        }
-        else return 'rgba(0,0,0,0)';
-    }
-
     let paletteSwatches = makeColorSwatches();
 
-    const normalizeRGB = (color: any): string => {
-        if (Array.isArray(color) && color.length >= 3) {
-            return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-        } else if (typeof color === 'string') {
-            const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-            if (match) {
-                return `rgb(${match[1]}, ${match[2]}, ${match[3]})`;
-            }
-            return color;
-        } else {
-            console.error('Unexpected format for color:', color);
-            return '';
-        }
-    }
-
     // Helper function to check if a color is already in the palette
-    const isColorInPalette = (color: string, palette: ColorPart[]): boolean => {
-        const normalizedColor = normalizeRGB(color);
-        return palette.some(swatch => normalizeRGB(swatch.color) === normalizedColor);
+    const isColorInPalette = (rgbString: string, palette: ColorPart[]): boolean => {
+        const normalizedColor = normalizeRgbString(rgbString);
+        return palette.some(swatch => normalizeRgbString(swatch.rgbString) === normalizedColor);
     }
 
-    const addToPalette = (color: string, palette: ColorPart[]) => {
-        if (!isColorInPalette(color, palette)) { // Only add if the color is not in the palette
+    const addToPalette = (rgbString: string, palette: ColorPart[]) => {
+        if (!isColorInPalette(rgbString, palette)) { // Only add if the color is not in the palette
             let updatedPalette = [...palette];
-            updatedPalette.push({ "color": color, "label": normalizeRGB(color), "partsInMix": 0 });
+            const recipe= palette.filter(color => color.partsInMix > 0);
+            updatedPalette.push({
+                "rgbString": rgbString,
+                "label": tinycolor(rgbString).toHexString(),
+                "partsInMix": 0,
+                "recipe": recipe //records colors used in a mix so it can be reconstructed
+            });
             setPalette(updatedPalette);
         } else {
-            console.error("Selected color already in palette", color);
+            console.error("Selected color already in palette", rgbString);
         }
     }
 
-
-    const handleColorChange = (color: { rgb: RGBColor }) => {
-        setSelectedColor(color.rgb);
+    const getRgbColorMatch = (color1: string, color2: string): number => {
+        const color1Lab = xyzToLab(rgbToXyz(tinycolor(color1).toRgb()));
+        const color2Lab = xyzToLab(rgbToXyz(tinycolor(color2).toRgb()));
+        return (100-deltaE94(color1Lab, color2Lab)); //convert % difference to % match
     }
 
-
-    const confirmColor = () => {
-        if (selectedHsva) {
-            const selectedColor = hsvaToRgba(selectedHsva);
-            addToPalette(`rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`, palette);
-            setShowColorPicker(false); // Close the color picker after adding
-        }
-    }
 
 
     const resetMix = () => {
@@ -196,56 +214,189 @@ const Mixer: React.FC = () => {
     }
 
     useEffect(() => {
-        setMixedColor(getMixedColorFromPalette(palette));
+        setMixedColor(getMixedRgbStringFromPalette(palette));
     }, [palette]);
 
+    useEffect(() => {
+        setMatchPercentage(getRgbColorMatch((mixedColor), (hsvaToRgbaString(targetHsva))).toFixed(2));
+    }, [mixedColor, targetHsva]);
+
+
     return (
-        <main className='Mixer'>
-            <section style={{backgroundColor: mixedColor}} className='color-box'>
-                <div className='color-box-ui'>
-                    <button className="reset-mix" onClick={resetMix}>Reset Mix</button>
-                    <button className="add-to-palette" onClick={() => addToPalette(mixedColor, palette)}>Add to Palette</button>
-                </div>
-                <div className='transparency-box'></div>
-            </section>
+        <>
+            <main className='Mixer'>
+                <div className='color-box'>
+                    <section className='mixed-color-container'
+                        style={{
+                            backgroundColor: mixedColor,
+                            width: '100%',
+                            top: '0px',
+                            bottom: '0px',
+                            left: '0px',
+                            position: 'absolute',
+                            zIndex: -1
+                        }}
+                    >
+                        {useTargetHsva && (
+                            <p className='match-pct' style={{
+                                color: (tinycolor(rgbStringToRgb(mixedColor)).isLight ? 'black' : 'white'),
+                            }}>
+                                <label>Match:</label>
+                                {matchPercentage}%
+                            </p>
+                        )}
 
-            <section className='swatches'>
-                {paletteSwatches}
-                <div className="add-color-ui">
-                    <button onClick={() => setShowColorPicker(!showColorPicker)}>+</button>
-                    {showColorPicker && (
-                        <>
-                            <div className='popover-box'>
+                    </section>
+                    {useTargetHsva && (
+                    <section className='target-color-container'
+                        style={{
+                            background: hsvaToRgbaString(targetHsva),
+                            color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black'),
+                            display: (useTargetHsva ? 'block' : 'none'),
+                            width: '40%',
+                            minWidth: '200px',
+                            position: 'absolute',
+                            top: '0px',
+                            bottom: '0px',
+                            right: '0px',
+                            zIndex: 0
+                        }}
+                    >
 
-                                <Wheel color={selectedHsva} onChange={(color) => setSelectedHsva({...selectedHsva, ...color.hsva})} />
-                                <div className='shade-slider'>
-                                    <ShadeSlider
-                                        hsva={selectedHsva}
-                                        onChange={(newShade) => {
-                                            setSelectedHsva({...selectedHsva, ...newShade});
-                                        }}
+                    {showTargetHsvaPicker && (
+                            <>
+                                <div className='target-color-box'
+                                style={{
+                                    background: hsvaToRgbaString(targetHsva),
+                                    color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')
+                                }}
+                                >
+                                <button
+                                    className='close-button'
+                                    onClick={() => setShowTargetHsvaPicker(false)}
+                                    style={{
+                                        color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')
+                                    }}
+                                >
+                                    x
+                                </button>
+
+                                    <Wheel
+                                        color={targetHsva}
+                                        onChange={(color) => setTargetHsva({...targetHsva, ...color.hsva})}
                                     />
-                                </div>
-
-
+                                    <div className='shade-slider'>
+                                        <ShadeSlider
+                                            hsva={targetHsva}
+                                            onChange={(newShade) => {
+                                                setTargetHsva({...targetHsva, ...newShade});
+                                            }}
+                                        />
+                                    </div>
                                     <EditableInputRGBA
-                                        hsva={selectedHsva}
+                                        hsva={targetHsva}
                                         placement="top"
                                         onChange={(color) => {
-                                            setSelectedHsva({...selectedHsva, ...color.hsva});
+                                            setTargetHsva({...targetHsva, ...color.hsva});
                                         }}
                                     />
-
-
-                                <div className='color-preview' style={{background: hsvaToRgbaString(selectedHsva)}}>
-                                    <button onClick={confirmColor}>Save</button>
                                 </div>
-                            </div>
                         </>
-                    )}
-            </div>
-            </section>
+                        )}
+                        </section>
+                        )}
+                    <div className='color-box-ui'>
+                        <div>
+                            <button
+                                className='reset-mix'
+                                onClick={resetMix}
+                                id='reset-mix'
+                                style={{
+                                    color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                                }}
+                            >
+                                <VscDebugRestart />
+                                <label className='button-reset-mix'>Reset</label>
+                            </button>
+                        </div>
+
+                        <div className='color-box-label'>
+                        <button
+                            className="add-to-palette"
+                            onClick={() => addToPalette(mixedColor, palette)}
+                            style={{
+                                color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                            }}
+                        >
+                                <FaArrowDown />
+                                <label className='button-save'>Save</label>
+                            </button>
+                            </div>
+
+                        <button
+                            className="toggle-target-color"
+                            onClick={toggleUseTargetColor}
+                            style={{
+                                color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                            }}
+                        >
+                            {(useTargetHsva ? <TbTargetArrow /> : <TbTargetOff />)}
+                            <label className='button-target-color'>Target</label>
+                        </button>
+                    </div>
+                    <div className='transparency-box'></div>
+                </div>
+
+                <section className='swatches'>
+                    {paletteSwatches}
+
+                    <div className="add-color-ui">
+                        <button
+                            style={{
+                                visibility: (showColorPicker) ? 'hidden' : 'visible',
+                                display: (showColorPicker) ? 'none' : 'block',
+                                cursor: (showColorPicker) ? 'default' : 'pointer'
+                            }}
+                            onClick={() => setShowColorPicker(!showColorPicker)}
+                        >
+                            <MdAddCircleOutline/>
+                        </button>
+
+                        {showColorPicker && (
+                            <>
+                                <div
+                                    className='popover-box'
+                                    style={{background: hsvaToRgbaString(selectedHsva)}}
+                                >
+                                        <Wheel
+                                            color={selectedHsva}
+                                            onChange={(color) => setSelectedHsva({...selectedHsva, ...color.hsva})}
+                                        />
+                                        <div className='shade-slider'>
+                                            <ShadeSlider
+                                                hsva={selectedHsva}
+                                                onChange={(newShade) => {
+                                                    setSelectedHsva({...selectedHsva, ...newShade});
+                                                }}
+                                            />
+                                        </div>
+                                        <EditableInputRGBA
+                                            hsva={selectedHsva}
+                                            placement="top"
+                                            onChange={(color) => {
+                                                setSelectedHsva({...selectedHsva, ...color.hsva});
+                                            }}
+                                        />
+                                    <button onClick={confirmColor}>
+                                        Add
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </section>
             </main>
+        </>
     );
 }
 

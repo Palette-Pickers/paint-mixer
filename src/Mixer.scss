@@ -1,4 +1,5 @@
 .Mixer {
+    box-sizing: border-box;
     .is-hidden {
         display: none;
     }
@@ -15,62 +16,157 @@
         justify-content: center;
         position: relative;
 
+        .match-pct {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+
+        }
+
         .transparency-box{
             width: 100%;
             height: 100%;
             background-image: url("../src/assets/transparent.png");
             position: absolute;
-            z-index: -9999999;
+            z-index: -99;
         }
 
         .color-box-ui {
             display: flex;
+            position: absolute;
+            bottom: 0;
             justify-content: space-between;
             width: 100%;
-        }
-    }
 
-    .popover-box {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        background-color: rgb(86, 75, 75);
-        width: auto;
-        min-height: 50vh;
-
-        .shade-slider {
-            width: 200px;
-            margin: 1rem 0;
-        }
-
-        .w-color-editable-input {
-            width: 2rem;
-            input {
-                color: white;
+            label {
+                display: flex;
+                flex-direction: column;
+                margin: 0 0.5rem 0 0.5rem;
             }
 
+            button {
+                padding: 0;
+                background-color: transparent;
+                border: 0;
+                text-transform: uppercase;
+
+                svg {
+                    height: 1.6rem;
+                    width: 1.6rem;
+                }
+            }
         }
 
+    }
+
+    .target-color-box, .popover-box {
+        width: 200px;
+        align-items: center;
+        border: 1px solid black;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 5px 0 0 0;
+        padding: 0.5rem 1rem;
         .w-color-editable-input:nth-of-type(4) {
             visibility: hidden;
             display: none !important;
         }
 
-        .color-preview {
-            width: 100px;
-            margin: 1rem 0;
-            padding: 0.5rem 0.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-
-        button {
+        .close-button {
+            position:absolute;
+            right: 5px;
+            top: 0;
             background-color: transparent;
             border: none;
+            color: black;
+            margin: 0;
+            padding: 0 3px;
+        }
+
+        .w-color-wheel {
+            border-radius: 50%;
+            border: white solid 0.25px;
+        }
+
+        .shade-slider {
+            margin: 1rem 0;
+            width: 200px;
+        }
+
+        .w-color-editable-input {
+            width: 2rem;
+            input {
+                background-color: rgb(61, 61, 61) !important;
+                color: rgb(255, 255, 255) !important;
+            }
+
+        }
+
+        .color-preview {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.5rem 0.25rem;
+            width: 100px;
+        }
+
+        button {
+            border-radius: 10%;
             font-size: 1.2rem;
+            margin: 0.5rem;
+            padding: 0.5rem 1rem;
+
+
+        }
+    }
+    .target-color-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1rem 0 0 1rem;
+
+        .target-color-data{
+            padding: 0 1rem 0.5rem;
+        }
+    }
+
+    .target-color-box {
+        position: absolute;
+        right: 0;
+        top: 0;
+        border: 0;
+    }
+
+    .popover-box {
+        position: relative;
+        border-radius: 0 0 20% 20%;
+        width: auto;
+
+
+
+
+
+
+    }
+
+    .swatch-container {
+        .change-parts-qty {
+            align-items: center;
+            display: flex;
+            justify-content: space-around;
+            padding: 0;
+            width: 100%;
+
+            .subtract-parts {
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 1.5rem;
+                padding: 0 0.5rem;
+                user-select: none;
+                width: 2rem;
+            }
         }
     }
 
@@ -78,87 +174,82 @@
         display: flex;
         flex-wrap: wrap;
 
-        .swatch-container {
-            .change-parts-qty {
-                display: flex;
-                width: 100%;
-                justify-content: space-around;
-                align-items: center;
-                padding: 0;
-            }
-        }
 
-        .add-color-ui > button {
-            position: absolute;
-            font-size: 3rem;
-            width: 5rem;
-            height: 8.6rem;
-            background-color: transparent;
-            border: 0;
+        .add-color-ui {
+            > button {
+                background-color: transparent;
+                border: 0;
+                font-size: 3rem;
+                height: 8.6rem;
+                position: absolute;
+                width: 5rem;
+            }
         }
 
         .swatch {
-            position: relative;
-            width: 10rem;
-            height: 8rem;
-            margin: 5px 5px 5px 0;
+            align-content: center;
             border-radius: 0 0 20% 20%;
             border: 1px solid black;
+            height: 6rem;
             justify-content: center;
-            align-content: center;
+            margin: 5px 5px 5px 0;
+            position: relative;
+            width: 10rem;
 
 
             .remove-from-palette {
-                position: absolute;
-                top: 1px;
-                right: 0;
                 background-color: transparent;
                 border: none;
+                cursor: pointer;
                 font-size: 1rem;
+                position: absolute;
+                right: 0;
+                top: 1px;
+                user-select: none;
             }
 
             .partsInMix {
-                padding: 0;
-                font-size: 1.5rem;
-                width: 100%;
-                top: 6rem;
-                position: relative;
+                cursor: pointer;
                 display: flex;
+                font-size: 2rem;
                 justify-content: center;
-
+                padding: 2rem 0 1rem 0;
+                position: relative;
+                top: 1rem;
+                user-select: none;
+                width: 100%;
             }
+
             .label {
+                display: block;
+                font-size: 0.8rem;
+                margin: 0.2rem 1rem 0.5rem 0.4rem;
                 position: absolute;
                 top: 1px;
                 z-index: 2;
-                display: block;
-                margin: 0.2rem 1rem 0.5rem 0.4rem;
             }
             .swatch-ui {
+                align-items: center;
+                bottom: 0;
                 display: flex;
                 flex-direction: row;
                 flex-wrap: wrap;
-                align-items: center;
                 justify-content: space-between;
-                position: relative;
-                background-color: rgba(255, 255, 255, 0.35);
-                border: solid 1px rgba(0, 0, 0, 0.5);;
-                width: 100%;
-                bottom: 0;
-                right: 0;
                 left: 0;
+                position: relative;
+                right: 0;
+                width: 100%;
 
                 > input {
-                    position: absolute;
                     padding: 0.2rem 0.4rem 0 0.2rem;
+                    position: absolute;
                     top: 0;
-
                 }
             }
             button {
-                font-size: 1.6rem;
-                border: none;
                 background-color: transparent;
+                border: none;
+                font-size: 1.6rem;
             }
         }
     }
