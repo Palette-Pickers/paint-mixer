@@ -5,7 +5,6 @@ import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider'
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
 import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
-import isDark from "./utils/isDark";
 import tinycolor from "tinycolor2";
 import {defaultPalette} from './utils/palettes/defaultPalette';
 import {fetchColorName} from './data/hooks/fetchColorName';
@@ -120,7 +119,7 @@ const Mixer: React.FC = () => {
                                 <button
                                     className="remove-from-palette"
                                     onClick={() => handleRemoveFromPaletteClick(i)}
-                                    style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}
+                                    style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
                                 >
                                     X
                                 </button>
@@ -135,8 +134,8 @@ const Mixer: React.FC = () => {
                                             setEditingLabelIndex(null);
                                         }}
                                         style={{
-                                            color: (tinycolor(swatch.rgbString).isDark()) ? 'white' : 'black',
-                                            backgroundColor: (tinycolor(swatch.rgbString).isDark()) ? 'black' : 'white'
+                                            color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
+                                            backgroundColor: tinycolor(swatch.rgbString).isDark() ? 'black' : 'white'
                                         }}
                                         autoFocus
                                     />
@@ -146,19 +145,16 @@ const Mixer: React.FC = () => {
                                                 setEditingLabelIndex(i);
                                                 setTempLabel(swatch.label);
                                             }}
-                                            style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}
+                                            style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
                                         >
 
                                                 {swatch.label}
-
-
-
                                         </div>
                                 )}
                                 <div
                                     className="partsInMix"
                                     onClick={() => handleSwatchIncrementClick(i)}
-                                    style={{color: (tinycolor(swatch.rgbString).isDark()) ? 'white' : 'black'}}>
+                                    style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}>
                                     {swatch.partsInMix}
                                 </div>
                             </div>
@@ -242,7 +238,7 @@ const Mixer: React.FC = () => {
                     >
                         {useTargetHsva && (
                             <p className='match-pct' style={{
-                                color: (tinycolor(rgbStringToRgb(mixedColor)).isLight ? 'black' : 'white'),
+                                color: tinycolor(rgbStringToRgb(mixedColor)).isLight ? 'black' : 'white',
                             }}>
                                 <label>Match:</label>
                                 {matchPercentage}%
@@ -254,7 +250,7 @@ const Mixer: React.FC = () => {
                     <section className='target-color-container'
                         style={{
                             background: hsvaToRgbaString(targetHsva),
-                            color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black'),
+                            color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black',
                             display: (useTargetHsva ? 'block' : 'none'),
                             width: '40%',
                             minWidth: '200px',
@@ -271,14 +267,14 @@ const Mixer: React.FC = () => {
                                 <div className='target-color-box'
                                 style={{
                                     background: hsvaToRgbaString(targetHsva),
-                                    color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')
+                                    color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black')
                                 }}
                                 >
                                 <button
                                     className='close-button'
                                     onClick={() => setShowTargetHsvaPicker(false)}
                                     style={{
-                                        color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')
+                                        color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black'
                                     }}
                                 >
                                     x
@@ -315,7 +311,7 @@ const Mixer: React.FC = () => {
                                 onClick={resetMix}
                                 id='reset-mix'
                                 style={{
-                                    color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                                    color: tinycolor(rgbStringToRgb(mixedColor)).isDark() ? 'white' : 'black',
                                 }}
                             >
                                 <VscDebugRestart />
@@ -328,7 +324,7 @@ const Mixer: React.FC = () => {
                             className="add-to-palette"
                             onClick={() => addToPalette(mixedColor, palette)}
                             style={{
-                                color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                                color: tinycolor(rgbStringToRgb(mixedColor)).isDark() ? 'white' : 'black',
                             }}
                         >
                                 <FaArrowDown />
@@ -340,7 +336,7 @@ const Mixer: React.FC = () => {
                             className="toggle-target-color"
                             onClick={toggleUseTargetColor}
                             style={{
-                                color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                                color: tinycolor(rgbStringToRgb(mixedColor)).isDark() ? 'white' : 'black',
                             }}
                         >
                             {(useTargetHsva ? <TbTargetArrow /> : <TbTargetOff />)}
