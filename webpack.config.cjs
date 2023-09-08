@@ -67,4 +67,7 @@ module.exports = {
         compress: true,
         historyApiFallback: true,
     },
+    stats: {
+        errorDetails: true,
+    },
 };

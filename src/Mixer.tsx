@@ -1,30 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import mixbox from 'mixbox';
 import './Mixer.scss';
-import {SketchPicker} from 'react-color'; // Import the color picker
 import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider'
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
 import {hsvaToRgba, hsvaToRgbaString, hsvaToHex, rgbaStringToHsva} from '@uiw/color-convert';
 import isDark from "./utils/isDark";
+import tinycolor from "tinycolor2";
 import {defaultPalette} from './utils/palettes/defaultPalette';
 import {
     rgbStringToRgb,
-    normalizeRGB,
+    normalizeRgbString,
     sRGBToLinear,
     rgbToXyz,
     xyzToLab,
     deltaE94
 } from './utils/colorConversion';
 
-import {IoColorPalette} from 'react-icons/io5';
 import {TbTargetArrow, TbTargetOff, TbTarget} from 'react-icons/tb';
 import {VscDebugRestart} from 'react-icons/vsc';
 import {MdAddCircleOutline} from 'react-icons/md';
-import {FaHandPointUp, FaHandPointDown} from 'react-icons/fa';
-import {HiBeaker} from 'react-icons/hi';
-import {BsPalette} from 'react-icons/bs';
-import {BiTargetLock} from 'react-icons/bi';
 import {FaArrowDown} from 'react-icons/fa';
 
 
@@ -52,6 +47,7 @@ const Mixer: React.FC = () => {
     const [targetHsva, setTargetHsva] = useState({h: 214, s: 43, v: 90, a: 1});
     const [useTargetHsva, setUseTargetHsva] = useState<boolean>(false);
     const [showTargetHsvaPicker, setShowTargetHsvaPicker] = useState<boolean>(false); // State to toggle color picker
+    const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
 
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
@@ -77,20 +73,15 @@ const Mixer: React.FC = () => {
         setPalette(updatedPalette);
     }
 
-    const confirmTargetColor = () => {
-        setShowTargetHsvaPicker(false);
-
-    }
-
     const confirmColor = () => {
-        if (selectedHsva) {
-            const selectedColor = hsvaToRgba(selectedHsva);
-            addToPalette(`rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`, palette);
-            setShowColorPicker(false); // Close the color picker after adding
+        if(selectedHsva) {
+            const selectedRgbString = tinycolor(selectedHsva).toRgbString();
+            addToPalette(selectedRgbString, palette);
+            setShowColorPicker(false); // Close the color picker after adding	            setShowColorPicker(false); // Close the color picker after adding
         }
     }
 
-    const getMixedColorFromPalette = (palette: ColorPart[]): string => {
+    const getMixedRgbStringFromPalette = (palette: ColorPart[]): string => {
         let totalParts = palette.reduce((acc, color) => {
             return acc + color.partsInMix;
         }, 0);
@@ -109,9 +100,9 @@ const Mixer: React.FC = () => {
                 }
             }
             const mixed_color = mixbox.latentToRgb(latent_mix);
-            return normalizeRGB(mixed_color);
+            return tinycolor(normalizeRgbString(mixed_color)).toRgbString();
         }
-        else return 'rgba(255,255,255,0)';
+        else return tinycolor('rgba(255,255,255,0)').toRgbString();
     }
 
     const makeColorSwatches = () => {
@@ -125,8 +116,13 @@ const Mixer: React.FC = () => {
                             style={{backgroundColor: `${swatch.rgbString}`}}
                         >
                             <div className="swatch-ui">
-                                <button className="remove-from-palette" onClick={() => handleRemoveFromPaletteClick(i)}
-                                style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}>X</button>
+                                <button
+                                    className="remove-from-palette"
+                                    onClick={() => handleRemoveFromPaletteClick(i)}
+                                    style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}
+                                >
+                                    X
+                                </button>
                                 {editingLabelIndex === i ? (
                                     <input
                                         value={tempLabel}
@@ -136,6 +132,10 @@ const Mixer: React.FC = () => {
                                             updatedPalette[i].label = tempLabel;
                                             setPalette(updatedPalette);
                                             setEditingLabelIndex(null);
+                                        }}
+                                        style={{
+                                            color: (tinycolor(swatch.rgbString).isDark()) ? 'white' : 'black',
+                                            backgroundColor: (tinycolor(swatch.rgbString).isDark()) ? 'black' : 'white'
                                         }}
                                         autoFocus
                                     />
@@ -157,7 +157,7 @@ const Mixer: React.FC = () => {
                                 <div
                                     className="partsInMix"
                                     onClick={() => handleSwatchIncrementClick(i)}
-                                    style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}>
+                                    style={{color: (tinycolor(swatch.rgbString).isDark()) ? 'white' : 'black'}}>
                                     {swatch.partsInMix}
                                 </div>
                             </div>
@@ -177,8 +177,8 @@ const Mixer: React.FC = () => {
 
     // Helper function to check if a color is already in the palette
     const isColorInPalette = (rgbString: string, palette: ColorPart[]): boolean => {
-        const normalizedColor = normalizeRGB(rgbString);
-        return palette.some(swatch => normalizeRGB(swatch.rgbString) === normalizedColor);
+        const normalizedColor = normalizeRgbString(rgbString);
+        return palette.some(swatch => normalizeRgbString(swatch.rgbString) === normalizedColor);
     }
 
     const addToPalette = (rgbString: string, palette: ColorPart[]) => {
@@ -187,7 +187,7 @@ const Mixer: React.FC = () => {
             const recipe= palette.filter(color => color.partsInMix > 0);
             updatedPalette.push({
                 "rgbString": rgbString,
-                "label": rgbString,
+                "label": tinycolor(rgbString).toHexString(),
                 "partsInMix": 0,
                 "recipe": recipe //records colors used in a mix so it can be reconstructed
             });
@@ -197,10 +197,10 @@ const Mixer: React.FC = () => {
         }
     }
 
-    const compareRgbColors = (color1: string, color2: string): number => {
-        const color1Lab = xyzToLab(rgbToXyz(rgbStringToRgb(color1)));
-        const color2Lab = xyzToLab(rgbToXyz(rgbStringToRgb(color2)));
-        return deltaE94(color1Lab, color2Lab);
+    const getRgbColorMatch = (color1: string, color2: string): number => {
+        const color1Lab = xyzToLab(rgbToXyz(tinycolor(color1).toRgb()));
+        const color2Lab = xyzToLab(rgbToXyz(tinycolor(color2).toRgb()));
+        return (100-deltaE94(color1Lab, color2Lab)); //convert % difference to % match
     }
 
 
@@ -214,9 +214,12 @@ const Mixer: React.FC = () => {
     }
 
     useEffect(() => {
-        setMixedColor(getMixedColorFromPalette(palette));
+        setMixedColor(getMixedRgbStringFromPalette(palette));
     }, [palette]);
 
+    useEffect(() => {
+        setMatchPercentage(getRgbColorMatch((mixedColor), (hsvaToRgbaString(targetHsva))).toFixed(2));
+    }, [mixedColor, targetHsva]);
 
 
     return (
@@ -234,12 +237,14 @@ const Mixer: React.FC = () => {
                             zIndex: -1
                         }}
                     >
-                        <p className='match-pct' style={{
-                            color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
-                        }}>
-                            <label>Match:</label>
-                            {(compareRgbColors(mixedColor, hsvaToRgbaString(targetHsva)).toFixed(2))}%
-                        </p>
+                        {useTargetHsva && (
+                            <p className='match-pct' style={{
+                                color: (tinycolor(rgbStringToRgb(mixedColor)).isLight ? 'black' : 'white'),
+                            }}>
+                                <label>Match:</label>
+                                {matchPercentage}%
+                            </p>
+                        )}
 
                     </section>
                     {useTargetHsva && (
