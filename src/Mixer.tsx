@@ -9,9 +9,7 @@ import tinycolor from "tinycolor2";
 import {defaultPalette} from './utils/palettes/defaultPalette';
 import {fetchColorName} from './data/hooks/fetchColorName';
 import {
-    rgbStringToRgb,
     normalizeRgbString,
-    sRGBToLinear,
     rgbToXyz,
     xyzToLab,
     deltaE94
@@ -311,7 +309,7 @@ const Mixer: React.FC = () => {
                                 onClick={resetMix}
                                 id='reset-mix'
                                 style={{
-                                    color: tinycolor(rgbStringToRgb(mixedColor)).isDark() ? 'white' : 'black',
+                                    color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
                                 }}
                             >
                                 <VscDebugRestart />
@@ -324,7 +322,7 @@ const Mixer: React.FC = () => {
                             className="add-to-palette"
                             onClick={() => addToPalette(mixedColor, palette)}
                             style={{
-                                color: tinycolor(rgbStringToRgb(mixedColor)).isDark() ? 'white' : 'black',
+                                color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
                             }}
                         >
                                 <FaArrowDown />
@@ -336,7 +334,7 @@ const Mixer: React.FC = () => {
                             className="toggle-target-color"
                             onClick={toggleUseTargetColor}
                             style={{
-                                color: tinycolor(rgbStringToRgb(mixedColor)).isDark() ? 'white' : 'black',
+                                color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
                             }}
                         >
                             {(useTargetHsva ? <TbTargetArrow /> : <TbTargetOff />)}
