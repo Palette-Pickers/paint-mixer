@@ -1,0 +1,10 @@
+export const fetchColorName = async (hexColor: string): Promise<string> => {
+    try {
+        const response = await fetch(`https://api.color.pizza/v1/?values=${hexColor}`);
+        const data = await response.json();
+        return data.colors[0].name;
+    } catch (error) {
+        console.error("Error fetching color name:", error);
+        return hexColor; // Return the hex value as a fallback
+    }
+};

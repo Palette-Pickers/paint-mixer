@@ -4,10 +4,10 @@ import './Mixer.scss';
 import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider'
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
-import {hsvaToRgba, hsvaToRgbaString, hsvaToHex, rgbaStringToHsva} from '@uiw/color-convert';
-import isDark from "./utils/isDark";
+import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
 import tinycolor from "tinycolor2";
 import {defaultPalette} from './utils/palettes/defaultPalette';
+import {fetchColorName} from './data/hooks/fetchColorName';
 import {
     rgbStringToRgb,
     normalizeRgbString,
@@ -119,7 +119,7 @@ const Mixer: React.FC = () => {
                                 <button
                                     className="remove-from-palette"
                                     onClick={() => handleRemoveFromPaletteClick(i)}
-                                    style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}
+                                    style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
                                 >
                                     X
                                 </button>
@@ -134,8 +134,8 @@ const Mixer: React.FC = () => {
                                             setEditingLabelIndex(null);
                                         }}
                                         style={{
-                                            color: (tinycolor(swatch.rgbString).isDark()) ? 'white' : 'black',
-                                            backgroundColor: (tinycolor(swatch.rgbString).isDark()) ? 'black' : 'white'
+                                            color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
+                                            backgroundColor: tinycolor(swatch.rgbString).isDark() ? 'black' : 'white'
                                         }}
                                         autoFocus
                                     />
@@ -145,19 +145,16 @@ const Mixer: React.FC = () => {
                                                 setEditingLabelIndex(i);
                                                 setTempLabel(swatch.label);
                                             }}
-                                            style={{color: isDark(rgbStringToRgb(swatch.rgbString)) ? 'white' : 'black'}}
+                                            style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
                                         >
 
                                                 {swatch.label}
-
-
-
                                         </div>
                                 )}
                                 <div
                                     className="partsInMix"
                                     onClick={() => handleSwatchIncrementClick(i)}
-                                    style={{color: (tinycolor(swatch.rgbString).isDark()) ? 'white' : 'black'}}>
+                                    style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}>
                                     {swatch.partsInMix}
                                 </div>
                             </div>
@@ -181,13 +178,15 @@ const Mixer: React.FC = () => {
         return palette.some(swatch => normalizeRgbString(swatch.rgbString) === normalizedColor);
     }
 
-    const addToPalette = (rgbString: string, palette: ColorPart[]) => {
+    const addToPalette = async (rgbString: string, palette: ColorPart[]) => {
         if (!isColorInPalette(rgbString, palette)) { // Only add if the color is not in the palette
             let updatedPalette = [...palette];
-            const recipe= palette.filter(color => color.partsInMix > 0);
+            const hexColor = tinycolor(rgbString).toHexString();
+            const colorName = await fetchColorName(hexColor.substring(1)); // Remove the '#'
+            const recipe = palette.filter(color => color.partsInMix > 0);
             updatedPalette.push({
                 "rgbString": rgbString,
-                "label": tinycolor(rgbString).toHexString(),
+                "label": colorName,
                 "partsInMix": 0,
                 "recipe": recipe //records colors used in a mix so it can be reconstructed
             });
@@ -195,7 +194,7 @@ const Mixer: React.FC = () => {
         } else {
             console.error("Selected color already in palette", rgbString);
         }
-    }
+    };
 
     const getRgbColorMatch = (color1: string, color2: string): number => {
         const color1Lab = xyzToLab(rgbToXyz(tinycolor(color1).toRgb()));
@@ -239,7 +238,7 @@ const Mixer: React.FC = () => {
                     >
                         {useTargetHsva && (
                             <p className='match-pct' style={{
-                                color: (tinycolor(rgbStringToRgb(mixedColor)).isLight ? 'black' : 'white'),
+                                color: tinycolor(mixedColor).isDark() ? 'white' : 'black'
                             }}>
                                 <label>Match:</label>
                                 {matchPercentage}%
@@ -251,7 +250,7 @@ const Mixer: React.FC = () => {
                     <section className='target-color-container'
                         style={{
                             background: hsvaToRgbaString(targetHsva),
-                            color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black'),
+                            color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black',
                             display: (useTargetHsva ? 'block' : 'none'),
                             width: '40%',
                             minWidth: '200px',
@@ -268,14 +267,14 @@ const Mixer: React.FC = () => {
                                 <div className='target-color-box'
                                 style={{
                                     background: hsvaToRgbaString(targetHsva),
-                                    color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')
+                                    color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black'
                                 }}
                                 >
                                 <button
                                     className='close-button'
                                     onClick={() => setShowTargetHsvaPicker(false)}
                                     style={{
-                                        color: (isDark(hsvaToRgba(targetHsva)) ? 'white' : 'black')
+                                        color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black'
                                     }}
                                 >
                                     x
@@ -312,7 +311,7 @@ const Mixer: React.FC = () => {
                                 onClick={resetMix}
                                 id='reset-mix'
                                 style={{
-                                    color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                                    color: tinycolor(rgbStringToRgb(mixedColor)).isDark() ? 'white' : 'black',
                                 }}
                             >
                                 <VscDebugRestart />
@@ -325,7 +324,7 @@ const Mixer: React.FC = () => {
                             className="add-to-palette"
                             onClick={() => addToPalette(mixedColor, palette)}
                             style={{
-                                color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                                color: tinycolor(rgbStringToRgb(mixedColor)).isDark() ? 'white' : 'black',
                             }}
                         >
                                 <FaArrowDown />
@@ -337,7 +336,7 @@ const Mixer: React.FC = () => {
                             className="toggle-target-color"
                             onClick={toggleUseTargetColor}
                             style={{
-                                color: (isDark(rgbStringToRgb(mixedColor)) ? 'white' : 'black'),
+                                color: tinycolor(rgbStringToRgb(mixedColor)).isDark() ? 'white' : 'black',
                             }}
                         >
                             {(useTargetHsva ? <TbTargetArrow /> : <TbTargetOff />)}
