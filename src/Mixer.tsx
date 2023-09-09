@@ -238,7 +238,7 @@ const Mixer: React.FC = () => {
                     >
                         {useTargetHsva && (
                             <p className='match-pct' style={{
-                                color: tinycolor(rgbStringToRgb(mixedColor)).isLight ? 'black' : 'white',
+                                color: tinycolor(mixedColor).isDark() ? 'white' : 'black'
                             }}>
                                 <label>Match:</label>
                                 {matchPercentage}%
@@ -267,7 +267,7 @@ const Mixer: React.FC = () => {
                                 <div className='target-color-box'
                                 style={{
                                     background: hsvaToRgbaString(targetHsva),
-                                    color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black')
+                                    color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black'
                                 }}
                                 >
                                 <button
