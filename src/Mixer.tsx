@@ -231,7 +231,8 @@ const Mixer: React.FC = () => {
                             bottom: '0px',
                             left: '0px',
                             position: 'absolute',
-                            zIndex: -1
+                            zIndex: -1,
+                            transition: 'background-color 0.25s ease-in-out'
                         }}
                     >
                         {useTargetHsva && (
@@ -256,7 +257,8 @@ const Mixer: React.FC = () => {
                             top: '0px',
                             bottom: '0px',
                             right: '0px',
-                            zIndex: 0
+                            zIndex: 0,
+                            transition: 'background-color 0.1s ease-in-out'
                         }}
                     >
 
@@ -265,14 +267,16 @@ const Mixer: React.FC = () => {
                                 <div className='target-color-box'
                                 style={{
                                     background: hsvaToRgbaString(targetHsva),
-                                    color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black'
+                                    color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black',
+                                    transition: 'background-color 0.1s ease-in-out'
                                 }}
                                 >
                                 <button
                                     className='close-button'
                                     onClick={() => setShowTargetHsvaPicker(false)}
                                     style={{
-                                        color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black'
+                                        color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black',
+                                        transition: 'color 0.1s ease-in-out'
                                     }}
                                 >
                                     x
@@ -334,7 +338,8 @@ const Mixer: React.FC = () => {
                             className="toggle-target-color"
                             onClick={toggleUseTargetColor}
                             style={{
-                                color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
+                                color: useTargetHsva ? tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black' : (tinycolor(mixedColor).isDark() ? 'white' : 'black')
+                                    // tinycolor(mixedColor).isDark() ? 'white' : 'black',
                             }}
                         >
                             {(useTargetHsva ? <TbTargetArrow /> : <TbTargetOff />)}
