@@ -172,8 +172,8 @@ const Mixer: React.FC = () => {
 
     // Helper function to check if a color is already in the palette
     const isColorInPalette = (rgbString: string, palette: ColorPart[]): boolean => {
-        const normalizedColor = normalizeRgbString(rgbString);
-        return palette.some(swatch => normalizeRgbString(swatch.rgbString) === normalizedColor);
+        const normalizedColor = tinycolor(rgbString).toHexString();
+        return palette.some(swatch => tinycolor(swatch.rgbString).toHexString() === normalizedColor);
     }
 
     const addToPalette = async (rgbString: string, palette: ColorPart[]) => {
