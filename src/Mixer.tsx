@@ -46,6 +46,7 @@ const Mixer: React.FC = () => {
     const [useTargetHsva, setUseTargetHsva] = useState<boolean>(false);
     const [showTargetHsvaPicker, setShowTargetHsvaPicker] = useState<boolean>(false); // State to toggle color picker
     const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
+    const [canSave, setCanSave] = useState<boolean>(true);
 
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
@@ -78,6 +79,10 @@ const Mixer: React.FC = () => {
             setShowColorPicker(false); // Close the color picker after adding	            setShowColorPicker(false); // Close the color picker after adding
         }
     }
+
+    const hasPartsInMix = (): boolean => {
+        return palette.some(color => color.partsInMix > 0);
+    };
 
     const getMixedRgbStringFromPalette = (palette: ColorPart[]): string => {
         let totalParts = palette.reduce((acc, color) => {
@@ -218,6 +223,11 @@ const Mixer: React.FC = () => {
         setMatchPercentage(getRgbColorMatch((mixedColor), (hsvaToRgbaString(targetHsva))).toFixed(2));
     }, [mixedColor, targetHsva]);
 
+    useEffect(() => {
+        setCanSave(!isColorInPalette(mixedColor, palette));
+    }, [mixedColor, palette]);
+
+
 
     return (
         <>
@@ -307,32 +317,43 @@ const Mixer: React.FC = () => {
                         </section>
                         )}
                     <div className='color-box-ui'>
+
                         <div>
-                            <button
-                                className='reset-mix'
-                                onClick={resetMix}
-                                id='reset-mix'
-                                style={{
-                                    color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
-                                }}
-                            >
-                                <VscDebugRestart />
-                                <label className='button-reset-mix'>Reset</label>
-                            </button>
-                        </div>
+                                <button
+                                    className='reset-mix'
+                                    onClick={resetMix}
+                                    id='reset-mix'
+                                    style={{
+                                        color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
+                                        opacity: hasPartsInMix() ? 1 : 0 // Chan,ge the opacity to indicate it's disabled
+                                    }}
+                                >
+                                    <VscDebugRestart />
+                                    <label className='button-reset-mix'>Reset</label>
+                                </button>
+                            </div>
+
 
                         <div className='color-box-label'>
-                        <button
-                            className="add-to-palette"
-                            onClick={() => addToPalette(mixedColor, palette)}
-                            style={{
-                                color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
-                            }}
-                        >
-                                <FaArrowDown />
-                                <label className='button-save'>Save</label>
+
+                            <button
+                                className="add-to-palette"
+                                onClick={() => addToPalette(mixedColor, palette)}
+                                disabled={!canSave} // Disable the button based on canSave state
+                                style={{
+                                    color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
+                                    opacity: canSave ? 1 : 0.5 // Optionally, you can change the opacity to indicate it's disabled
+                                }}
+                            >
+                                <FaArrowDown style={{
+        color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
+        opacity: canSave ? 1 : 0 // Change the opacity to indicate it's disabled
+    }}
+/>
+                                <label className='button-save'>{canSave ? 'Save' : 'Saved'}</label>
                             </button>
-                            </div>
+
+                        </div>
 
                         <button
                             className="toggle-target-color"
