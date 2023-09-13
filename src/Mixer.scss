@@ -16,10 +16,51 @@
         justify-content: center;
         position: relative;
 
-        .match-pct {
-            display: flex;
+        .mixed-color-container {
             width: 100%;
-            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: -1;
+            transition: background-color 0.15s ease-in-out;
+
+            .mixed-color-values {
+                margin: 1rem 0 0 1rem;
+
+                label{
+                    font-weight: bold;
+                }
+            }
+        }
+
+        .target-color-container {
+            width: 40%;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            transition: background-color 0.15s ease-in-out;
+
+            .target-color-values {
+                margin: 0 1rem 0 0;
+                text-align: right;
+
+                label{
+                    font-weight: bold;
+                }
+            }
+            .target-color-box {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                border: 0;
+                transition: background-color 0.15s ease-in-out;
+            }
+        }
+
+        .match-pct {
 
         }
 
@@ -130,13 +171,6 @@
         .target-color-data{
             padding: 0 1rem 0.5rem;
         }
-    }
-
-    .target-color-box {
-        position: absolute;
-        right: 0;
-        top: 0;
-        border: 0;
     }
 
     .popover-box {
