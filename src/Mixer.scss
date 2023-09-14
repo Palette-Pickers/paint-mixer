@@ -177,12 +177,6 @@
         position: relative;
         border-radius: 0 0 20% 20%;
         width: auto;
-
-
-
-
-
-
     }
 
     .swatch-container {
@@ -229,6 +223,15 @@
             margin: 5px 5px 5px 0;
             position: relative;
             width: 10rem;
+
+            .recipe-info-button {
+                position: absolute;
+                right: 0.9rem;
+                top: 1px;
+                font-size: 0.9rem;
+                z-index: 20;
+                cursor: pointer;
+            }
 
 
             .remove-from-palette {
