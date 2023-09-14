@@ -317,11 +317,7 @@ const Mixer: React.FC = () => {
                             display: (useTargetHsva ? 'block' : 'none'),
                         }}
                         >
-                            <div className='target-color-values'>
-                                <label>Target Color</label>
-                                {tinycolor(targetHsva).toHexString()}
-                                <div>{targetColorName}</div>
-                            </div>
+
 
 
 
@@ -366,7 +362,12 @@ const Mixer: React.FC = () => {
                                     />
                                 </div>
                         </>
-                        )}
+                            )}
+                            <div className='target-color-values'>
+                                <label>Target Color</label>
+                                {tinycolor(targetHsva).toHexString()}
+                                <div>{targetColorName}</div>
+                            </div>
                         </section>
                         )}
                     <div className='color-box-ui'>
