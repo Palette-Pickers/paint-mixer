@@ -258,18 +258,20 @@ const Mixer: React.FC = () => {
                 <div className='color-box'>
                     <section className='mixed-color-container'
                         style={{
-                            backgroundColor: mixedColor
+                            backgroundColor: mixedColor,
+                            color: tinycolor(mixedColor).isDark() ? 'white' : 'black'
                         }}
                     >
-                    <div className='mixed-color-values'>
+                        <div
+                            className='mixed-color-values'>
                             <label>Mixed Color</label>
                             {tinycolor(mixedColor).toHexString()}
                             <div>{mixedColorName}</div>
 
                         {useTargetHsva && (
-                            <p className='match-pct' style={{
-                                color: tinycolor(mixedColor).isDark() ? 'white' : 'black'
-                            }}>
+                                <p className='match-pct'
+                                    style={{ color: tinycolor(mixedColor).isDark() ? 'white' : 'black'}}
+                                >
                                     <label>Target Match</label>
                                     <div>{matchPercentage}%</div>
                             </p>
