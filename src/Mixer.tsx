@@ -20,6 +20,7 @@ import {VscDebugRestart} from 'react-icons/vsc';
 import {MdAddCircleOutline} from 'react-icons/md';
 import {FaArrowDown} from 'react-icons/fa';
 import {AiOutlineClose} from 'react-icons/ai';
+import {FaInfo} from 'react-icons/fa';
 
 
 interface ColorPart {
@@ -50,6 +51,7 @@ const Mixer: React.FC = () => {
     const [canSave, setCanSave] = useState<boolean>(true);
     const [mixedColorName, setMixedColorName] = useState<string>('');
     const [targetColorName, setTargetColorName] = useState<string>('');
+    const [activeInfoIndex, setActiveInfoIndex] = useState<number | null>(null);
 
 
     const handleSwatchIncrementClick = (index: number) => {
@@ -158,6 +160,13 @@ const Mixer: React.FC = () => {
                                                 {swatch.label}
                                         </div>
                                 )}
+                                {swatch.recipe && (
+                                    <div className="recipe-info-button">
+                                        <a
+                                            style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
+                                            onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
+                                    </div>
+                                )}
                                 <div
                                     className="partsInMix"
                                     onClick={() => handleSwatchIncrementClick(i)}
@@ -171,11 +180,29 @@ const Mixer: React.FC = () => {
                             <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
                         </div>
 
-                    </div>
-                )
-            })
-        }
+
+                        {i === activeInfoIndex && swatch.recipe && (
+                            <div className="recipe-info">
+                                <h3>Recipe:</h3>
+                                {swatch.recipe.map((ingredient, index) => (
+                                    <div key={index}>
+                                        <span style={{backgroundColor: ingredient.rgbString}}></span>
+                                        {ingredient.label}: {ingredient.partsInMix} parts
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                </div>
+            )
+        })
     }
+}
+
+
+
+
+
+
 
     let paletteSwatches = makeColorSwatches();
 
