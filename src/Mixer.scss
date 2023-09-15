@@ -295,4 +295,16 @@
             }
         }
     }
+    .recipe-info {
+        position: absolute;
+        width: 10rem;
+        font-size: 0.75rem;
+        background-color: #FFFFFF33;
+        padding: 1rem 0 0 0.5rem;
+
+        h3 {
+            font-size: 0.9rem;
+            margin: 0.5rem 0 0 0;
+        }
+    }
 }

@@ -163,7 +163,9 @@ const Mixer: React.FC = () => {
                                 {swatch.recipe && (
                                     <div className="recipe-info-button">
                                         <a
-                                            style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
+                                            style={{
+                                                color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'
+                                            }}
                                             onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
                                     </div>
                                 )}
@@ -173,25 +175,29 @@ const Mixer: React.FC = () => {
                                     style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}>
                                     {swatch.partsInMix}
                                 </div>
+
+                                {i === activeInfoIndex && swatch.recipe && (
+                                    <div className="recipe-info"
+                                    style={{
+                                        color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
+                                        backgroundColor: swatch.rgbString,
+                                    }}
+                                    >
+                                        <h3>Recipe:</h3>
+                                        {swatch.recipe.map((ingredient, index) => (
+                                            <div key={index}>
+                                                <span style={{backgroundColor: ingredient.rgbString}}></span>
+                                                {ingredient.partsInMix} {ingredient.label}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                         </div>
                         <div className='change-parts-qty'>
                             <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
                         </div>
-
-
-                        {i === activeInfoIndex && swatch.recipe && (
-                            <div className="recipe-info">
-                                <h3>Recipe:</h3>
-                                {swatch.recipe.map((ingredient, index) => (
-                                    <div key={index}>
-                                        <span style={{backgroundColor: ingredient.rgbString}}></span>
-                                        {ingredient.label}: {ingredient.partsInMix} parts
-                                    </div>
-                                ))}
-                            </div>
-                        )}
                 </div>
             )
         })
@@ -233,7 +239,7 @@ const Mixer: React.FC = () => {
     const getRgbColorMatch = (color1: string, color2: string): number => {
         const color1Lab = xyzToLab(rgbToXyz(tinycolor(color1).toRgb()));
         const color2Lab = xyzToLab(rgbToXyz(tinycolor(color2).toRgb()));
-        return (100-deltaE94(color1Lab, color2Lab)); //convert % difference to % match
+        return (100 - deltaE94(color1Lab, color2Lab)); //convert % difference to % match
     }
 
     const resetMix = () => {
