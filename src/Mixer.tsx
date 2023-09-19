@@ -20,6 +20,7 @@ import {VscDebugRestart} from 'react-icons/vsc';
 import {MdAddCircleOutline} from 'react-icons/md';
 import {FaArrowDown} from 'react-icons/fa';
 import {AiOutlineClose} from 'react-icons/ai';
+import {FaInfo} from 'react-icons/fa';
 
 
 interface ColorPart {
@@ -48,6 +49,10 @@ const Mixer: React.FC = () => {
     const [showTargetHsvaPicker, setShowTargetHsvaPicker] = useState<boolean>(false); // State to toggle color picker
     const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
     const [canSave, setCanSave] = useState<boolean>(true);
+    const [mixedColorName, setMixedColorName] = useState<string>('');
+    const [targetColorName, setTargetColorName] = useState<string>('');
+    const [activeInfoIndex, setActiveInfoIndex] = useState<number | null>(null);
+
 
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
@@ -155,6 +160,13 @@ const Mixer: React.FC = () => {
                                                 {swatch.label}
                                         </div>
                                 )}
+                                {swatch.recipe && (
+                                    <div className="recipe-info-button">
+                                        <a
+                                            style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
+                                            onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
+                                    </div>
+                                )}
                                 <div
                                     className="partsInMix"
                                     onClick={() => handleSwatchIncrementClick(i)}
@@ -168,11 +180,29 @@ const Mixer: React.FC = () => {
                             <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
                         </div>
 
-                    </div>
-                )
-            })
-        }
+
+                        {i === activeInfoIndex && swatch.recipe && (
+                            <div className="recipe-info">
+                                <h3>Recipe:</h3>
+                                {swatch.recipe.map((ingredient, index) => (
+                                    <div key={index}>
+                                        <span style={{backgroundColor: ingredient.rgbString}}></span>
+                                        {ingredient.label}: {ingredient.partsInMix} parts
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                </div>
+            )
+        })
     }
+}
+
+
+
+
+
+
 
     let paletteSwatches = makeColorSwatches();
 
@@ -206,8 +236,6 @@ const Mixer: React.FC = () => {
         return (100-deltaE94(color1Lab, color2Lab)); //convert % difference to % match
     }
 
-
-
     const resetMix = () => {
         const resetPalette = palette.map(color => ({
             ...color,
@@ -228,6 +256,27 @@ const Mixer: React.FC = () => {
         setCanSave(!isColorInPalette(mixedColor, palette));
     }, [mixedColor, palette]);
 
+    useEffect(() => {
+        const fetchAndSetMixedColorName = async () => {
+            setMixedColorName(''); // Set to empty string immediately
+            const hexColor = tinycolor(mixedColor).toHexString();
+            const fetchedColorName = await fetchColorName(hexColor.substring(1));
+            setMixedColorName(fetchedColorName);
+        };
+
+        fetchAndSetMixedColorName();
+    }, [mixedColor]);
+
+    useEffect(() => {
+        const fetchAndSetTargetColorName = async () => {
+            setTargetColorName(''); // Set to empty string immediately
+            const hexColor = tinycolor(hsvaToRgbaString(targetHsva)).toHexString();
+            const fetchedColorName = await fetchColorName(hexColor.substring(1));
+            setTargetColorName(fetchedColorName);
+        };
+
+        fetchAndSetTargetColorName();
+    }, [targetHsva]);
 
 
     return (
@@ -236,20 +285,27 @@ const Mixer: React.FC = () => {
                 <div className='color-box'>
                     <section className='mixed-color-container'
                         style={{
-                            backgroundColor: mixedColor
+                            backgroundColor: mixedColor,
+                            color: tinycolor(mixedColor).isDark() ? 'white' : 'black'
                         }}
                     >
-                        <div className='mixed-color-values'>
-                            <label>Mixed Color</label><br />{tinycolor(mixedColor).toHexString()}
-                            {useTargetHsva && (
-                            <p className='match-pct' style={{
-                                color: tinycolor(mixedColor).isDark() ? 'white' : 'black'
-                            }}>
-                                <label>Match:</label>
-                                {matchPercentage}%
+                        <div
+                            className='mixed-color-values'>
+                            <label>Mixed Color</label>
+                            {tinycolor(mixedColor).toHexString()}
+                            <div>{mixedColorName}</div>
+
+                        {useTargetHsva && (
+                                <p className='match-pct'
+                                    style={{ color: tinycolor(mixedColor).isDark() ? 'white' : 'black'}}
+                                >
+                                    <label>Target Match</label>
+                                    <div>{matchPercentage}%</div>
                             </p>
                         )}
-                        </div>
+                    </div>
+
+
 
 
                     </section>
@@ -262,8 +318,12 @@ const Mixer: React.FC = () => {
                         }}
                         >
                             <div className='target-color-values'>
-                                <label>Target Color</label><br/>{tinycolor(targetHsva).toHexString()}
+                                <label>Target Color</label>
+                                {tinycolor(targetHsva).toHexString()}
+                                <div>{targetColorName}</div>
                             </div>
+
+
 
 
                     {showTargetHsvaPicker && (
@@ -355,7 +415,6 @@ const Mixer: React.FC = () => {
                                 color: useTargetHsva?
                                     tinycolor(hsvaToRgba(targetHsva)).isDark()? 'white' : 'black' :
                                     tinycolor(mixedColor).isDark()? 'white' : 'black'
-                                    // tinycolor(mixedColor).isDark() ? 'white' : 'black',
                             }}
                         >
                             {(useTargetHsva ? <TbTargetArrow /> : <TbTargetOff />)}

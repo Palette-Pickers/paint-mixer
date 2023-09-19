@@ -27,6 +27,8 @@
 
             .mixed-color-values {
                 margin: 1rem 0 0 1rem;
+                display: flex;
+                flex-direction: column;
 
                 label{
                     font-weight: bold;
@@ -46,6 +48,8 @@
             .target-color-values {
                 margin: 0 1rem 0 0;
                 text-align: right;
+                display: flex;
+                flex-direction: column;
 
                 label{
                     font-weight: bold;
@@ -58,10 +62,6 @@
                 border: 0;
                 transition: background-color 0.15s ease-in-out;
             }
-        }
-
-        .match-pct {
-
         }
 
         .transparency-box{
@@ -177,12 +177,6 @@
         position: relative;
         border-radius: 0 0 20% 20%;
         width: auto;
-
-
-
-
-
-
     }
 
     .swatch-container {
@@ -229,6 +223,15 @@
             margin: 5px 5px 5px 0;
             position: relative;
             width: 10rem;
+
+            .recipe-info-button {
+                position: absolute;
+                right: 0.9rem;
+                top: 1px;
+                font-size: 0.9rem;
+                z-index: 20;
+                cursor: pointer;
+            }
 
 
             .remove-from-palette {
