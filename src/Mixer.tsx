@@ -180,8 +180,9 @@ const Mixer: React.FC = () => {
                                     <div className="recipe-info"
                                     style={{
                                         color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
-                                        backgroundColor: swatch.rgbString,
+                                        backgroundColor: swatch.rgbString
                                     }}
+                                    onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}
                                     >
                                         <h3>Recipe:</h3>
                                         {swatch.recipe.map((ingredient, index) => (
