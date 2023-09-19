@@ -1,5 +1,6 @@
 .Mixer {
     box-sizing: border-box;
+
     .is-hidden {
         display: none;
     }
@@ -114,6 +115,7 @@
         justify-content: center;
         margin: 5px 0 0 0;
         padding: 0.5rem 1rem;
+
         .w-color-editable-input:nth-of-type(4) {
             visibility: hidden;
             display: none !important;
@@ -234,7 +236,7 @@
                 right: 0.9rem;
                 top: 1px;
                 font-size: 0.9rem;
-                z-index: 20;
+                z-index: 1;
                 cursor: pointer;
             }
 
@@ -286,6 +288,7 @@
                     padding: 0.2rem 0.4rem 0 0.2rem;
                     position: absolute;
                     top: 0;
+                    z-index: 2;
                 }
             }
             button {
@@ -295,13 +298,15 @@
             }
         }
     }
+
     .recipe-info {
         position: absolute;
         width: 9rem;
         font-size: 0.75rem;
         background-color: #FFFFFF33;
-        padding: 0.5rem 0 0.5rem 0.5rem;
-        top: 1rem;
+        padding: 0 0 0.5rem 0.5rem;
+        top: 1.3rem;
+        user-select: none;
 
         h3 {
             font-size: 0.9rem;

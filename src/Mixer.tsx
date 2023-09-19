@@ -324,10 +324,6 @@ const Mixer: React.FC = () => {
                         }}
                         >
 
-
-
-
-
                     {showTargetHsvaPicker && (
                             <>
                                 <div className='target-color-box'
