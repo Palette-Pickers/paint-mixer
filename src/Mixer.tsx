@@ -180,7 +180,7 @@ const Mixer: React.FC = () => {
                                     style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}>
                                     {swatch.partsInMix}
                                     <p className="parts-percentage">
-                                        {(swatch.partsInMix / totalParts * 100).toFixed(2)}%
+                                        {(swatch.partsInMix > 0.000001) ? (swatch.partsInMix / totalParts * 100).toFixed(0)+'%' : ''}
                                     </p>
                                 </div>
 
