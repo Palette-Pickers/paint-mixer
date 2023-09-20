@@ -39,7 +39,6 @@ interface Rgb {
 
 const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
-    const [palette, setPalette] = useState<ColorPart[]>(defaultPalette);
     const [showNewHsvaPicker, setShowNewHsvaPicker] = useState(false); // State to toggle color picker
     const [newHsva, setNewHsva] = useState({h: 214, s: 43, v: 90, a: 1});
     const [editingLabelIndex, setEditingLabelIndex] = useState<number | null>(null);
@@ -52,7 +51,9 @@ const Mixer: React.FC = () => {
     const [mixedColorName, setMixedColorName] = useState<string>('');
     const [targetColorName, setTargetColorName] = useState<string>('');
     const [activeInfoIndex, setActiveInfoIndex] = useState<number | null>(null);
-
+    const savedPalette = localStorage.getItem('savedPalette');
+    const initialPalette = savedPalette ? JSON.parse(savedPalette) : defaultPalette;
+    const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
 
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
@@ -205,12 +206,6 @@ const Mixer: React.FC = () => {
     }
 }
 
-
-
-
-
-
-
     let paletteSwatches = makeColorSwatches();
 
     // Helper function to check if a color is already in the palette
@@ -252,6 +247,7 @@ const Mixer: React.FC = () => {
     }
 
     useEffect(() => {
+        localStorage.setItem('savedPalette', JSON.stringify(palette));
         setMixedColor(getMixedRgbStringFromPalette(palette));
     }, [palette]);
 
