@@ -39,7 +39,6 @@ interface Rgb {
 
 const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
-    const [palette, setPalette] = useState<ColorPart[]>(defaultPalette);
     const [showNewHsvaPicker, setShowNewHsvaPicker] = useState(false); // State to toggle color picker
     const [newHsva, setNewHsva] = useState({h: 214, s: 43, v: 90, a: 1});
     const [editingLabelIndex, setEditingLabelIndex] = useState<number | null>(null);
@@ -52,7 +51,9 @@ const Mixer: React.FC = () => {
     const [mixedColorName, setMixedColorName] = useState<string>('');
     const [targetColorName, setTargetColorName] = useState<string>('');
     const [activeInfoIndex, setActiveInfoIndex] = useState<number | null>(null);
-
+    const savedPalette = localStorage.getItem('savedPalette');
+    const initialPalette = savedPalette ? JSON.parse(savedPalette) : defaultPalette;
+    const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
 
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
@@ -163,7 +164,9 @@ const Mixer: React.FC = () => {
                                 {swatch.recipe && (
                                     <div className="recipe-info-button">
                                         <a
-                                            style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
+                                            style={{
+                                                color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'
+                                            }}
                                             onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
                                     </div>
                                 )}
@@ -173,36 +176,35 @@ const Mixer: React.FC = () => {
                                     style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}>
                                     {swatch.partsInMix}
                                 </div>
+
+                                {i === activeInfoIndex && swatch.recipe && (
+                                    <div className="recipe-info"
+                                    style={{
+                                        color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
+                                        backgroundColor: swatch.rgbString
+                                    }}
+                                    onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}
+                                    >
+                                        <h3>Recipe:</h3>
+                                        {swatch.recipe.map((ingredient, index) => (
+                                            <div key={index}>
+                                                <span style={{backgroundColor: ingredient.rgbString}}></span>
+                                                {ingredient.partsInMix} {ingredient.label}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                         </div>
                         <div className='change-parts-qty'>
                             <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
                         </div>
-
-
-                        {i === activeInfoIndex && swatch.recipe && (
-                            <div className="recipe-info">
-                                <h3>Recipe:</h3>
-                                {swatch.recipe.map((ingredient, index) => (
-                                    <div key={index}>
-                                        <span style={{backgroundColor: ingredient.rgbString}}></span>
-                                        {ingredient.label}: {ingredient.partsInMix} parts
-                                    </div>
-                                ))}
-                            </div>
-                        )}
                 </div>
             )
         })
     }
 }
-
-
-
-
-
-
 
     let paletteSwatches = makeColorSwatches();
 
@@ -233,7 +235,7 @@ const Mixer: React.FC = () => {
     const getRgbColorMatch = (color1: string, color2: string): number => {
         const color1Lab = xyzToLab(rgbToXyz(tinycolor(color1).toRgb()));
         const color2Lab = xyzToLab(rgbToXyz(tinycolor(color2).toRgb()));
-        return (100-deltaE94(color1Lab, color2Lab)); //convert % difference to % match
+        return (100 - deltaE94(color1Lab, color2Lab)); //convert % difference to % match
     }
 
     const resetMix = () => {
@@ -245,6 +247,7 @@ const Mixer: React.FC = () => {
     }
 
     useEffect(() => {
+        localStorage.setItem('savedPalette', JSON.stringify(palette));
         setMixedColor(getMixedRgbStringFromPalette(palette));
     }, [palette]);
 
@@ -317,14 +320,6 @@ const Mixer: React.FC = () => {
                             display: (useTargetHsva ? 'block' : 'none'),
                         }}
                         >
-                            <div className='target-color-values'>
-                                <label>Target Color</label>
-                                {tinycolor(targetHsva).toHexString()}
-                                <div>{targetColorName}</div>
-                            </div>
-
-
-
 
                     {showTargetHsvaPicker && (
                             <>
@@ -366,7 +361,12 @@ const Mixer: React.FC = () => {
                                     />
                                 </div>
                         </>
-                        )}
+                            )}
+                            <div className='target-color-values'>
+                                <label>Target Color</label>
+                                {tinycolor(targetHsva).toHexString()}
+                                <div>{targetColorName}</div>
+                            </div>
                         </section>
                         )}
                     <div className='color-box-ui'>

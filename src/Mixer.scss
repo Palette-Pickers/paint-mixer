@@ -1,5 +1,6 @@
 .Mixer {
     box-sizing: border-box;
+
     .is-hidden {
         display: none;
     }
@@ -39,6 +40,9 @@
         .target-color-container {
             width: 40%;
             position: absolute;
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
             top: 0;
             right: 0;
             bottom: 0;
@@ -46,10 +50,11 @@
             transition: background-color 0.15s ease-in-out;
 
             .target-color-values {
-                margin: 0 1rem 0 0;
-                text-align: right;
+                margin: 0 0 0 0;
                 display: flex;
                 flex-direction: column;
+                position: relative;
+
 
                 label{
                     font-weight: bold;
@@ -57,8 +62,9 @@
             }
             .target-color-box {
                 position: absolute;
+                z-index: 2;
+                top: 0;
                 right: 0;
-                bottom: 0;
                 border: 0;
                 transition: background-color 0.15s ease-in-out;
             }
@@ -109,6 +115,7 @@
         justify-content: center;
         margin: 5px 0 0 0;
         padding: 0.5rem 1rem;
+
         .w-color-editable-input:nth-of-type(4) {
             visibility: hidden;
             display: none !important;
@@ -229,7 +236,7 @@
                 right: 0.9rem;
                 top: 1px;
                 font-size: 0.9rem;
-                z-index: 20;
+                z-index: 1;
                 cursor: pointer;
             }
 
@@ -281,6 +288,7 @@
                     padding: 0.2rem 0.4rem 0 0.2rem;
                     position: absolute;
                     top: 0;
+                    z-index: 2;
                 }
             }
             button {
@@ -288,6 +296,22 @@
                 border: none;
                 font-size: 1.6rem;
             }
+        }
+    }
+
+    .recipe-info {
+        position: absolute;
+        width: 9rem;
+        font-size: 0.75rem;
+        background-color: #FFFFFF33;
+        padding: 0 0 0.5rem 0.5rem;
+        top: 1.3rem;
+        user-select: none;
+        cursor: pointer;
+
+        h3 {
+            font-size: 0.9rem;
+            margin: 0.5rem 0 0 0;
         }
     }
 }
