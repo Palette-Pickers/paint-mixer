@@ -39,25 +39,25 @@ interface Rgb {
 
 const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
-    const [showNewHsvaPicker, setShowNewHsvaPicker] = useState(false); // State to toggle color picker
-    const [newHsva, setNewHsva] = useState({h: 214, s: 43, v: 90, a: 1});
-    const [editingLabelIndex, setEditingLabelIndex] = useState<number | null>(null);
-    const [tempLabel, setTempLabel] = useState<string>('');
-    const [targetHsva, setTargetHsva] = useState({h: 214, s: 43, v: 90, a: 1});
-    const [useTargetHsva, setUseTargetHsva] = useState<boolean>(false);
-    const [showTargetHsvaPicker, setShowTargetHsvaPicker] = useState<boolean>(false); // State to toggle color picker
-    const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
-    const [canSave, setCanSave] = useState<boolean>(true);
     const [mixedColorName, setMixedColorName] = useState<string>('');
+    const [showAddColorPicker, setShowAddColorPicker] = useState(false);
+    const [addColor, setAddColor] = useState({h: 214, s: 43, v: 90, a: 1});
+    const [editingColorNameIndex, setEditingColorNameIndex] = useState<number | null>(null);
+    const [tempColorName, setTempColorName] = useState<string>('');
+    const [targetColor, setTargetColor] = useState({h: 214, s: 43, v: 90, a: 1});
+    const [useTargetColor, setUseTargetColor] = useState<boolean>(false);
+    const [showTargetColorPicker, setShowTargetColorPicker] = useState<boolean>(false);
     const [targetColorName, setTargetColorName] = useState<string>('');
     const [activeInfoIndex, setActiveInfoIndex] = useState<number | null>(null);
+    const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
+    const [canSave, setCanSave] = useState<boolean>(true);
     const savedPalette = localStorage.getItem('savedPalette');
     const initialPalette = savedPalette ? JSON.parse(savedPalette) : defaultPalette;
     const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
 
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
-        updatedPalette[index].partsInMix++;  // Increment partsInMix for the clicked swatch
+        updatedPalette[index].partsInMix++;
         setPalette(updatedPalette);
     }
 
@@ -69,27 +69,31 @@ const Mixer: React.FC = () => {
     }
 
     const toggleUseTargetColor = () => {
-        setUseTargetHsva(!useTargetHsva);
-        setShowTargetHsvaPicker(true);
+        setUseTargetColor(!useTargetColor);
+        setShowTargetColorPicker(true);
     }
 
     const handleRemoveFromPaletteClick = (index: number) => {
         const updatedPalette = [...palette];
-        updatedPalette.splice(index, 1);  // Remove swatch from palette
+        updatedPalette.splice(index, 1);
         setPalette(updatedPalette);
     }
 
     const confirmColor = () => {
-        if(newHsva) {
-            const selectedRgbString = tinycolor(newHsva).toRgbString();
+        if(addColor) {
+            const selectedRgbString = tinycolor(addColor).toRgbString();
             addToPalette(selectedRgbString, palette);
-            setShowNewHsvaPicker(false); // Close the color picker after adding	            setShowColorPicker(false); // Close the color picker after adding
+            setShowAddColorPicker(false);
         }
     }
 
     const hasPartsInMix = (): boolean => {
         return palette.some(color => color.partsInMix > 0);
     };
+
+    const totalParts = palette.reduce((acc, color) => {
+        return acc + color.partsInMix;
+    }, 0);
 
     const getMixedRgbStringFromPalette = (palette: ColorPart[]): string => {
         let totalParts = palette.reduce((acc, color) => {
@@ -133,15 +137,15 @@ const Mixer: React.FC = () => {
                                 >
                                     <AiOutlineClose/>
                                 </a>
-                                {editingLabelIndex === i ? (
+                                {editingColorNameIndex === i ? (
                                     <input
-                                        value={tempLabel}
-                                        onChange={(e) => setTempLabel(e.target.value)}
+                                        value={tempColorName}
+                                        onChange={(e) => setTempColorName(e.target.value)}
                                         onBlur={() => {
                                             const updatedPalette = [...palette];
-                                            updatedPalette[i].label = tempLabel;
+                                            updatedPalette[i].label = tempColorName;
                                             setPalette(updatedPalette);
-                                            setEditingLabelIndex(null);
+                                            setEditingColorNameIndex(null);
                                         }}
                                         style={{
                                             color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
@@ -152,8 +156,8 @@ const Mixer: React.FC = () => {
                                 ) : (
                                         <div className='label'
                                             onClick={() => {
-                                                setEditingLabelIndex(i);
-                                                setTempLabel(swatch.label);
+                                                setEditingColorNameIndex(i);
+                                                setTempColorName(swatch.label);
                                             }}
                                             style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
                                         >
@@ -175,6 +179,9 @@ const Mixer: React.FC = () => {
                                     onClick={() => handleSwatchIncrementClick(i)}
                                     style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}>
                                     {swatch.partsInMix}
+                                    <p className="parts-percentage">
+                                        {(swatch.partsInMix / totalParts * 100).toFixed(2)}%
+                                    </p>
                                 </div>
 
                                 {i === activeInfoIndex && swatch.recipe && (
@@ -252,8 +259,8 @@ const Mixer: React.FC = () => {
     }, [palette]);
 
     useEffect(() => {
-        setMatchPercentage(getRgbColorMatch((mixedColor), (hsvaToRgbaString(targetHsva))).toFixed(2));
-    }, [mixedColor, targetHsva]);
+        setMatchPercentage(getRgbColorMatch((mixedColor), (hsvaToRgbaString(targetColor))).toFixed(2));
+    }, [mixedColor, targetColor]);
 
     useEffect(() => {
         setCanSave(!isColorInPalette(mixedColor, palette));
@@ -273,13 +280,13 @@ const Mixer: React.FC = () => {
     useEffect(() => {
         const fetchAndSetTargetColorName = async () => {
             setTargetColorName(''); // Set to empty string immediately
-            const hexColor = tinycolor(hsvaToRgbaString(targetHsva)).toHexString();
+            const hexColor = tinycolor(hsvaToRgbaString(targetColor)).toHexString();
             const fetchedColorName = await fetchColorName(hexColor.substring(1));
             setTargetColorName(fetchedColorName);
         };
 
         fetchAndSetTargetColorName();
-    }, [targetHsva]);
+    }, [targetColor]);
 
 
     return (
@@ -298,7 +305,7 @@ const Mixer: React.FC = () => {
                             {tinycolor(mixedColor).toHexString()}
                             <div>{mixedColorName}</div>
 
-                        {useTargetHsva && (
+                        {useTargetColor && (
                                 <p className='match-pct'
                                     style={{ color: tinycolor(mixedColor).isDark() ? 'white' : 'black'}}
                                 >
@@ -312,28 +319,28 @@ const Mixer: React.FC = () => {
 
 
                     </section>
-                    {useTargetHsva && (
+                    {useTargetColor && (
                     <section className='target-color-container'
                         style={{
-                            background: hsvaToRgbaString(targetHsva),
-                            color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black',
-                            display: (useTargetHsva ? 'block' : 'none'),
+                            background: hsvaToRgbaString(targetColor),
+                            color: tinycolor(hsvaToRgba(targetColor)).isDark() ? 'white' : 'black',
+                            display: (useTargetColor ? 'block' : 'none'),
                         }}
                         >
 
-                    {showTargetHsvaPicker && (
+                    {showTargetColorPicker && (
                             <>
                                 <div className='target-color-box'
                                 style={{
-                                    background: hsvaToRgbaString(targetHsva),
-                                    color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black',
+                                    background: hsvaToRgbaString(targetColor),
+                                    color: tinycolor(hsvaToRgba(targetColor)).isDark() ? 'white' : 'black',
                                 }}
                                 >
                                 <button
                                     className='close-button'
-                                    onClick={() => setShowTargetHsvaPicker(false)}
+                                    onClick={() => setShowTargetColorPicker(false)}
                                     style={{
-                                        color: tinycolor(hsvaToRgba(targetHsva)).isDark() ? 'white' : 'black',
+                                        color: tinycolor(hsvaToRgba(targetColor)).isDark() ? 'white' : 'black',
                                         transition: 'color 0.1s ease-in-out'
                                     }}
                                 >
@@ -341,22 +348,22 @@ const Mixer: React.FC = () => {
                                 </button>
 
                                     <Wheel
-                                        color={targetHsva}
-                                        onChange={(color) => setTargetHsva({...targetHsva, ...color.hsva})}
+                                        color={targetColor}
+                                        onChange={(color) => setTargetColor({...targetColor, ...color.hsva})}
                                     />
                                     <div className='shade-slider'>
                                         <ShadeSlider
-                                            hsva={targetHsva}
+                                            hsva={targetColor}
                                             onChange={(newShade) => {
-                                                setTargetHsva({...targetHsva, ...newShade});
+                                                setTargetColor({...targetColor, ...newShade});
                                             }}
                                         />
                                     </div>
                                     <EditableInputRGBA
-                                        hsva={targetHsva}
+                                        hsva={targetColor}
                                         placement="top"
                                         onChange={(color) => {
-                                            setTargetHsva({...targetHsva, ...color.hsva});
+                                            setTargetColor({...targetColor, ...color.hsva});
                                         }}
                                     />
                                 </div>
@@ -364,7 +371,7 @@ const Mixer: React.FC = () => {
                             )}
                             <div className='target-color-values'>
                                 <label>Target Color</label>
-                                {tinycolor(targetHsva).toHexString()}
+                                {tinycolor(targetColor).toHexString()}
                                 <div>{targetColorName}</div>
                             </div>
                         </section>
@@ -412,12 +419,12 @@ const Mixer: React.FC = () => {
                             className="toggle-target-color"
                             onClick={toggleUseTargetColor}
                             style={{
-                                color: useTargetHsva?
-                                    tinycolor(hsvaToRgba(targetHsva)).isDark()? 'white' : 'black' :
+                                color: useTargetColor?
+                                    tinycolor(hsvaToRgba(targetColor)).isDark()? 'white' : 'black' :
                                     tinycolor(mixedColor).isDark()? 'white' : 'black'
                             }}
                         >
-                            {(useTargetHsva ? <TbTargetArrow /> : <TbTargetOff />)}
+                            {(useTargetColor ? <TbTargetArrow /> : <TbTargetOff />)}
                             <label className='button-target-color'>Target</label>
                         </button>
                     </div>
@@ -430,38 +437,38 @@ const Mixer: React.FC = () => {
                     <div className="add-color-ui">
                         <button
                             style={{
-                                visibility: (showNewHsvaPicker) ? 'hidden' : 'visible',
-                                display: (showNewHsvaPicker) ? 'none' : 'block',
-                                cursor: (showNewHsvaPicker) ? 'default' : 'pointer'
+                                visibility: (showAddColorPicker) ? 'hidden' : 'visible',
+                                display: (showAddColorPicker) ? 'none' : 'block',
+                                cursor: (showAddColorPicker) ? 'default' : 'pointer'
                             }}
-                            onClick={() => setShowNewHsvaPicker(!showNewHsvaPicker)}
+                            onClick={() => setShowAddColorPicker(!showAddColorPicker)}
                         >
                             <MdAddCircleOutline/>
                         </button>
 
-                        {showNewHsvaPicker && (
+                        {showAddColorPicker && (
                             <>
                                 <div
                                     className='popover-box'
-                                    style={{background: hsvaToRgbaString(newHsva)}}
+                                    style={{background: hsvaToRgbaString(addColor)}}
                                 >
                                         <Wheel
-                                            color={newHsva}
-                                            onChange={(color) => setNewHsva({...newHsva, ...color.hsva})}
+                                            color={addColor}
+                                            onChange={(color) => setAddColor({...addColor, ...color.hsva})}
                                         />
                                         <div className='shade-slider'>
                                             <ShadeSlider
-                                                hsva={newHsva}
+                                                hsva={addColor}
                                                 onChange={(newShade) => {
-                                                    setNewHsva({...newHsva, ...newShade});
+                                                    setAddColor({...addColor, ...newShade});
                                                 }}
                                             />
                                         </div>
                                         <EditableInputRGBA
-                                            hsva={newHsva}
+                                            hsva={addColor}
                                             placement="top"
                                             onChange={(color) => {
-                                                setNewHsva({...newHsva, ...color.hsva});
+                                                setAddColor({...addColor, ...color.hsva});
                                             }}
                                         />
                                     <button onClick={confirmColor}>
