@@ -192,11 +192,18 @@ const Mixer: React.FC = () => {
                                     }}
                                     onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}
                                     >
-                                        <h3>Recipe:</h3>
+                                        
                                         {swatch.recipe.map((ingredient, index) => (
                                             <div key={index}>
-                                                <span style={{backgroundColor: ingredient.rgbString}}></span>
-                                                {ingredient.partsInMix} {ingredient.label}
+                                                <div style={{
+                                                    backgroundColor: ingredient.rgbString,
+                                                    color: tinycolor(ingredient.rgbString).isDark() ? 'white' : 'black',
+                                                    width: '100%',
+                                                    padding: '0.5rem',
+                                                    boxSizing: 'border-box'
+                                                }}>
+                                                    {ingredient.partsInMix} {ingredient.label}
+                                                    </div>
                                             </div>
                                         ))}
                                     </div>

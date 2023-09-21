@@ -312,11 +312,12 @@
     }
 
     .recipe-info {
+        box-sizing: border-box;
         position: absolute;
-        width: 9rem;
+        width: 10rem;
         font-size: 0.75rem;
         background-color: #FFFFFF33;
-        padding: 0 0 0.5rem 0.5rem;
+        padding: 0 0.5rem 0.5rem;
         top: 1.3rem;
         user-select: none;
         cursor: pointer;
