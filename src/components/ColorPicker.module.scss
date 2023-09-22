@@ -1,0 +1,47 @@
+
+.ColorPicker {
+    align-items: center;
+    border: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    float: right;
+    justify-content: center;
+    margin: 0.4rem 0.5rem;
+    padding: 0;
+    max-width: 200px;
+    position: relative;
+
+    .closeButton {
+        position:absolute;
+        right: 1px;
+        top: 2px;
+        background-color: transparent;
+        border: none;
+        color: black;
+        margin: 0;
+        padding: 0;
+        z-index: 3;
+    }
+
+    .shadeSlider {
+        margin: 1rem 0;
+        width: 180px;
+    }
+
+    .color-preview {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        margin: 1rem 0;
+        padding: 0.5rem 0.25rem;
+        width: 100px;
+    }
+
+    button {
+        border-radius: 10%;
+        font-size: 1rem;
+        margin: 0.5rem;
+        padding: 0.5rem 1rem;
+    }
+}
