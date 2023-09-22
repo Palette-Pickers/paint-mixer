@@ -1,4 +1,4 @@
-import Mixer from './Mixer';
+import Mixer from './components/Mixer';
 
 const App = () => <Mixer />;
 
