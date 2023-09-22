@@ -7,9 +7,9 @@
     flex-direction: column;
     float: right;
     justify-content: center;
-    margin: 0;
+    margin: 0.4rem 0.5rem;
+    padding: 0;
     max-width: 200px;
-    padding: 0.5rem 1rem;
     position: relative;
 
     .closeButton {
@@ -20,7 +20,7 @@
         border: none;
         color: black;
         margin: 0;
-        padding: 0 3px;
+        padding: 0;
         z-index: 3;
     }
 
@@ -28,8 +28,6 @@
         margin: 1rem 0;
         width: 180px;
     }
-
-    
 
     .color-preview {
         align-items: center;
