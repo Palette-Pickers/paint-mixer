@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import mixbox from 'mixbox';
 import './Mixer.scss';
-import Wheel from "@uiw/react-color-wheel";
-import ShadeSlider from '@uiw/react-color-shade-slider'
-import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';;
+import ColorPicker from './ColorPicker';
 import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
 import tinycolor from "tinycolor2";
-import {defaultPalette} from './utils/palettes/defaultPalette';
-import {fetchColorName} from './data/hooks/fetchColorName';
+import {defaultPalette} from '../utils/palettes/defaultPalette';
+import {fetchColorName} from '../data/hooks/fetchColorName';
 import {
     normalizeRgbString,
     rgbToXyz,
     xyzToLab,
     deltaE94
-} from './utils/colorConversion';
+} from '../utils/colorConversion';
 
 import {TbTargetArrow, TbTargetOff, TbTarget} from 'react-icons/tb';
 import {VscDebugRestart} from 'react-icons/vsc';
@@ -179,9 +177,9 @@ const Mixer: React.FC = () => {
                                     onClick={() => handleSwatchIncrementClick(i)}
                                     style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}>
                                     {swatch.partsInMix}
-                                    <p className="parts-percentage">
+                                    <div className="parts-percentage">
                                         {(swatch.partsInMix > 0.000001) ? (swatch.partsInMix / totalParts * 100).toFixed(0)+'%' : ''}
-                                    </p>
+                                    </div>
                                 </div>
 
                                 {i === activeInfoIndex && swatch.recipe && (
@@ -192,7 +190,7 @@ const Mixer: React.FC = () => {
                                     }}
                                     onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}
                                     >
-                                        
+
                                         {swatch.recipe.map((ingredient, index) => (
                                             <div key={index}>
                                                 <div style={{
@@ -313,12 +311,12 @@ const Mixer: React.FC = () => {
                             <div>{mixedColorName}</div>
 
                         {useTargetColor && (
-                                <p className='match-pct'
+                                <div className='match-pct'
                                     style={{ color: tinycolor(mixedColor).isDark() ? 'white' : 'black'}}
                                 >
                                     <label>Target Match</label>
                                     <div>{matchPercentage}%</div>
-                            </p>
+                            </div>
                         )}
                     </div>
 
@@ -335,47 +333,17 @@ const Mixer: React.FC = () => {
                         }}
                         >
 
-                    {showTargetColorPicker && (
-                            <>
-                                <div className='target-color-box'
-                                style={{
-                                    background: hsvaToRgbaString(targetColor),
-                                    color: tinycolor(hsvaToRgba(targetColor)).isDark() ? 'white' : 'black',
+                        {showTargetColorPicker && (
+                                <ColorPicker
+                                color={targetColor}
+                                onChange={(newColor) => {
+                                    setTargetColor(newColor);
                                 }}
-                                >
-                                <button
-                                    className='close-button'
-                                    onClick={() => setShowTargetColorPicker(false)}
-                                    style={{
-                                        color: tinycolor(hsvaToRgba(targetColor)).isDark() ? 'white' : 'black',
-                                        transition: 'color 0.1s ease-in-out'
-                                    }}
-                                >
-                                    <AiOutlineClose/>
-                                </button>
+                                onClose={() => setShowTargetColorPicker(false)}
+                                onConfirm={() => { setShowTargetColorPicker(false) }}
+                            />
+                        )}
 
-                                    <Wheel
-                                        color={targetColor}
-                                        onChange={(color) => setTargetColor({...targetColor, ...color.hsva})}
-                                    />
-                                    <div className='shade-slider'>
-                                        <ShadeSlider
-                                            hsva={targetColor}
-                                            onChange={(newShade) => {
-                                                setTargetColor({...targetColor, ...newShade});
-                                            }}
-                                        />
-                                    </div>
-                                    <EditableInputRGBA
-                                        hsva={targetColor}
-                                        placement="top"
-                                        onChange={(color) => {
-                                            setTargetColor({...targetColor, ...color.hsva});
-                                        }}
-                                    />
-                                </div>
-                        </>
-                            )}
                             <div className='target-color-values'>
                                 <label>Target Color</label>
                                 {tinycolor(targetColor).toHexString()}
@@ -454,36 +422,16 @@ const Mixer: React.FC = () => {
                         </button>
 
                         {showAddColorPicker && (
-                            <>
-                                <div
-                                    className='popover-box'
-                                    style={{background: hsvaToRgbaString(addColor)}}
-                                >
-                                        <Wheel
-                                            color={addColor}
-                                            onChange={(color) => setAddColor({...addColor, ...color.hsva})}
-                                        />
-                                        <div className='shade-slider'>
-                                            <ShadeSlider
-                                                hsva={addColor}
-                                                onChange={(newShade) => {
-                                                    setAddColor({...addColor, ...newShade});
-                                                }}
-                                            />
-                                        </div>
-                                        <EditableInputRGBA
-                                            hsva={addColor}
-                                            placement="top"
-                                            onChange={(color) => {
-                                                setAddColor({...addColor, ...color.hsva});
-                                            }}
-                                        />
-                                    <button onClick={confirmColor}>
-                                        Add
-                                    </button>
-                                </div>
-                            </>
+                            <ColorPicker
+                                color={addColor}
+                                onChange={(newColor) => {
+                                    setAddColor(newColor);
+                                }}
+                                onClose={() => setShowAddColorPicker(false)}
+                                onConfirm={confirmColor}
+                            />
                         )}
+
                     </div>
                 </section>
             </main>
