@@ -53,8 +53,8 @@ const Mixer: React.FC = () => {
     const savedPalette = localStorage.getItem('savedPalette');
     const initialPalette = savedPalette ? JSON.parse(savedPalette) : defaultPalette;
     const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
-    const [debouncedMixedColor] = useDebounce(mixedColor, 500);
-    const [debouncedTargetColor] = useDebounce(targetColor, 500);
+    const [debouncedMixedColor] = useDebounce(mixedColor, 250);
+    const [debouncedTargetColor] = useDebounce(targetColor, 250);
 
 
     const handleSwatchIncrementClick = (index: number) => {
@@ -277,8 +277,8 @@ const Mixer: React.FC = () => {
     }, [mixedColor, palette]);
 
     useEffect(() => {
+        setMixedColorName(''); // Set to empty string immediately
         const fetchAndSetMixedColorName = async () => {
-            setMixedColorName(''); // Set to empty string immediately
             const hexColor = tinycolor(debouncedMixedColor).toHexString();
             const fetchedColorName = await fetchColorName(hexColor.substring(1));
             setMixedColorName(fetchedColorName);
@@ -288,8 +288,8 @@ const Mixer: React.FC = () => {
     }, [debouncedMixedColor]);
 
     useEffect(() => {
+        setTargetColorName(''); // Set to empty string immediately
         const fetchAndSetTargetColorName = async () => {
-            setTargetColorName(''); // Set to empty string immediately
             const hexColor = tinycolor(hsvaToRgbaString(debouncedTargetColor)).toHexString();
             const fetchedColorName = await fetchColorName(hexColor.substring(1));
             setTargetColorName(fetchedColorName);
