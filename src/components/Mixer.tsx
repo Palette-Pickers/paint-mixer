@@ -41,6 +41,7 @@ const Mixer: React.FC = () => {
     const [mixedColorName, setMixedColorName] = useState<string>('');
     const [showAddColorPicker, setShowAddColorPicker] = useState(false);
     const [addColor, setAddColor] = useState({h: 214, s: 43, v: 90, a: 1});
+    const [addColorName, setAddColorName] = useState<string>('');
     const [editingColorNameIndex, setEditingColorNameIndex] = useState<number | null>(null);
     const [tempColorName, setTempColorName] = useState<string>('');
     const [targetColor, setTargetColor] = useState({h: 214, s: 43, v: 90, a: 1});
@@ -55,6 +56,7 @@ const Mixer: React.FC = () => {
     const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
     const [debouncedMixedColor] = useDebounce(mixedColor, 250);
     const [debouncedTargetColor] = useDebounce(targetColor, 250);
+    const [debouncedAddColor] = useDebounce(addColor, 250);
 
 
     const handleSwatchIncrementClick = (index: number) => {
@@ -301,6 +303,17 @@ const Mixer: React.FC = () => {
         fetchAndSetTargetColorName();
     }, [debouncedTargetColor]);
 
+    useEffect(() => {
+    const fetchAndSetAddColorName = async () => {
+        const hexColor = tinycolor(debouncedAddColor).toHexString();
+        const colorName = await fetchColorName(hexColor.substring(1)); // Remove the '#'
+        setAddColorName(colorName);
+    };
+
+    fetchAndSetAddColorName();
+}, [debouncedAddColor]);
+
+
 
 
     return (
@@ -431,14 +444,20 @@ const Mixer: React.FC = () => {
                         </button>
 
                         {showAddColorPicker && (
+                            <section style={{
+                                backgroundColor: tinycolor(addColor).toHexString(),
+                                display: 'flex',
+                                flexDirection: 'column',
+                                padding: '0 0.5rem',
+                            }}>
+
                             <ColorPicker
                                 color={addColor}
-                                onChange={(newColor) => {
-                                    setAddColor(newColor);
-                                }}
+                                onChange={(newColor) => { setAddColor(newColor); }}
                                 onClose={() => setShowAddColorPicker(false)}
                                 onConfirm={confirmColor}
-                            />
+                                />
+                            </section>
                         )}
 
                     </div>
