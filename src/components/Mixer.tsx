@@ -152,7 +152,7 @@ const Mixer: React.FC = () => {
                                         autoFocus
                                     />
                                 ) : (
-                                        <div className='label'
+                                        <div className='name'
                                             onClick={() => {
                                                 setEditingColorNameIndex(i);
                                                 setTempColorName(swatch.label);

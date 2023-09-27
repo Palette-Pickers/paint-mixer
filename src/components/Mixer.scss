@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inclusive+Sans&family=PT+Serif&family=Roboto+Condensed:ital,wght@0,400;0,700;1,400&display=swap');
+
 .Mixer {
     box-sizing: border-box;
+    font-family: 'Inclusive Sans', sans-serif;
 
     .is-hidden {
         display: none;
@@ -147,12 +150,12 @@
             align-content: center;
             border-radius: 0 0 20% 20%;
             border: 1px solid black;
-            min-height: 5.5rem;
+            min-height: 6rem;
             height: auto;
             justify-content: center;
             margin: 5px 5px 5px 0;
             position: relative;
-            width: 10rem;
+            width: 9rem;
 
             .recipe-info-button {
                 position: absolute;
@@ -176,11 +179,13 @@
             }
 
             .partsInMix {
+                font-family: 'PT Serif', sans-serif;
                 cursor: pointer;
                 display: flex;
                 font-size: 2rem;
                 justify-content: center;
                 padding: 0;
+                margin: 0;
                 position: relative;
                 top: 1.5rem;
                 user-select: none;
@@ -191,11 +196,12 @@
                 .parts-percentage {
                     font-size: 1rem;
                     padding: 0 0 0.75rem;
-                    margin: 0.25rem 0 1rem 0
+                    margin: 0;
                 }
             }
-            
-            .label {
+
+            .name {
+                font-family: 'Roboto Condensed', sans-serif;
                 display: block;
                 font-size: 0.8rem;
                 margin: 0.2rem 1rem 0.5rem 0.4rem;
@@ -233,7 +239,7 @@
     .recipe-info {
         box-sizing: border-box;
         position: absolute;
-        width: 10rem;
+        width: 9rem;
         font-size: 0.75rem;
         background-color: #FFFFFF33;
         padding: 0 0.5rem 0.5rem;
