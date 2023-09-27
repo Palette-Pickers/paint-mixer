@@ -6,7 +6,7 @@ import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
 import tinycolor from "tinycolor2";
 import {defaultPalette} from '../utils/palettes/defaultPalette';
 import {fetchColorName} from '../data/hooks/fetchColorName';
-import { throttle } from 'lodash';
+import { useDebounce } from 'use-debounce';
 import {
     normalizeRgbString,
     rgbToXyz,
@@ -53,7 +53,9 @@ const Mixer: React.FC = () => {
     const savedPalette = localStorage.getItem('savedPalette');
     const initialPalette = savedPalette ? JSON.parse(savedPalette) : defaultPalette;
     const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
-    const throttledFetchColorName = throttle(fetchColorName, 500);
+    const [debouncedMixedColor] = useDebounce(mixedColor, 500);
+    const [debouncedTargetColor] = useDebounce(targetColor, 500);
+
 
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
@@ -277,24 +279,25 @@ const Mixer: React.FC = () => {
     useEffect(() => {
         const fetchAndSetMixedColorName = async () => {
             setMixedColorName(''); // Set to empty string immediately
-            const hexColor = tinycolor(mixedColor).toHexString();
-            const fetchedColorName = await throttledFetchColorName(hexColor.substring(1));
+            const hexColor = tinycolor(debouncedMixedColor).toHexString();
+            const fetchedColorName = await fetchColorName(hexColor.substring(1));
             setMixedColorName(fetchedColorName);
         };
 
         fetchAndSetMixedColorName();
-    }, [mixedColor]);
+    }, [debouncedMixedColor]);
 
     useEffect(() => {
         const fetchAndSetTargetColorName = async () => {
             setTargetColorName(''); // Set to empty string immediately
-            const hexColor = tinycolor(hsvaToRgbaString(targetColor)).toHexString();
-            const fetchedColorName = await throttledFetchColorName(hexColor.substring(1));
+            const hexColor = tinycolor(hsvaToRgbaString(debouncedTargetColor)).toHexString();
+            const fetchedColorName = await fetchColorName(hexColor.substring(1));
             setTargetColorName(fetchedColorName);
         };
 
         fetchAndSetTargetColorName();
-    }, [targetColor]);
+    }, [debouncedTargetColor]);
+
 
 
     return (
