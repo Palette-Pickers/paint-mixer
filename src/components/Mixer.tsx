@@ -84,7 +84,7 @@ const Mixer: React.FC = () => {
     const confirmColor = () => {
         if(addColor) {
             const selectedRgbString = tinycolor(addColor).toRgbString();
-            addToPalette(selectedRgbString, palette);
+            addToPalette(selectedRgbString, palette, false);  // Set includeRecipe to false
             setShowAddColorPicker(false);
         }
     }
@@ -230,24 +230,27 @@ const Mixer: React.FC = () => {
         return palette.some(swatch => tinycolor(swatch.rgbString).toHexString() === normalizedColor);
     }
 
-    const addToPalette = async (rgbString: string, palette: ColorPart[]) => {
+    const addToPalette = async (rgbString: string, palette: ColorPart[], includeRecipe: boolean) => {
         if (!isColorInPalette(rgbString, palette)) { // Only add if the color is not in the palette
 
             let updatedPalette = [...palette];
             const hexColor = tinycolor(rgbString).toHexString();
             const colorName = await fetchColorName(hexColor.substring(1)); // Remove the '#'
-            const recipe = palette.filter(color => color.partsInMix > 0);
-            updatedPalette.push({
+            const newColor: ColorPart = {
                 "rgbString": rgbString,
                 "label": colorName,
                 "partsInMix": 0,
-                "recipe": recipe //records colors used in a mix so it can be reconstructed
-            });
+            };
+            if (includeRecipe) {
+                newColor.recipe = palette.filter(color => color.partsInMix > 0);
+            }
+            updatedPalette.push(newColor);
             setPalette(updatedPalette);
         } else {
             console.error("Selected color already in palette", rgbString);
         }
     };
+
 
     const getRgbColorMatch = (color1: string, color2: string): number => {
         const color1Lab = xyzToLab(rgbToXyz(tinycolor(color1).toRgb()));
@@ -378,7 +381,7 @@ const Mixer: React.FC = () => {
                         <div className='color-box-label'>
                             <button
                                 className="add-to-palette"
-                                onClick={() => addToPalette(mixedColor, palette)}
+                                onClick={() => addToPalette(mixedColor, palette, true)}  // Set includeRecipe to true
                                 disabled={!canSave} // Disable the button based on canSave state
                                 style={{
                                     color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
