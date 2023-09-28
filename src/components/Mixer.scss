@@ -4,6 +4,10 @@
     box-sizing: border-box;
     font-family: 'Inclusive Sans', sans-serif;
 
+    p {
+        margin: 0;
+    }
+
     .is-hidden {
         display: none;
     }
