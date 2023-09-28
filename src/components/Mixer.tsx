@@ -54,9 +54,9 @@ const Mixer: React.FC = () => {
     const savedPalette = localStorage.getItem('savedPalette');
     const initialPalette = savedPalette ? JSON.parse(savedPalette) : defaultPalette;
     const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
-    const [debouncedMixedColor] = useDebounce(mixedColor, 250);
-    const [debouncedTargetColor] = useDebounce(targetColor, 250);
-    const [debouncedAddColor] = useDebounce(addColor, 250);
+    const [debouncedMixedColorName] = useDebounce(mixedColor, 250);
+    const [debouncedTargetColorName] = useDebounce(targetColor, 250);
+    const [debouncedAddColorName] = useDebounce(addColor, 250);
 
 
     const handleSwatchIncrementClick = (index: number) => {
@@ -284,34 +284,34 @@ const Mixer: React.FC = () => {
     useEffect(() => {
         setMixedColorName(''); // Set to empty string immediately
         const fetchAndSetMixedColorName = async () => {
-            const hexColor = tinycolor(debouncedMixedColor).toHexString();
+            const hexColor = tinycolor(debouncedMixedColorName).toHexString();
             const fetchedColorName = await fetchColorName(hexColor.substring(1));
             setMixedColorName(fetchedColorName);
         };
 
         fetchAndSetMixedColorName();
-    }, [debouncedMixedColor]);
+    }, [debouncedMixedColorName]);
 
     useEffect(() => {
         setTargetColorName(''); // Set to empty string immediately
         const fetchAndSetTargetColorName = async () => {
-            const hexColor = tinycolor(hsvaToRgbaString(debouncedTargetColor)).toHexString();
-            const fetchedColorName = await fetchColorName(hexColor.substring(1));
+            const hexColor = tinycolor(hsvaToRgbaString(debouncedTargetColorName)).toHexString();
+            const fetchedColorName = await fetchColorName(hexColor.substring(1)); // Remove the '#'
             setTargetColorName(fetchedColorName);
         };
 
         fetchAndSetTargetColorName();
-    }, [debouncedTargetColor]);
+    }, [debouncedTargetColorName]);
 
     useEffect(() => {
     const fetchAndSetAddColorName = async () => {
-        const hexColor = tinycolor(debouncedAddColor).toHexString();
+        const hexColor = tinycolor(debouncedAddColorName).toHexString();
         const colorName = await fetchColorName(hexColor.substring(1)); // Remove the '#'
         setAddColorName(colorName);
     };
 
     fetchAndSetAddColorName();
-}, [debouncedAddColor]);
+}, [debouncedAddColorName]);
 
 
 
@@ -328,9 +328,9 @@ const Mixer: React.FC = () => {
                     >
                         <div
                             className='mixed-color-values'>
-                            <label>Mixed Color</label>
+                            <label htmlFor="mixed-color">Mixed Color</label>
                             {tinycolor(mixedColor).toHexString()}
-                            <div>{mixedColorName}</div>
+                            <div id="mixed-color">{mixedColorName}</div>
 
                         {useTargetColor && (
                                 <div className='match-pct'
@@ -367,9 +367,11 @@ const Mixer: React.FC = () => {
                         )}
 
                             <div className='target-color-values'>
-                                <label>Target Color</label>
-                                {tinycolor(targetColor).toHexString()}
-                                <div>{targetColorName}</div>
+                                <label htmlFor="target-color">Target Color</label>
+                                <div id="target-color">
+                                    {tinycolor(targetColor).toHexString()}
+                                    <p>{targetColorName}</p>
+                                </div>
                             </div>
                         </section>
                         )}
