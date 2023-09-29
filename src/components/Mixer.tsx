@@ -384,7 +384,7 @@ const Mixer: React.FC = () => {
                                     id='reset-mix'
                                     style={{
                                         color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
-                                        opacity: hasPartsInMix() ? 1 : 0 // Chan,ge the opacity to indicate it's disabled
+                                        opacity: hasPartsInMix() ? 0.5 : 0 // Chan,ge the opacity to indicate it's disabled
                                     }}
                                 >
                                     <VscDebugRestart />

@@ -18,10 +18,14 @@
         top: 2px;
         background-color: transparent;
         border: none;
-        color: black;
         margin: 0;
         padding: 0;
         z-index: 3;
+        opacity: 0.5;
+
+        &:hover {
+            opacity: 1;
+        }
     }
 
     .shadeSlider {
@@ -43,5 +47,10 @@
         font-size: 1rem;
         margin: 0.5rem;
         padding: 0.5rem 1rem;
+        opacity: 0.75;
+
+        &:hover, &:focus, &:active {
+            opacity: 1;
+        }
     }
 }

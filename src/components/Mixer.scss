@@ -16,6 +16,11 @@
         display: block;
     }
 
+    label{
+        font-family: 'Roboto Condensed', sans-serif;
+        font-weight: 700;
+    }
+
     .color-box {
         border: 2px solid black;
         height: 50vh;
@@ -37,10 +42,6 @@
                 margin: 1rem 0 0 1rem;
                 display: flex;
                 flex-direction: column;
-
-                label{
-                    font-weight: bold;
-                }
             }
         }
 
@@ -63,9 +64,7 @@
                 position: relative;
 
 
-                label{
-                    font-weight: bold;
-                }
+
             }
             .target-color-box {
                 position: absolute;
@@ -103,6 +102,11 @@
                 background-color: transparent;
                 border: 0;
                 text-transform: uppercase;
+                opacity: 0.5;
+
+                &:hover, &:active {
+                    opacity: 1;
+                }
 
                 svg {
                     height: 1.6rem;
@@ -147,6 +151,11 @@
                 height: 8.6rem;
                 position: absolute;
                 width: 5rem;
+                opacity: 0.5;
+
+                &:hover, &:active {
+                    opacity: 1;
+                }
             }
         }
 
@@ -180,6 +189,11 @@
                 right: 0;
                 top: 1px;
                 user-select: none;
+                opacity: 0.5;
+
+                &:hover, &:active {
+                    opacity: 1;
+                }
             }
 
             .partsInMix {
