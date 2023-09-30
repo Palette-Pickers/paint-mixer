@@ -5,11 +5,10 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    float: right;
     justify-content: center;
-    margin: 0.4rem 0.5rem;
     padding: 0;
-    max-width: 200px;
+    width: 100%;
+    height: 90%;
     position: relative;
 
     .closeButton {
@@ -18,10 +17,14 @@
         top: 2px;
         background-color: transparent;
         border: none;
-        color: black;
         margin: 0;
         padding: 0;
         z-index: 3;
+        opacity: 0.5;
+
+        &:hover {
+            opacity: 1;
+        }
     }
 
     .shadeSlider {
@@ -43,5 +46,14 @@
         font-size: 1rem;
         margin: 0.5rem;
         padding: 0.5rem 1rem;
+        opacity: 0.75;
+
+        &:hover, &:focus, &:active {
+            opacity: 1;
+        }
+    }
+
+    .w-color-editable-input span {
+        padding: 1rem
     }
 }

@@ -328,19 +328,30 @@ const Mixer: React.FC = () => {
                     >
                         <div
                             className='mixed-color-values'>
-                            <label htmlFor="mixed-color">Mixed Color</label>
-                            {tinycolor(mixedColor).toHexString()}
-                            <div id="mixed-color">{mixedColorName}</div>
+                            <div>
+                                <label htmlFor="mixed-color">
+                                    Mixed Color
+                                </label>
+                                <div id="mixed-color">
+                                    <p>
+                                        {tinycolor(mixedColor).toHexString()}
+                                    </p>
+                                    <p>
+                                        {mixedColorName}
+                                    </p>
+                                </div>
+                        </div>
 
-                        {useTargetColor && (
+                            {useTargetColor && (
                                 <div className='match-pct'
-                                    style={{ color: tinycolor(mixedColor).isDark() ? 'white' : 'black'}}
+                                    style={{color: tinycolor(mixedColor).isDark() ? 'white' : 'black'}}
                                 >
                                     <label>Target Match</label>
                                     <div>{matchPercentage}%</div>
-                            </div>
-                        )}
-                    </div>
+                                </div>
+                            )}
+                        </div>
+
 
 
 
@@ -365,7 +376,7 @@ const Mixer: React.FC = () => {
                                 onConfirm={() => { setShowTargetColorPicker(false) }}
                             />
                         )}
-
+                        {!showTargetColorPicker && (
                             <div className='target-color-values'>
                                 <label htmlFor="target-color">Target Color</label>
                                 <div id="target-color">
@@ -373,6 +384,7 @@ const Mixer: React.FC = () => {
                                     <p>{targetColorName}</p>
                                 </div>
                             </div>
+                        )}
                         </section>
                         )}
                     <div className='color-box-ui'>
@@ -384,7 +396,7 @@ const Mixer: React.FC = () => {
                                     id='reset-mix'
                                     style={{
                                         color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
-                                        opacity: hasPartsInMix() ? 1 : 0 // Chan,ge the opacity to indicate it's disabled
+                                        opacity: hasPartsInMix() ? 0.5 : 0 // Change the opacity to indicate it's disabled
                                     }}
                                 >
                                     <VscDebugRestart />
@@ -400,12 +412,12 @@ const Mixer: React.FC = () => {
                                 disabled={!canSave} // Disable the button based on canSave state
                                 style={{
                                     color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
-                                    opacity: canSave ? 1 : 0.5 // Optionally, you can change the opacity to indicate it's disabled
+                                    opacity: canSave ? 1 : 0.5 // Change the opacity to indicate it's disabled
                                 }}
                             >
                                 <FaArrowDown style={{
                                     color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
-                                    opacity: canSave ? 1 : 0 // Change the opacity to indicate it's disabled
+                                    opacity: canSave ? 1 : 0 // Hide the icon when disabled
                                 }}
                                 />
                                 <label className='button-save'>
