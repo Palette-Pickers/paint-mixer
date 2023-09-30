@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inclusive+Sans&family=PT+Serif&family=Roboto+Condensed:ital,wght@0,400;0,700;1,400&display=swap');
 
 .Mixer {
-    box-sizing: border-box;
+    * {
+        box-sizing: border-box;
+    }
     font-family: 'Inclusive Sans', sans-serif;
 
     p {
@@ -39,9 +41,16 @@
             transition: background-color 0.15s ease-in-out;
 
             .mixed-color-values {
-                margin: 1rem 0 0 1rem;
+                padding: 3rem 2rem;
                 display: flex;
-                flex-direction: column;
+                flex-direction: row;
+                width: 60%;
+                height: 100%;
+                justify-content: space-between;
+
+                #mixed-color {
+                    flex-direction: column;
+                }
             }
         }
 
@@ -58,14 +67,13 @@
             z-index: 0;
 
             .target-color-values {
-                margin: 1rem 0 0 1rem;;
+                padding: 3rem 2rem;
                 display: flex;
                 flex-direction: column;
                 position: relative;
-
-
-
+                align-items: flex-end;
             }
+
             .target-color-box {
                 position: absolute;
                 z-index: 2;
@@ -284,6 +292,7 @@
         input {
             background-color: rgb(61, 61, 61) !important;
             color: rgb(255, 255, 255) !important;
+            margin: 0 0 0 0.25rem
         }
     }
 }
