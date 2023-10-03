@@ -1,4 +1,3 @@
-
 .ColorPicker {
     align-items: center;
     border: 0;
@@ -12,7 +11,7 @@
     position: relative;
 
     .closeButton {
-        position:absolute;
+        position: absolute;
         right: 1px;
         top: 2px;
         background-color: transparent;
@@ -48,7 +47,9 @@
         padding: 0.5rem 1rem;
         opacity: 0.75;
 
-        &:hover, &:focus, &:active {
+        &:hover,
+        &:focus,
+        &:active {
             opacity: 1;
         }
     }

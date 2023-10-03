@@ -47,6 +47,7 @@
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",
+    "react-transition-group": "^4.4.5",
     "tinycolor2": "^1.6.0",
     "use-debounce": "^9.0.4"
   }
