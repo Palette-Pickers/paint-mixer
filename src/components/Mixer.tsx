@@ -2,17 +2,12 @@ import React, { useState, useEffect } from 'react';
 import mixbox from 'mixbox';
 import './Mixer.scss';
 import ColorPicker from './ColorPicker';
-import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
-import tinycolor from "tinycolor2";
 import { defaultPalette } from '../utils/palettes/defaultPalette';
 import { fetchColorName } from '../data/hooks/fetchColorName';
 import { useDebounce } from 'use-debounce';
-import {
-    normalizeRgbString,
-    rgbToXyz,
-    xyzToLab,
-    deltaE94
-} from '../utils/colorConversion';
+import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
+import tinycolor from "tinycolor2";
+import { normalizeRgbString, rgbToXyz, xyzToLab, deltaE94 } from '../utils/colorConversion';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { TbTargetArrow, TbTargetOff, TbTarget } from 'react-icons/tb';
 import { VscDebugRestart } from 'react-icons/vsc';
@@ -124,104 +119,106 @@ const Mixer: React.FC = () => {
     };
 
     const makeColorSwatches = () => {
-        if (palette.length) {
-            return palette.map((swatch, i) => {
-                return (
-                    <div className="swatch-container">
-                        <div
-                            key={i}
-                            className="swatch"
-                            style={{ backgroundColor: `${swatch.rgbString}` }}
-                        >
-                            <div className="swatch-ui">
-                                <a
-                                    className="remove-from-palette"
-                                    onClick={() => handleRemoveFromPaletteClick(i)}
-                                    style={{ color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' }}
-                                >
-                                    <AiOutlineClose />
-                                </a>
-                                {editingColorNameIndex === i ? (
-                                    <input
-                                        value={tempColorName}
-                                        onChange={(e) => setTempColorName(e.target.value)}
-                                        onBlur={() => {
-                                            const updatedPalette = [...palette];
-                                            updatedPalette[i].label = tempColorName;
-                                            setPalette(updatedPalette);
-                                            setEditingColorNameIndex(null);
-                                        }}
-                                        style={{
-                                            color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
-                                            backgroundColor: tinycolor(swatch.rgbString).isDark() ? 'black' : 'white'
-                                        }}
-                                        autoFocus
-                                    />
-                                ) : (
-                                    <div className='name'
-                                        onClick={() => {
-                                            setEditingColorNameIndex(i);
-                                            setTempColorName(swatch.label);
-                                        }}
+        return (
+            <TransitionGroup className="palette">
+                {palette.map((swatch, i) => (
+                    <CSSTransition
+                        key={i}
+                        timeout={500}
+                        classNames="fade"
+                    >
+                        <div className="swatch-container">
+                            <div
+                                className="swatch"
+                                style={{ backgroundColor: `${swatch.rgbString}` }}
+                            >
+                                <div className="swatch-ui">
+                                    <a
+                                        className="remove-from-palette"
+                                        onClick={() => handleRemoveFromPaletteClick(i)}
                                         style={{ color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' }}
                                     >
-
-                                        {swatch.label}
-                                    </div>
-                                )}
-                                {swatch.recipe && (
-                                    <div className="recipe-info-button">
-                                        <a
-                                            style={{
-                                                color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'
+                                        <AiOutlineClose />
+                                    </a>
+                                    {editingColorNameIndex === i ? (
+                                        <input
+                                            value={tempColorName}
+                                            onChange={(e) => setTempColorName(e.target.value)}
+                                            onBlur={() => {
+                                                const updatedPalette = [...palette];
+                                                updatedPalette[i].label = tempColorName;
+                                                setPalette(updatedPalette);
+                                                setEditingColorNameIndex(null);
                                             }}
-                                            onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
+                                            style={{
+                                                color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
+                                                backgroundColor: tinycolor(swatch.rgbString).isDark() ? 'black' : 'white'
+                                            }}
+                                            autoFocus
+                                        />
+                                    ) : (
+                                        <div className='name'
+                                            onClick={() => {
+                                                setEditingColorNameIndex(i);
+                                                setTempColorName(swatch.label);
+                                            }}
+                                            style={{ color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' }}
+                                        >
+                                            {swatch.label}
+                                        </div>
+                                    )}
+                                    {swatch.recipe && (
+                                        <div className="recipe-info-button">
+                                            <a
+                                                style={{
+                                                    color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'
+                                                }}
+                                                onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
+                                        </div>
+                                    )}
+                                    <div
+                                        className="partsInMix"
+                                        onClick={() => handleSwatchIncrementClick(i)}
+                                        style={{ color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' }}>
+                                        {swatch.partsInMix}
+                                        <div className="parts-percentage">
+                                            {(swatch.partsInMix > 0.000001) ? (swatch.partsInMix / totalParts * 100).toFixed(0) + '%' : ''}
+                                        </div>
                                     </div>
-                                )}
-                                <div
-                                    className="partsInMix"
-                                    onClick={() => handleSwatchIncrementClick(i)}
-                                    style={{ color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' }}>
-                                    {swatch.partsInMix}
-                                    <div className="parts-percentage">
-                                        {(swatch.partsInMix > 0.000001) ? (swatch.partsInMix / totalParts * 100).toFixed(0) + '%' : ''}
-                                    </div>
-                                </div>
 
-                                {i === activeInfoIndex && swatch.recipe && (
-                                    <div className="recipe-info"
-                                        style={{
-                                            color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
-                                            backgroundColor: swatch.rgbString
-                                        }}
-                                        onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}
-                                    >
-
-                                        {swatch.recipe.map((ingredient, index) => (
-                                            <div key={index}>
-                                                <div style={{
-                                                    backgroundColor: ingredient.rgbString,
-                                                    color: tinycolor(ingredient.rgbString).isDark() ? 'white' : 'black',
-                                                    width: '100%',
-                                                    padding: '0.5rem',
-                                                    boxSizing: 'border-box'
-                                                }}>
-                                                    {ingredient.partsInMix} {ingredient.label}
+                                    {i === activeInfoIndex && swatch.recipe && (
+                                        <div className="recipe-info"
+                                            style={{
+                                                color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
+                                                backgroundColor: swatch.rgbString
+                                            }}
+                                            onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}
+                                        >
+                                            {swatch.recipe.map((ingredient, index) => (
+                                                <div key={index}>
+                                                    <div style={{
+                                                        backgroundColor: ingredient.rgbString,
+                                                        color: tinycolor(ingredient.rgbString).isDark() ? 'white' : 'black',
+                                                        width: '100%',
+                                                        padding: '0.5rem',
+                                                        boxSizing: 'border-box'
+                                                    }}>
+                                                        {ingredient.partsInMix} {ingredient.label}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-
+                            <div className='change-parts-qty'>
+                                <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
+                            </div>
                         </div>
-                        <div className='change-parts-qty'>
-                            <button className="subtract-parts" onClick={() => handleSwatchDecrementClick(i)}>-</button>
-                        </div>
-                    </div>
-                );
-            });
-        }
+                    </CSSTransition>
+                ))}
+            </TransitionGroup>
+        );
     };
 
     let paletteSwatches = makeColorSwatches();
@@ -234,7 +231,6 @@ const Mixer: React.FC = () => {
 
     const addToPalette = async (rgbString: string, palette: ColorPart[], includeRecipe: boolean) => {
         if (!isColorInPalette(rgbString, palette)) { // Only add if the color is not in the palette
-
             let updatedPalette = [...palette];
             const hexColor = tinycolor(rgbString).toHexString();
             const colorName = await fetchColorName(hexColor.substring(1)); // Remove the '#'
@@ -252,7 +248,6 @@ const Mixer: React.FC = () => {
             console.error("Selected color already in palette", rgbString);
         }
     };
-
 
     const getRgbColorMatch = (color1: string, color2: string): number => {
         const color1Lab = xyzToLab(rgbToXyz(tinycolor(color1).toRgb()));
@@ -314,8 +309,6 @@ const Mixer: React.FC = () => {
     }, [debouncedAddColorName]);
 
 
-
-
     return (
         <>
             <main className='Mixer'>
@@ -351,11 +344,6 @@ const Mixer: React.FC = () => {
                                 </div>
                             )}
                         </div>
-
-
-
-
-
                     </section>
                     {useTargetColor && (
                         <section className='target-color-container'
@@ -443,7 +431,7 @@ const Mixer: React.FC = () => {
                 </div>
 
                 <section className='swatches'>
-                    {paletteSwatches}
+                    {makeColorSwatches()}
 
                     <div className="add-color-ui">
                         <button

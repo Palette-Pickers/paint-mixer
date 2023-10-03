@@ -12,6 +12,11 @@
         margin: 0;
     }
 
+    label {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-weight: 700;
+    }
+
     .is-hidden {
         display: none;
     }
@@ -20,9 +25,13 @@
         display: block;
     }
 
-    label {
-        font-family: 'Roboto Condensed', sans-serif;
-        font-weight: 700;
+    .fade-enter {
+        opacity: 0;
+    }
+
+    .fade-enter-active {
+        opacity: 1;
+        transition: opacity 500ms ease-in;
     }
 
     .color-box {
@@ -153,6 +162,10 @@
         display: flex;
         flex-wrap: wrap;
 
+        .palette {
+            display: flex;
+            flex-wrap: wrap;
+        }
 
         .add-color-ui {
             >button {
