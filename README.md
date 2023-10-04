@@ -17,11 +17,9 @@ A tool for natural media painters to help them build virtual palettes and experi
 
 You can try out Paint Mixer without installing anything by visiting [paint-mixer.netlify.app](https://paint-mixer.netlify.app).
 
-I apologize for the confusion. Here's the corrected version of the Installation section:
-
 ## Installation
 
-Before you can use Paint Mixer, ensure you have [Node.js](https://nodejs.org/) installed on your machine. Then follow these steps:
+Before you can install Paint Mixer, ensure you have [Node.js](https://nodejs.org/) installed on your machine. Then follow these steps:
 
 1. Clone the repository to your local machine using:
 
@@ -48,8 +46,6 @@ Before you can use Paint Mixer, ensure you have [Node.js](https://nodejs.org/) i
     ```
 
 Now, you should be able to access the Paint Mixer application at `http://localhost:3000` in your web browser.
-
-By indenting the code blocks, the numbering should now continue correctly.
 
 ## Usage
 
@@ -79,14 +75,14 @@ By indenting the code blocks, the numbering should now continue correctly.
 
 ## How It Works
 
-Paint Mixer utilizes a combination of libraries and custom utility functions to simulate color mixing. Here's a brief overview of how it works:
+Paint Mixer utilizes a combination of libraries and custom utility functions to simulate paint mixing. Here's a brief overview of how it works:
 
 1. **Color Selection and Conversion**:
    - Colors are selected using a color picker, which returns colors in HSVa format.
    - These colors are then converted to RGBa format using the `hsvaToRgba` and `hsvaToRgbaString` functions from the `@uiw/color-convert` library.
 
 2. **Color Mixing**:
-   - The mixing engine uses the `mixbox` library to simulate the mixing of colors.
+   - The mixing engine uses the `mixbox` library to simulate the way paint mixes in the real world. Paints get their color from pigments, and mixbox predicts their mixing behavior by using the Kubelka–Munk model, not a simple subtractive color model.
    - Each color in the mix is converted to a latent color space, mixed according to the specified parts, and then converted back to RGBa format.
 
 3. **Color Matching**:
