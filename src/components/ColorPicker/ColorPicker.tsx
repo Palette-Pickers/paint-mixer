@@ -49,7 +49,10 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, onClose, onC
                     label="Hex"
                     value={hsvaToHex(color)}
                     placement={'left'}
-                    style={{ width: '4.5rem', alignItems: 'space-between' }}
+                    style={{
+                        width: '4.5rem',
+                        alignItems: 'space-between'
+                    }}
                 />
             </div>
             <button
@@ -59,7 +62,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, onClose, onC
                     color: tinycolor(hsvaToRgba(color)).isDark() ? 'black' : 'white',
                     transition: 'all 0.2s ease-in-out'
                 }}
-            >OK</button>
+            >
+                OK
+            </button>
         </div>
     );
 };

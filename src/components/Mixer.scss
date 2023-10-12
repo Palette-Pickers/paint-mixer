@@ -37,6 +37,7 @@
     .color-box {
         border: 2px solid black;
         height: 50vh;
+        min-height: 395px;
         display: flex;
         align-items: end;
         justify-content: center;
@@ -248,7 +249,7 @@
                 font-family: 'Roboto Condensed', sans-serif;
                 display: block;
                 font-size: 0.8rem;
-                margin: 0.2rem 1rem 0.5rem 0.4rem;
+                margin: 0.2rem 1.6rem 0.5rem 0.4rem;
                 position: absolute;
                 top: 1px;
                 z-index: 2;
@@ -292,6 +293,13 @@
         top: 1.3rem;
         user-select: none;
         cursor: pointer;
+        z-index: 4;
+
+        .recipe-list {
+            width: 100%;
+            padding: 0.5rem;
+            box-sizing: border-box;
+        }
 
         h3 {
             font-size: 0.9rem;
@@ -311,11 +319,17 @@
 
     .w-color-editable-input {
         width: 2rem;
+        background-color: rgb(219, 217, 217) !important;
 
         input {
             background-color: rgb(61, 61, 61) !important;
             color: rgb(255, 255, 255) !important;
             margin: 0 0 0 0.25rem
+        }
+
+        span {
+            padding: 0 0.25rem;
+
         }
     }
 }
