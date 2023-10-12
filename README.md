@@ -53,6 +53,8 @@ Now, you should be able to access the Paint Mixer application at `http://localho
    - Click on the `+` icon in the palette section to open the color picker.
    - Select the color you want to add to your palette and click `Confirm`.
    - The selected color will appear as a swatch in the palette section.
+   - You can lookup RGB and hex values for commercial paints at [Art Paints](http://www.art-paints.com/). This will help you find the closest match to the paint you're using.
+   - You can rename the automatically named color by clicking on the swatch's name and editing it.
 
 2. **Mixing Colors**:
    - Click on the swatches in the palette to increment the parts of each color you want to mix.
@@ -61,6 +63,7 @@ Now, you should be able to access the Paint Mixer application at `http://localho
 
 3. **Saving Mixed Colors**:
    - Once you've created a mix you like, click the `Save` button to add the mixed color to your palette.
+   - The recipe of colors used to create the mixed color will be saved along with it. You can view the recipe by clicking on the swatch's info button.
 
 4. **Setting a Target Color**:
    - Click the `Target` button to set a target color.
@@ -75,28 +78,28 @@ Now, you should be able to access the Paint Mixer application at `http://localho
 
 ## How It Works
 
-Paint Mixer utilizes a combination of libraries and custom utility functions to simulate paint mixing. Here's a brief overview of how it works:
+Paint Mixer utilizes a combination of hooks, libraries, and custom utility functions to simulate paint mixing. Here's a brief overview of how it works:
 
 1. **Color Selection and Conversion**:
    - Colors are selected using a color picker, which returns colors in HSVa format.
    - These colors are then converted to RGBa format using the `hsvaToRgba` and `hsvaToRgbaString` functions from the `@uiw/color-convert` library.
 
 2. **Color Mixing**:
-   - The mixing engine uses the `mixbox` library to simulate the way paint mixes in the real world. Paints get their color from pigments, and mixbox predicts their mixing behavior by using the Kubelka–Munk model, not a simple subtractive color model.
-   - Each color in the mix is converted to a latent color space, mixed according to the specified parts, and then converted back to RGBa format.
+   - The mixing engine uses the `mixbox` library to simulate the way paint mixes in the real world. Unlike a simple subtractive color model, the mixbox library uses the Kubelka–Munk model, predicting the behavior of paints based on pigments.
+   - The `useColorMixing` hook abstracts the process where each color in the mix is converted to a latent color space, mixed according to the specified parts, and then converted back to RGBa format.
 
 3. **Color Matching**:
-   - The `deltaE94` function from the `colorConversion` utility is used to calculate the color difference between the mixed color and the target color.
+   - The `useColorMatching` hook utilizes the `deltaE94` function from the `colorConversion` utility to determine the color difference between the mixed color and the target color.
    - This difference is then converted to a match percentage, which is displayed to the user.
 
 4. **Palette Management**:
-   - The palette is managed using the React state, with each color in the palette represented as an object containing its RGBa string, label, parts in the mix, and optionally a recipe of colors used to create it.
+   - The `usePalette` hook manages the palette using the React state. Each color in the palette is represented as an object containing its RGBa string, label, parts in the mix, and optionally a recipe of colors used to create it.
 
 5. **Color Naming**:
-   - The `fetchColorName` function is used to fetch a name for a color based on its hex value from the `color-name-list` library.
+   - The `useColorNaming` hook uses the `fetchColorName` function to fetch a name for a color based on its hex value, leveraging the `color-name-list` library.
 
 6. **Local Storage**:
-   - The palette is saved to local storage, so it persists across browser sessions.
+   - The `useLocalStorage` hook ensures the palette is saved to and loaded from local storage, allowing it to persist across browser sessions.
 
 ## Contributing
 
