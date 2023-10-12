@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './ColorPicker.module.scss';
+import styles from './ColorPicker.module.scss'
 import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider';
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';

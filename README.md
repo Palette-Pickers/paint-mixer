@@ -96,7 +96,7 @@ Paint Mixer utilizes a combination of hooks, libraries, and custom utility funct
    - The `usePalette` hook manages the palette using the React state. Each color in the palette is represented as an object containing its RGBa string, label, parts in the mix, and optionally a recipe of colors used to create it.
 
 5. **Color Naming**:
-   - The `useColorNaming` hook uses the `fetchColorName` function to fetch a name for a color based on its hex value, leveraging the `color-name-list` library.
+   - The `useColorName` hook fetches a name for a color based on its hex value, leveraging the `color-name-list` library.
 
 6. **Local Storage**:
    - The `useLocalStorage` hook ensures the palette is saved to and loaded from local storage, allowing it to persist across browser sessions.

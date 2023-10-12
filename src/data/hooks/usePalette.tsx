@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import tinycolor from "tinycolor2";
-import { ColorPart } from '../../../types/types';
+import { ColorPart } from '../../types/types';
 import { useColorName } from './useColorName';
 
 export const usePalette = (initialPalette: ColorPart[]) => {

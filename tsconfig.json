@@ -6,6 +6,6 @@
     },
     "include": [
         "src/**/*", // or wherever your source files are
-        "types/**/*" // or wherever you placed the scss.d.ts file
+        "src/types/**/*" // or wherever you placed the scss.d.ts file
     ]
 }
