@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import tinycolor from "tinycolor2";
 import { ColorPart } from '../../../types/types';
-import { fetchColorName } from '../hooks/fetchColorName';
+import { useColorName } from './useColorName';
 
 export const usePalette = (initialPalette: ColorPart[]) => {
     const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
@@ -10,7 +10,7 @@ export const usePalette = (initialPalette: ColorPart[]) => {
         if (!isColorInPalette(rgbString)) {
             let updatedPalette = [...palette];
             const hexColor = tinycolor(rgbString).toHexString();
-            const colorName = await fetchColorName(hexColor.substring(1));
+            const colorName = await useColorName(hexColor.substring(1));
             const newColor: ColorPart = {
                 "rgbString": rgbString,
                 "label": colorName,

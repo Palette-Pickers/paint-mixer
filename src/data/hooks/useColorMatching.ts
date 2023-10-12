@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import tinycolor from "tinycolor2";
 import { useDebounce } from 'use-debounce';
-import { fetchColorName } from '../hooks/fetchColorName';
+import { useColorName } from './useColorName';
 
 
 export const useColorMatching = (initialColor: string) => {
@@ -12,7 +12,7 @@ export const useColorMatching = (initialColor: string) => {
         setColorName('');
         const fetchAndSetColorName = async () => {
             const hexColor = tinycolor(debouncedColorName).toHexString();
-            const fetchedColorName = await fetchColorName(hexColor.substring(1));
+            const fetchedColorName = await useColorName(hexColor.substring(1));
             setColorName(fetchedColorName);
         };
         fetchAndSetColorName();
