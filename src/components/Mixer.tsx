@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import mixbox from 'mixbox';
 import './Mixer.scss';
-import ColorPicker from './ColorPicker';
+import ColorPicker from './ColorPicker/ColorPicker';
 import { defaultPalette } from '../utils/palettes/defaultPalette';
-import { fetchColorName } from '../data/hooks/fetchColorName';
-import { useDebounce } from 'use-debounce';
 import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
 import tinycolor from "tinycolor2";
 import { normalizeRgbString, rgbToXyz, xyzToLab, deltaE94 } from '../utils/colorConversion';
@@ -15,44 +13,29 @@ import { MdAddCircleOutline } from 'react-icons/md';
 import { FaArrowDown } from 'react-icons/fa';
 import { AiOutlineClose } from 'react-icons/ai';
 import { FaInfo } from 'react-icons/fa';
-
-
-interface ColorPart {
-    label: string;
-    partsInMix: number;
-    rgbString: string;
-    recipe?: ColorPart[];
-}
-
-interface Rgb {
-    r: number;
-    g: number;
-    b: number;
-    a?: number;
-}
+import { usePalette } from '../data/hooks/usePalette';
+import { useColorMatching } from '../data/hooks/useColorMatching';
+import { useLocalStorage } from '../data/hooks/useLocalStorage';
+import { ColorPart, Rgb } from '../../types/types';
 
 const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
-    const [mixedColorName, setMixedColorName] = useState<string>('');
     const [showAddColorPicker, setShowAddColorPicker] = useState(false);
     const [addColor, setAddColor] = useState({ h: 214, s: 43, v: 90, a: 1 });
-    const [addColorName, setAddColorName] = useState<string>('');
     const [editingColorNameIndex, setEditingColorNameIndex] = useState<number | null>(null);
     const [tempColorName, setTempColorName] = useState<string>('');
     const [targetColor, setTargetColor] = useState({ h: 214, s: 43, v: 90, a: 1 });
     const [useTargetColor, setUseTargetColor] = useState<boolean>(false);
     const [showTargetColorPicker, setShowTargetColorPicker] = useState<boolean>(false);
-    const [targetColorName, setTargetColorName] = useState<string>('');
     const [activeInfoIndex, setActiveInfoIndex] = useState<number | null>(null);
     const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
     const [canSave, setCanSave] = useState<boolean>(true);
-    const savedPalette = localStorage.getItem('savedPalette');
-    const initialPalette = savedPalette ? JSON.parse(savedPalette) : defaultPalette;
-    const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
-    const [debouncedMixedColorName] = useDebounce(mixedColor, 250);
-    const [debouncedTargetColorName] = useDebounce(targetColor, 250);
-    const [debouncedAddColorName] = useDebounce(addColor, 250);
-
+    const [savedPalette, setSavedPalette] = useLocalStorage('savedPalette', defaultPalette);
+    const initialPalette: (any) = savedPalette;
+    const { palette, setPalette, addToPalette } = usePalette(initialPalette);
+    const { colorName: mixedColorName } = useColorMatching(mixedColor);
+    const { colorName: targetColorName } = useColorMatching(hsvaToRgbaString(targetColor));
+    const { colorName: addColorName } = useColorMatching(tinycolor(addColor).toHexString());
 
     const handleSwatchIncrementClick = (index: number) => {
         const updatedPalette = [...palette];
@@ -81,7 +64,7 @@ const Mixer: React.FC = () => {
     const confirmColor = () => {
         if (addColor) {
             const selectedRgbString = tinycolor(addColor).toRgbString();
-            addToPalette(selectedRgbString, palette, false);  // Set includeRecipe to false
+            addToPalette(selectedRgbString, false);  // Set includeRecipe to false
             setShowAddColorPicker(false);
         }
     };
@@ -196,13 +179,12 @@ const Mixer: React.FC = () => {
                                         >
                                             {swatch.recipe.map((ingredient, index) => (
                                                 <div key={index}>
-                                                    <div style={{
-                                                        backgroundColor: ingredient.rgbString,
-                                                        color: tinycolor(ingredient.rgbString).isDark() ? 'white' : 'black',
-                                                        width: '100%',
-                                                        padding: '0.5rem',
-                                                        boxSizing: 'border-box'
-                                                    }}>
+                                                    <div
+                                                        className="recipe-list"
+                                                        style={{
+                                                            backgroundColor: ingredient.rgbString,
+                                                            color: tinycolor(ingredient.rgbString).isDark() ? 'white' : 'black'
+                                                        }}>
                                                         {ingredient.partsInMix} {ingredient.label}
                                                     </div>
                                                 </div>
@@ -229,26 +211,6 @@ const Mixer: React.FC = () => {
         return palette.some(swatch => tinycolor(swatch.rgbString).toHexString() === normalizedColor);
     };
 
-    const addToPalette = async (rgbString: string, palette: ColorPart[], includeRecipe: boolean) => {
-        if (!isColorInPalette(rgbString, palette)) { // Only add if the color is not in the palette
-            let updatedPalette = [...palette];
-            const hexColor = tinycolor(rgbString).toHexString();
-            const colorName = await fetchColorName(hexColor.substring(1)); // Remove the '#'
-            const newColor: ColorPart = {
-                "rgbString": rgbString,
-                "label": colorName,
-                "partsInMix": 0,
-            };
-            if (includeRecipe) {
-                newColor.recipe = palette.filter(color => color.partsInMix > 0);
-            }
-            updatedPalette.push(newColor);
-            setPalette(updatedPalette);
-        } else {
-            console.error("Selected color already in palette", rgbString);
-        }
-    };
-
     const getRgbColorMatch = (color1: string, color2: string): number => {
         const color1Lab = xyzToLab(rgbToXyz(tinycolor(color1).toRgb()));
         const color2Lab = xyzToLab(rgbToXyz(tinycolor(color2).toRgb()));
@@ -264,9 +226,9 @@ const Mixer: React.FC = () => {
     };
 
     useEffect(() => {
-        localStorage.setItem('savedPalette', JSON.stringify(palette));
         setMixedColor(getMixedRgbStringFromPalette(palette));
     }, [palette]);
+
 
     useEffect(() => {
         setMatchPercentage(getRgbColorMatch((mixedColor), (hsvaToRgbaString(targetColor))).toFixed(2));
@@ -276,37 +238,8 @@ const Mixer: React.FC = () => {
         setCanSave(!isColorInPalette(mixedColor, palette));
     }, [mixedColor, palette]);
 
-    useEffect(() => {
-        setMixedColorName(''); // Set to empty string immediately
-        const fetchAndSetMixedColorName = async () => {
-            const hexColor = tinycolor(debouncedMixedColorName).toHexString();
-            const fetchedColorName = await fetchColorName(hexColor.substring(1));
-            setMixedColorName(fetchedColorName);
-        };
 
-        fetchAndSetMixedColorName();
-    }, [debouncedMixedColorName]);
 
-    useEffect(() => {
-        setTargetColorName(''); // Set to empty string immediately
-        const fetchAndSetTargetColorName = async () => {
-            const hexColor = tinycolor(hsvaToRgbaString(debouncedTargetColorName)).toHexString();
-            const fetchedColorName = await fetchColorName(hexColor.substring(1)); // Remove the '#'
-            setTargetColorName(fetchedColorName);
-        };
-
-        fetchAndSetTargetColorName();
-    }, [debouncedTargetColorName]);
-
-    useEffect(() => {
-        const fetchAndSetAddColorName = async () => {
-            const hexColor = tinycolor(debouncedAddColorName).toHexString();
-            const colorName = await fetchColorName(hexColor.substring(1)); // Remove the '#'
-            setAddColorName(colorName);
-        };
-
-        fetchAndSetAddColorName();
-    }, [debouncedAddColorName]);
 
 
     return (
@@ -396,7 +329,7 @@ const Mixer: React.FC = () => {
                         <div className='color-box-label'>
                             <button
                                 className="add-to-palette"
-                                onClick={() => addToPalette(mixedColor, palette, true)}  // Set includeRecipe to true
+                                onClick={() => addToPalette(mixedColor, true)}  // Set includeRecipe to true
                                 disabled={!canSave} // Disable the button based on canSave state
                                 style={{
                                     color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
