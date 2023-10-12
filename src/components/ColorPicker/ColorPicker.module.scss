@@ -5,10 +5,13 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 0;
+    padding: 1rem;
     width: 100%;
-    height: 90%;
     position: relative;
+
+    .w-color-editable-input span {
+        background-color: black !important;
+    }
 
     .closeButton {
         position: absolute;
@@ -54,7 +57,5 @@
         }
     }
 
-    .w-color-editable-input span {
-        padding: 1rem
-    }
+    
 }
