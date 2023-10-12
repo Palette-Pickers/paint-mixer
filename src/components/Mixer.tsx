@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import mixbox from 'mixbox';
 import './Mixer.scss';
-import ColorPicker from './ColorPicker/ColorPicker';
 import { defaultPalette } from '../utils/palettes/defaultPalette';
+import { ColorPart, Rgb } from '../../types/types';
+import { normalizeRgbString, rgbToXyz, xyzToLab, deltaE94 } from '../utils/colorConversion';
+import ColorPicker from './ColorPicker/ColorPicker';
+
 import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
 import tinycolor from "tinycolor2";
-import { normalizeRgbString, rgbToXyz, xyzToLab, deltaE94 } from '../utils/colorConversion';
+
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+
+import { usePalette } from '../data/hooks/usePalette';
+import { useColorMatching } from '../data/hooks/useColorMatching';
+import { useLocalStorage } from '../data/hooks/useLocalStorage';
+
 import { TbTargetArrow, TbTargetOff, TbTarget } from 'react-icons/tb';
 import { VscDebugRestart } from 'react-icons/vsc';
 import { MdAddCircleOutline } from 'react-icons/md';
 import { FaArrowDown } from 'react-icons/fa';
 import { AiOutlineClose } from 'react-icons/ai';
 import { FaInfo } from 'react-icons/fa';
-import { usePalette } from '../data/hooks/usePalette';
-import { useColorMatching } from '../data/hooks/useColorMatching';
-import { useLocalStorage } from '../data/hooks/useLocalStorage';
-import { ColorPart, Rgb } from '../../types/types';
 
 const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
@@ -25,11 +29,11 @@ const Mixer: React.FC = () => {
     const [editingColorNameIndex, setEditingColorNameIndex] = useState<number | null>(null);
     const [tempColorName, setTempColorName] = useState<string>('');
     const [targetColor, setTargetColor] = useState({ h: 214, s: 43, v: 90, a: 1 });
-    const [useTargetColor, setUseTargetColor] = useState<boolean>(false);
-    const [showTargetColorPicker, setShowTargetColorPicker] = useState<boolean>(false);
+    const [isUsingTargetColor, setIsUsingTargetColor] = useState<boolean>(false);
+    const [isShowingTargetColorPicker, setIsShowingTargetColorPicker] = useState<boolean>(false);
     const [activeInfoIndex, setActiveInfoIndex] = useState<number | null>(null);
     const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
-    const [canSave, setCanSave] = useState<boolean>(true);
+    const [isSavable, setIsSavable] = useState<boolean>(true);
     const [savedPalette, setSavedPalette] = useLocalStorage('savedPalette', defaultPalette);
     const initialPalette: (any) = savedPalette;
     const { palette, setPalette, addToPalette } = usePalette(initialPalette);
@@ -51,8 +55,8 @@ const Mixer: React.FC = () => {
     };
 
     const toggleUseTargetColor = () => {
-        setUseTargetColor(!useTargetColor);
-        setShowTargetColorPicker(true);
+        setIsUsingTargetColor(!isUsingTargetColor);
+        setIsShowingTargetColorPicker(true);
     };
 
     const handleRemoveFromPaletteClick = (index: number) => {
@@ -235,7 +239,7 @@ const Mixer: React.FC = () => {
     }, [mixedColor, targetColor]);
 
     useEffect(() => {
-        setCanSave(!isColorInPalette(mixedColor, palette));
+        setIsSavable(!isColorInPalette(mixedColor, palette));
     }, [mixedColor, palette]);
 
 
@@ -268,7 +272,7 @@ const Mixer: React.FC = () => {
                                 </div>
                             </div>
 
-                            {useTargetColor && (
+                            {isUsingTargetColor && (
                                 <div className='match-pct'
                                     style={{ color: tinycolor(mixedColor).isDark() ? 'white' : 'black' }}
                                 >
@@ -278,26 +282,26 @@ const Mixer: React.FC = () => {
                             )}
                         </div>
                     </section>
-                    {useTargetColor && (
+                    {isUsingTargetColor && (
                         <section className='target-color-container'
                             style={{
                                 background: hsvaToRgbaString(targetColor),
                                 color: tinycolor(hsvaToRgba(targetColor)).isDark() ? 'white' : 'black',
-                                display: (useTargetColor ? 'block' : 'none'),
+                                display: (isUsingTargetColor ? 'block' : 'none'),
                             }}
                         >
 
-                            {showTargetColorPicker && (
+                            {isShowingTargetColorPicker && (
                                 <ColorPicker
                                     color={targetColor}
                                     onChange={(newColor) => {
                                         setTargetColor(newColor);
                                     }}
-                                    onClose={() => setShowTargetColorPicker(false)}
-                                    onConfirm={() => { setShowTargetColorPicker(false); }}
+                                    onClose={() => setIsShowingTargetColorPicker(false)}
+                                    onConfirm={() => { setIsShowingTargetColorPicker(false); }}
                                 />
                             )}
-                            {!showTargetColorPicker && (
+                            {!isShowingTargetColorPicker && (
                                 <div className='target-color-values'>
                                     <label htmlFor="target-color">Target Color</label>
                                     <div id="target-color">
@@ -330,19 +334,19 @@ const Mixer: React.FC = () => {
                             <button
                                 className="add-to-palette"
                                 onClick={() => addToPalette(mixedColor, true)}  // Set includeRecipe to true
-                                disabled={!canSave} // Disable the button based on canSave state
+                                disabled={!isSavable} // Disable the button based on canSave state
                                 style={{
                                     color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
-                                    opacity: canSave ? 1 : 0.5 // Change the opacity to indicate it's disabled
+                                    opacity: isSavable ? 1 : 0.5 // Change the opacity to indicate it's disabled
                                 }}
                             >
                                 <FaArrowDown style={{
                                     color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
-                                    opacity: canSave ? 1 : 0 // Hide the icon when disabled
+                                    opacity: isSavable ? 1 : 0 // Hide the icon when disabled
                                 }}
                                 />
                                 <label className='button-save'>
-                                    {canSave ? 'Save' : 'Saved'}
+                                    {isSavable ? 'Save' : 'Saved'}
                                 </label>
                             </button>
                         </div>
@@ -351,12 +355,12 @@ const Mixer: React.FC = () => {
                             className="toggle-target-color"
                             onClick={toggleUseTargetColor}
                             style={{
-                                color: useTargetColor ?
+                                color: isUsingTargetColor ?
                                     tinycolor(hsvaToRgba(targetColor)).isDark() ? 'white' : 'black' :
                                     tinycolor(mixedColor).isDark() ? 'white' : 'black'
                             }}
                         >
-                            {(useTargetColor ? <TbTargetArrow /> : <TbTargetOff />)}
+                            {(isUsingTargetColor ? <TbTargetArrow /> : <TbTargetOff />)}
                             <label className='button-target-color'>Target</label>
                         </button>
                     </div>
@@ -392,6 +396,15 @@ const Mixer: React.FC = () => {
                                     onClose={() => setShowAddColorPicker(false)}
                                     onConfirm={confirmColor}
                                 />
+
+                                <p style={{
+                                    display: 'flex',
+                                    position: 'relative',
+                                    alignSelf: 'center',
+                                    margin: '0.5rem',
+                                    height: '2rem',
+                                    justifyContent: 'flex-start',
+                                }}>{addColorName}</p>
                             </section>
                         )}
                     </div>
