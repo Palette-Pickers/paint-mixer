@@ -14,7 +14,7 @@ export const normalizeRgbString = (color: Rgb | number[] | string): string => {
     if (Array.isArray(color) && color.length >= 3) {
         return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
     } else if (typeof color === 'string') {
-        const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+        const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i); // Added 'i' flag for case-insensitive matching
         if (match) {
             return `rgb(${match[1]}, ${match[2]}, ${match[3]})`;
         }
@@ -39,17 +39,22 @@ export const rgbStringToRgb = (rgbString: string): Rgb => {
             b: parseInt(match[3]),
         };
     }
-    return {r: 0, g: 0, b: 0, a: 0}; //return transparent black if no match
+    return {r: 0, g: 0, b: 0}; //return black if no match
 };
 
 /**
  * Converts an HSLA object into a hex string.
  *
  * @param {h, s, l, a} hsla values between 0 and 1
- * @return {string} hex string in the format '#000000'
+ * @return {string} hex string in the format '#000000' or '#000000ff' if alpha is not 1
  */
 export const hslaToHex = (hsla: Hsla): string => {
     const h = hsla.h / 360;
+    const s = Math.max(0, Math.min(1, hsla.s));
+    const l = Math.max(0, Math.min(1, hsla.l));
+    // Clamp the alpha value between 0 and 1
+    const a = Math.max(0, Math.min(1, hsla.a));
+
     let r: number, g: number, b: number;
 
     const hue2rgb = (p: number, q: number, t: number) => {
@@ -61,11 +66,11 @@ export const hslaToHex = (hsla: Hsla): string => {
         return p;
     };
 
-    if (hsla.s === 0) {
-        r = g = b = hsla.l; // achromatic
+    if (s === 0) {
+        r = g = b = l; // achromatic
     } else {
-        const q = hsla.l < 0.5 ? hsla.l * (1 + hsla.s) : hsla.l + hsla.s - hsla.l * hsla.s;
-        const p = 2 * hsla.l - q;
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
         r = hue2rgb(p, q, h + 1 / 3);
         g = hue2rgb(p, q, h);
         b = hue2rgb(p, q, h - 1 / 3);
@@ -76,14 +81,13 @@ export const hslaToHex = (hsla: Hsla): string => {
         return hex.length === 1 ? '0' + hex : hex;
     };
 
-// Clamp the alpha value between 0 and 1
-    const clampedAlpha = Math.max(0, Math.min(1, hsla.a));
-
     // Convert the clamped alpha value to a 2-digit hexadecimal value
-    const alphaHex = Math.round(clampedAlpha * 255).toString(16).padStart(2, '0');
+    const alphaHex = Math.round(a * 255).toString(16).padStart(2, '0');
 
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}${alphaHex}`;
+    // If alphaHex is 'ff', return the 6-character hex code. Otherwise, include the alpha value.
+    return alphaHex === 'ff' ? `#${toHex(r)}${toHex(g)}${toHex(b)}` : `#${toHex(r)}${toHex(g)}${toHex(b)}${alphaHex}`;
 };
+
 
 /**
  * Converts an sRGB value to a linear RGB value.

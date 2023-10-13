@@ -97,19 +97,19 @@ describe('hslaToHex', () => {
 
     it('should handle transparency correctly', () => {
         const hslaColor = {h: 120, s: 0.5, l: 0.5, a: 0.5};
-        expect(hslaToHex(hslaColor)).toBe('#80bf7f80');
+        expect(hslaToHex(hslaColor)).toBe('#40bf4080');
     });
 
     it('should handle full transparency correctly', () => {
         const hslaColor = {h: 120, s: 0.5, l: 0.5, a: 0};
-        expect(hslaToHex(hslaColor)).toBe('#80bf7f00');
+        expect(hslaToHex(hslaColor)).toBe('#40bf4000');
     });
 
     it('should convert HSLA values at the extreme ends to HEX', () => {
         const hslaColorBlack = {h: 0, s: 0, l: 0, a: 0};
         const hslaColorWhite = {h: 360, s: 1, l: 1, a: 1};
         expect(hslaToHex(hslaColorBlack)).toBe('#00000000');
-        expect(hslaToHex(hslaColorWhite)).toBe('#ffffffff');
+        expect(hslaToHex(hslaColorWhite)).toBe('#ffffff');
     });
 
     it('should handle HSLA values with hue greater than 360', () => {
