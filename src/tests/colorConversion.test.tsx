@@ -33,48 +33,48 @@ describe('normalizeRgbString', () => {
 describe('rgbStringToRgb', () => {
     it('should convert an RGB string to an RGB object', () => {
         const colorString = 'rgb(255, 128, 64)';
-        expect(rgbStringToRgb(colorString)).toEqual({ r: 255, g: 128, b: 64 });
+        expect(rgbStringToRgb(colorString)).toEqual({r: 255, g: 128, b: 64});
     });
 
     it('should handle RGB strings with spaces', () => {
         const colorString = 'rgb(255,   128, 64)';
-        expect(rgbStringToRgb(colorString)).toEqual({ r: 255, g: 128, b: 64 });
+        expect(rgbStringToRgb(colorString)).toEqual({r: 255, g: 128, b: 64});
     });
 
     it('should return {r: 0, g: 0, b: 0} for invalid strings', () => {
         const invalidString = 'rgba(255, 128, 64, 0.5)';
-        expect(rgbStringToRgb(invalidString)).toEqual({ r: 0, g: 0, b: 0 });
+        expect(rgbStringToRgb(invalidString)).toEqual({r: 0, g: 0, b: 0});
     });
 });
 
 describe('hslaToHex', () => {
     it('should convert a basic Hsla color to HEX correctly', () => {
-        const hslaColor = { h: 180, s: 0.5, l: 0.5, a: 0.8 };
+        const hslaColor = {h: 180, s: 0.5, l: 0.5, a: 0.8};
         expect(hslaToHex(hslaColor)).toBe('#40bfbfcc');
     });
 
     it('should handle achromatic colors correctly', () => {
-        const hslaColor = { h: 0, s: 0, l: 0.5, a: 1 };
+        const hslaColor = {h: 0, s: 0, l: 0.5, a: 1};
         expect(hslaToHex(hslaColor)).toBe('#808080');
     });
 
     it('should handle full saturation and lightness correctly', () => {
-        const hslaColor = { h: 240, s: 1, l: 1, a: 1 };
+        const hslaColor = {h: 240, s: 1, l: 1, a: 1};
         expect(hslaToHex(hslaColor)).toBe('#ffffff');
     });
 
     it('should handle zero saturation and lightness correctly', () => {
-        const hslaColor = { h: 240, s: 0, l: 0, a: 1 };
+        const hslaColor = {h: 240, s: 0, l: 0, a: 1};
         expect(hslaToHex(hslaColor)).toBe('#000000');
     });
 
     it('should handle transparency correctly', () => {
-        const hslaColor = { h: 120, s: 0.5, l: 0.5, a: 0.5 };
+        const hslaColor = {h: 120, s: 0.5, l: 0.5, a: 0.5};
         expect(hslaToHex(hslaColor)).toBe('#80bf7f80');
     });
 
     it('should handle full transparency correctly', () => {
-        const hslaColor = { h: 120, s: 0.5, l: 0.5, a: 0 };
+        const hslaColor = {h: 120, s: 0.5, l: 0.5, a: 0};
         expect(hslaToHex(hslaColor)).toBe('#80bf7f00');
     });
 });
@@ -110,7 +110,7 @@ describe('sRGBToLinear', () => {
 
 describe('rgbToXyz', () => {
     it('should convert black RGB to XYZ correctly', () => {
-        const rgb = { r: 0, g: 0, b: 0 };
+        const rgb = {r: 0, g: 0, b: 0};
         const result = rgbToXyz(rgb);
         expect(result.x).toBeCloseTo(0);
         expect(result.y).toBeCloseTo(0);
@@ -118,7 +118,7 @@ describe('rgbToXyz', () => {
     });
 
     it('should convert white RGB to XYZ correctly', () => {
-        const rgb = { r: 255, g: 255, b: 255 };
+        const rgb = {r: 255, g: 255, b: 255};
         const result = rgbToXyz(rgb);
         expect(result.x).toBeCloseTo(95.047);
         expect(result.y).toBeCloseTo(100);
@@ -126,7 +126,7 @@ describe('rgbToXyz', () => {
     });
 
     it('should convert red RGB to XYZ correctly', () => {
-        const rgb = { r: 255, g: 0, b: 0 };
+        const rgb = {r: 255, g: 0, b: 0};
         const result = rgbToXyz(rgb);
         expect(result.x).toBeCloseTo(41.24564);
         expect(result.y).toBeCloseTo(21.26729);
@@ -134,7 +134,7 @@ describe('rgbToXyz', () => {
     });
 
     it('should convert green RGB to XYZ correctly', () => {
-        const rgb = { r: 0, g: 255, b: 0 };
+        const rgb = {r: 0, g: 255, b: 0};
         const result = rgbToXyz(rgb);
         expect(result.x).toBeCloseTo(35.75761);
         expect(result.y).toBeCloseTo(71.51522);
@@ -142,7 +142,7 @@ describe('rgbToXyz', () => {
     });
 
     it('should convert blue RGB to XYZ correctly', () => {
-        const rgb = { r: 0, g: 0, b: 255 };
+        const rgb = {r: 0, g: 0, b: 255};
         const result = rgbToXyz(rgb);
         expect(result.x).toBeCloseTo(18.04374);
         expect(result.y).toBeCloseTo(7.21750);
@@ -150,7 +150,7 @@ describe('rgbToXyz', () => {
     });
 
     it('should convert gray RGB to XYZ correctly', () => {
-        const rgb = { r: 128, g: 128, b: 128 };
+        const rgb = {r: 128, g: 128, b: 128};
         const result = rgbToXyz(rgb);
         expect(result.x).toBeGreaterThan(0);
         expect(result.y).toBeGreaterThan(0);
@@ -161,7 +161,7 @@ describe('rgbToXyz', () => {
 
 describe('xyzToLab', () => {
     it('should convert D65 white point XYZ to Lab correctly', () => {
-        const xyz = { x: 95.047, y: 100.000, z: 108.883 };
+        const xyz = {x: 95.047, y: 100.000, z: 108.883};
         const result = xyzToLab(xyz);
         expect(result.l).toBeCloseTo(100, 2);
         expect(result.a).toBeCloseTo(0, 2);
@@ -169,7 +169,7 @@ describe('xyzToLab', () => {
     });
 
     it('should convert black XYZ to Lab correctly', () => {
-        const xyz = { x: 0, y: 0, z: 0 };
+        const xyz = {x: 0, y: 0, z: 0};
         const result = xyzToLab(xyz);
         expect(result.l).toBeCloseTo(0, 2);
         expect(result.a).toBeCloseTo(0, 2);
@@ -177,7 +177,7 @@ describe('xyzToLab', () => {
     });
 
     it('should convert middle gray XYZ to Lab correctly', () => {
-        const xyz = { x: 18, y: 20, z: 22 };
+        const xyz = {x: 18, y: 20, z: 22};
         const result = xyzToLab(xyz);
         expect(result.l).toBeCloseTo(51.8372, 4);
         expect(result.a).toBeCloseTo(-5.2699, 4);  // Adjusted to the current output
@@ -188,35 +188,35 @@ describe('xyzToLab', () => {
 
 describe('deltaE94', () => {
     it('should compute the CIE94 color difference correctly for identical colors', () => {
-        const lab = { l: 50, a: 60, b: 30 };
+        const lab = {l: 50, a: 60, b: 30};
         const difference = deltaE94(lab, lab);
         expect(difference).toBeCloseTo(0);
     });
 
     it('should compute the CIE94 color difference correctly for different lightness', () => {
-        const lab1 = { l: 50, a: 60, b: 30 };
-        const lab2 = { l: 55, a: 60, b: 30 };
+        const lab1 = {l: 50, a: 60, b: 30};
+        const lab2 = {l: 55, a: 60, b: 30};
         const difference = deltaE94(lab1, lab2);
         expect(difference).toBeGreaterThan(0);
     });
 
     it('should compute the CIE94 color difference correctly for different a values', () => {
-        const lab1 = { l: 50, a: 60, b: 30 };
-        const lab2 = { l: 50, a: 65, b: 30 };
+        const lab1 = {l: 50, a: 60, b: 30};
+        const lab2 = {l: 50, a: 65, b: 30};
         const difference = deltaE94(lab1, lab2);
         expect(difference).toBeGreaterThan(0);
     });
 
     it('should compute the CIE94 color difference correctly for different b values', () => {
-        const lab1 = { l: 50, a: 60, b: 30 };
-        const lab2 = { l: 50, a: 60, b: 35 };
+        const lab1 = {l: 50, a: 60, b: 30};
+        const lab2 = {l: 50, a: 60, b: 35};
         const difference = deltaE94(lab1, lab2);
         expect(difference).toBeGreaterThan(0);
     });
 
     it('should compute the CIE94 color difference correctly for colors with large differences', () => {
-        const lab1 = { l: 10, a: 20, b: 10 };
-        const lab2 = { l: 90, a: 80, b: 90 };
+        const lab1 = {l: 10, a: 20, b: 10};
+        const lab2 = {l: 90, a: 80, b: 90};
         const difference = deltaE94(lab1, lab2);
         expect(difference).toBeGreaterThan(92);
         expect(difference).toBeLessThan(96);
