@@ -28,6 +28,21 @@ describe('normalizeRgbString', () => {
         const invalidString = 'rgba(255, 128, 64, 0.5)';
         expect(normalizeRgbString(invalidString)).toBe(invalidString);
     });
+
+    it('should normalize an RGB string with uppercase characters', () => {
+        const colorString = 'RGB(255, 128, 64)';
+        expect(normalizeRgbString(colorString)).toBe('rgb(255, 128, 64)');
+    });
+
+    it('should return the input string for values greater than 255', () => {
+        const invalidString = 'rgb(256, 128, 64)';
+        expect(normalizeRgbString(invalidString)).toBe(invalidString);
+    });
+
+    it('should return the input string for values less than 0', () => {
+        const invalidString = 'rgb(-1, 128, 64)';
+        expect(normalizeRgbString(invalidString)).toBe(invalidString);
+    });
 });
 
 describe('rgbStringToRgb', () => {
@@ -43,6 +58,18 @@ describe('rgbStringToRgb', () => {
 
     it('should return {r: 0, g: 0, b: 0} for invalid strings', () => {
         const invalidString = 'rgba(255, 128, 64, 0.5)';
+        expect(rgbStringToRgb(invalidString)).toEqual({r: 0, g: 0, b: 0});
+    });
+
+        it('should convert an RGB string with values at the extreme ends to an RGB object', () => {
+        const colorStringBlack = 'rgb(0, 0, 0)';
+        const colorStringWhite = 'rgb(255, 255, 255)';
+        expect(rgbStringToRgb(colorStringBlack)).toEqual({r: 0, g: 0, b: 0});
+        expect(rgbStringToRgb(colorStringWhite)).toEqual({r: 255, g: 255, b: 255});
+    });
+
+    it('should return {r: 0, g: 0, b: 0} for non-numeric RGB strings', () => {
+        const invalidString = 'rgb(a, b, c)';
         expect(rgbStringToRgb(invalidString)).toEqual({r: 0, g: 0, b: 0});
     });
 });
@@ -77,6 +104,49 @@ describe('hslaToHex', () => {
         const hslaColor = {h: 120, s: 0.5, l: 0.5, a: 0};
         expect(hslaToHex(hslaColor)).toBe('#80bf7f00');
     });
+
+    it('should convert HSLA values at the extreme ends to HEX', () => {
+        const hslaColorBlack = {h: 0, s: 0, l: 0, a: 0};
+        const hslaColorWhite = {h: 360, s: 1, l: 1, a: 1};
+        expect(hslaToHex(hslaColorBlack)).toBe('#00000000');
+        expect(hslaToHex(hslaColorWhite)).toBe('#ffffffff');
+    });
+
+    it('should handle HSLA values with hue greater than 360', () => {
+        const hslaColor = {h: 365, s: 0.5, l: 0.5, a: 1};
+        // Assuming the function wraps the hue value around
+        expect(hslaToHex(hslaColor)).toBe(hslaToHex({h: 5, s: 0.5, l: 0.5, a: 1}));
+    });
+
+    it('should handle HSLA values with negative hue', () => {
+        const hslaColor = {h: -5, s: 0.5, l: 0.5, a: 1};
+        // Assuming the function wraps the negative hue value around
+        expect(hslaToHex(hslaColor)).toBe(hslaToHex({h: 355, s: 0.5, l: 0.5, a: 1}));
+    });
+
+    it('should handle HSLA values with saturation or lightness greater than 1', () => {
+        const hslaColor = {h: 180, s: 1.5, l: 1.5, a: 1};
+        // Assuming the function clamps the saturation and lightness values
+        expect(hslaToHex(hslaColor)).toBe(hslaToHex({h: 180, s: 1, l: 1, a: 1}));
+    });
+
+    it('should handle HSLA values with saturation or lightness less than 0', () => {
+        const hslaColor = {h: 180, s: -0.5, l: -0.5, a: 1};
+        // Assuming the function clamps the saturation and lightness values
+        expect(hslaToHex(hslaColor)).toBe(hslaToHex({h: 180, s: 0, l: 0, a: 1}));
+    });
+
+    it('should handle HSLA values with alpha greater than 1', () => {
+        const hslaColor = {h: 180, s: 0.5, l: 0.5, a: 1.5};
+        // Assuming the function clamps the alpha value
+        expect(hslaToHex(hslaColor)).toBe(hslaToHex({h: 180, s: 0.5, l: 0.5, a: 1}));
+    });
+
+    it('should handle HSLA values with alpha less than 0', () => {
+        const hslaColor = {h: 180, s: 0.5, l: 0.5, a: -0.5};
+        // Assuming the function clamps the alpha value
+        expect(hslaToHex(hslaColor)).toBe(hslaToHex({h: 180, s: 0.5, l: 0.5, a: 0}));
+    });
 });
 
 
@@ -104,6 +174,16 @@ describe('sRGBToLinear', () => {
         expect(sRGBToLinear(0.1)).toBeGreaterThan(0.1 / 12.92);
         expect(sRGBToLinear(0.2)).toBeGreaterThan(0.2 / 12.92);
         expect(sRGBToLinear(0.3)).toBeCloseTo(Math.pow((0.3 + 0.055) / 1.055, 2.4));
+    });
+
+
+    it('should convert sRGB values at the extreme ends', () => {
+        expect(sRGBToLinear(0)).toBeCloseTo(0);
+        expect(sRGBToLinear(1)).toBeCloseTo(1);
+    });
+
+    it('should convert an sRGB value that is a fraction', () => {
+        expect(sRGBToLinear(0.5)).toBeCloseTo(0.214);
     });
 });
 
@@ -155,6 +235,14 @@ describe('rgbToXyz', () => {
         expect(result.x).toBeGreaterThan(0);
         expect(result.y).toBeGreaterThan(0);
         expect(result.z).toBeGreaterThan(0);
+    });
+
+    it('should convert commonly used RGB colors to XYZ', () => {
+        const magentaRGB = {r: 255, g: 0, b: 255};
+        const result = rgbToXyz(magentaRGB);
+        expect(result.x).toBeCloseTo(59.2893);
+        expect(result.y).toBeCloseTo(28.484);
+        expect(result.z).toBeCloseTo(96.964);
     });
 });
 

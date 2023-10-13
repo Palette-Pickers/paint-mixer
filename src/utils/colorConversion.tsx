@@ -4,8 +4,11 @@ type Lab = {l: number, a: number, b: number;};
 type Hsla = {h: number, s: number, l: number, a?: number;};
 
 /**
- * @param {string} *OR* {r, g, b} *OR* {r, g, b, a} *OR* [r, g, b] *OR* [r, g, b, a]
- * @return {string} string in the format 'rgb(0, 0, 0)'
+ * Normalizes a color input into an RGB string format.
+ *
+ * @param {Rgb | number[] | string} color - The color in various formats. Can be an RGB object, an array of RGB values, or an RGB string.
+ * @return {string} The color in 'rgb(0, 0, 0)' format.
+ * @throws {Error} Throws an error if the provided color format is unexpected.
  */
 export const normalizeRgbString = (color: Rgb | number[] | string): string => {
     if (Array.isArray(color) && color.length >= 3) {
@@ -17,14 +20,15 @@ export const normalizeRgbString = (color: Rgb | number[] | string): string => {
         }
         return color;
     } else {
-        console.error('Unexpected format for color:', color);
-        return '';
+        throw new Error(`Unexpected format for color: ${JSON.stringify(color)}`);
     }
 };
 
 /**
- * @param {string} rgbString
- * @return {r, g, b} rgb values between 0 and 255
+ * Converts an RGB string to an RGB object.
+ *
+ * @param {string} rgbString - The RGB string.
+ * @return {Rgb} The RGB values.
  */
 export const rgbStringToRgb = (rgbString: string): Rgb => {
     const match = rgbString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
@@ -39,6 +43,8 @@ export const rgbStringToRgb = (rgbString: string): Rgb => {
 };
 
 /**
+ * Converts an HSLA object into a hex string.
+ *
  * @param {h, s, l, a} hsla values between 0 and 1
  * @return {string} hex string in the format '#000000'
  */
@@ -70,12 +76,18 @@ export const hslaToHex = (hsla: Hsla): string => {
         return hex.length === 1 ? '0' + hex : hex;
     };
 
-    const alpha = (hsla.a < 1) ? (Math.round(hsla.a * 255).toString(16).padStart(2, '0')) : '';
+// Clamp the alpha value between 0 and 1
+    const clampedAlpha = Math.max(0, Math.min(1, hsla.a));
 
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}${alpha}`;
+    // Convert the clamped alpha value to a 2-digit hexadecimal value
+    const alphaHex = Math.round(clampedAlpha * 255).toString(16).padStart(2, '0');
+
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}${alphaHex}`;
 };
 
 /**
+ * Converts an sRGB value to a linear RGB value.
+ *
  * @param {number} value sRGB value between 0 and 1
  * @return {number} linear RGB value between 0 and 1
  */
@@ -92,8 +104,10 @@ export const sRGBToLinear = (value: number): number => {
 
 
 /**
- * @param {rgb} value sRGB value between 0 and 1
- * @return {number} linear RGB value between 0 and 1
+ * Converts an RGB color to an XYZ color.
+ *
+ * @param {Rgb} value rgb value between 0 and 1
+ * @return {Xyz} xyz object with values between 0 and 100
  */
 export const rgbToXyz = (rgb: Rgb): Xyz => {
     // Convert sRGB to linear RGB
@@ -111,8 +125,10 @@ export const rgbToXyz = (rgb: Rgb): Xyz => {
 };
 
 /**
- * @param {x, y, z} xyz values between 0 and 1
- * @return {l, a, b} lab values between 0 and 1
+ * Converts an XYZ color to a LAB color.
+ *
+ * @param {Xyz} xyz values between 0 and 1
+ * @return {Lab} lab values between 0 and 1
  */
 export const xyzToLab = (xyz: Xyz): Lab => {
     // Reference-X, Y and Z refer to specific illuminants and observers. D65 is the standard, and the only one we'll use.
@@ -150,8 +166,10 @@ export const xyzToLab = (xyz: Xyz): Lab => {
 };
 
 /**
- * @param {l, a, b} lab1 values between 0 and 1
- * @param {l, a, b} lab2 values between 0 and 1
+ * Compares two Lab colors using the CIE94 algorithm.
+ * The difference score is between 0 and 100. Below 1 is generally imperceptible.
+ * @param {Lab} lab1 values between 0 and 1
+ * @param {Lab} lab2 values between 0 and 1
  * @return {number} similarity score between 0 and 100
  */
 export const deltaE94 = (lab1: Lab, lab2: Lab): number => {
