@@ -3,6 +3,10 @@ type Xyz = {x: number, y: number, z: number;};
 type Lab = {l: number, a: number, b: number;};
 type Hsla = {h: number, s: number, l: number, a?: number;};
 
+/**
+ * @param {string} *OR* {r, g, b} *OR* {r, g, b, a} *OR* [r, g, b] *OR* [r, g, b, a]
+ * @return {string} string in the format 'rgb(0, 0, 0)'
+ */
 export const normalizeRgbString = (color: Rgb | number[] | string): string => {
     if (Array.isArray(color) && color.length >= 3) {
         return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
@@ -18,6 +22,10 @@ export const normalizeRgbString = (color: Rgb | number[] | string): string => {
     }
 };
 
+/**
+ * @param {string} rgbString
+ * @return {r, g, b} rgb values between 0 and 255
+ */
 export const rgbStringToRgb = (rgbString: string): Rgb => {
     const match = rgbString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
     if (match) {
@@ -30,6 +38,10 @@ export const rgbStringToRgb = (rgbString: string): Rgb => {
     return {r: 0, g: 0, b: 0, a: 0}; //return transparent black if no match
 };
 
+/**
+ * @param {h, s, l, a} hsla values between 0 and 1
+ * @return {string} hex string in the format '#000000'
+ */
 export const hslaToHex = (hsla: Hsla): string => {
     const h = hsla.h / 360;
     let r: number, g: number, b: number;
@@ -63,8 +75,10 @@ export const hslaToHex = (hsla: Hsla): string => {
     return `#${toHex(r)}${toHex(g)}${toHex(b)}${alpha}`;
 };
 
-
-
+/**
+ * @param {number} value sRGB value between 0 and 1
+ * @return {number} linear RGB value between 0 and 1
+ */
 export const sRGBToLinear = (value: number): number => {
     if (value <= 0) return 0; // Clamp values below 0
     if (value >= 1) return 1; // Clamp values above 1
@@ -76,6 +90,11 @@ export const sRGBToLinear = (value: number): number => {
     }
 };
 
+
+/**
+ * @param {rgb} value sRGB value between 0 and 1
+ * @return {number} linear RGB value between 0 and 1
+ */
 export const rgbToXyz = (rgb: Rgb): Xyz => {
     // Convert sRGB to linear RGB
     let rLinear = sRGBToLinear(rgb.r / 255.0);
@@ -87,10 +106,14 @@ export const rgbToXyz = (rgb: Rgb): Xyz => {
     let y = rLinear * 0.2126729 + gLinear * 0.7151522 + bLinear * 0.0721750;
     let z = rLinear * 0.0193339 + gLinear * 0.1191920 + bLinear * 0.9503041;
 
-    // The XYZ values are typically within the range [0, 1]. If you need them to be in the range [0, 100], you can scale them.
+    // The XYZ values are sometimes expressed within the range [0, 1]. In this case the range is scaled to [0, 100].
     return {x: x * 100, y: y * 100, z: z * 100};
 };
 
+/**
+ * @param {x, y, z} xyz values between 0 and 1
+ * @return {l, a, b} lab values between 0 and 1
+ */
 export const xyzToLab = (xyz: Xyz): Lab => {
     // Reference-X, Y and Z refer to specific illuminants and observers. D65 is the standard, and the only one we'll use.
     let refX = 95.047;
@@ -126,6 +149,11 @@ export const xyzToLab = (xyz: Xyz): Lab => {
     return {l, a, b};
 };
 
+/**
+ * @param {l, a, b} lab1 values between 0 and 1
+ * @param {l, a, b} lab2 values between 0 and 1
+ * @return {number} similarity score between 0 and 100
+ */
 export const deltaE94 = (lab1: Lab, lab2: Lab): number => {
     const kL = 1;
     const kC = 1;

@@ -63,7 +63,6 @@ const Mixer: React.FC = () => {
         }
     };
 
-
     const hasPartsInMix = (): boolean => {
         return palette.some(color => color.partsInMix > 0);
     };
