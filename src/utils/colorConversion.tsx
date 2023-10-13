@@ -1,9 +1,9 @@
-type Rgb = { r: number, g: number, b: number, a?: number };
-type Xyz = { x: number, y: number, z: number };
-type Lab = { l: number, a: number, b: number };
-type Hsla = { h: number, s: number, l: number, a?: number };
+type Rgb = {r: number, g: number, b: number, a?: number;};
+type Xyz = {x: number, y: number, z: number;};
+type Lab = {l: number, a: number, b: number;};
+type Hsla = {h: number, s: number, l: number, a?: number;};
 
-export const normalizeRgbString = (color: Rgb|number[]|string): string => {
+export const normalizeRgbString = (color: Rgb | number[] | string): string => {
     if (Array.isArray(color) && color.length >= 3) {
         return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
     } else if (typeof color === 'string') {
@@ -16,9 +16,9 @@ export const normalizeRgbString = (color: Rgb|number[]|string): string => {
         console.error('Unexpected format for color:', color);
         return '';
     }
-}
+};
 
-export const rgbStringToRgb = (rgbString:string): Rgb => {
+export const rgbStringToRgb = (rgbString: string): Rgb => {
     const match = rgbString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
     if (match) {
         return {
@@ -28,7 +28,7 @@ export const rgbStringToRgb = (rgbString:string): Rgb => {
         };
     }
     return {r: 0, g: 0, b: 0, a: 0}; //return transparent black if no match
-}
+};
 
 export const hslaToHex = (hsla: Hsla): string => {
     const h = hsla.h / 360;
@@ -61,7 +61,7 @@ export const hslaToHex = (hsla: Hsla): string => {
     const alpha = (hsla.a < 1) ? (Math.round(hsla.a * 255).toString(16).padStart(2, '0')) : '';
 
     return `#${toHex(r)}${toHex(g)}${toHex(b)}${alpha}`;
-}
+};
 
 
 
@@ -74,9 +74,9 @@ export const sRGBToLinear = (value: number): number => {
     } else {
         return Math.pow((value + 0.055) / 1.055, 2.4);
     }
-}
+};
 
-export const rgbToXyz = (rgb: Rgb): Xyz =>{
+export const rgbToXyz = (rgb: Rgb): Xyz => {
     // Convert sRGB to linear RGB
     let rLinear = sRGBToLinear(rgb.r / 255.0);
     let gLinear = sRGBToLinear(rgb.g / 255.0);
@@ -88,8 +88,8 @@ export const rgbToXyz = (rgb: Rgb): Xyz =>{
     let z = rLinear * 0.0193339 + gLinear * 0.1191920 + bLinear * 0.9503041;
 
     // The XYZ values are typically within the range [0, 1]. If you need them to be in the range [0, 100], you can scale them.
-    return { x: x * 100, y: y * 100, z: z * 100 };
-}
+    return {x: x * 100, y: y * 100, z: z * 100};
+};
 
 export const xyzToLab = (xyz: Xyz): Lab => {
     // Reference-X, Y and Z refer to specific illuminants and observers. D65 is the standard, and the only one we'll use.
@@ -123,8 +123,8 @@ export const xyzToLab = (xyz: Xyz): Lab => {
     const a = 500 * (x - y);
     const b = 200 * (y - z);
 
-    return { l, a, b };
-}
+    return {l, a, b};
+};
 
 export const deltaE94 = (lab1: Lab, lab2: Lab): number => {
     const kL = 1;
@@ -148,4 +148,4 @@ export const deltaE94 = (lab1: Lab, lab2: Lab): number => {
     const h = deltaH / (kH * SH);
 
     return Math.sqrt(l * l + c * c + h * h);
-}
+};

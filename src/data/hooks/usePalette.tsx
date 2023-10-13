@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import tinycolor from "tinycolor2";
-import { ColorPart } from '../../types/types';
-import { useColorName } from './useColorName';
+import {ColorPart} from '../../types/types';
+import {useColorName} from './useColorName';
 
 export const usePalette = (initialPalette: ColorPart[]) => {
     const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
@@ -31,5 +31,5 @@ export const usePalette = (initialPalette: ColorPart[]) => {
         return palette.some(swatch => tinycolor(swatch.rgbString).toHexString() === normalizedColor);
     };
 
-    return { palette, setPalette, addToPalette };
+    return {palette, setPalette, addToPalette};
 };

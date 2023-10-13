@@ -5,8 +5,7 @@
         box-sizing: border-box;
     }
 
-    font-family: 'Inclusive Sans',
-    sans-serif;
+    font-family: 'Inclusive Sans', sans-serif;
 
     p {
         margin: 0;
@@ -307,29 +306,39 @@
         }
     }
 
-    .w-color-editable-input:nth-of-type(4) {
-        visibility: hidden;
-        display: none !important;
-    }
+    .color-picker-container {
+        display: flex;
+        flex-direction: column;
+        padding: 0 0.5rem;
+        margin: 1rem 0 0;
+        border: 1px solid black;
 
-    .w-color-wheel {
-        border-radius: 50%;
-        border: white solid 0.25px;
-    }
-
-    .w-color-editable-input {
-        width: 2rem;
-        background-color: rgb(219, 217, 217) !important;
-
-        input {
-            background-color: rgb(61, 61, 61) !important;
-            color: rgb(255, 255, 255) !important;
-            margin: 0 0 0 0.25rem
+        .w-color-editable-input:nth-of-type(4) {
+            visibility: hidden;
+            display: none !important;
         }
 
-        span {
-            padding: 0 0.25rem;
+        .w-color-wheel {
+            border-radius: 50%;
+            border: white solid 0.25px;
+        }
 
+        .colorInputs {
+            display: flex;
+            padding: 0.1rem 0.3rem 0.25rem 0;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 200px;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .w-color-editable-input {
+            width: 2rem;
+            input {
+                background-color: rgb(61, 61, 61) !important;
+                color: rgb(255, 255, 255) !important;
+                margin: 0 0 0 0.25rem
+            }
         }
     }
 }

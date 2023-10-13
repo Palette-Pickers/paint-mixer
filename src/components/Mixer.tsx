@@ -1,34 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import mixbox from 'mixbox';
 import './Mixer.scss';
-import { defaultPalette } from '../utils/palettes/defaultPalette';
-import { ColorPart, Rgb } from '../types/types';
-import { normalizeRgbString, rgbToXyz, xyzToLab, deltaE94 } from '../utils/colorConversion';
+import {defaultPalette} from '../utils/palettes/defaultPalette';
+import {ColorPart, Rgb} from '../types/types';
+import {normalizeRgbString, rgbToXyz, xyzToLab, deltaE94} from '../utils/colorConversion';
 import ColorPicker from './ColorPicker/ColorPicker';
 
-import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
+import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
 import tinycolor from "tinycolor2";
 
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import {TransitionGroup, CSSTransition} from 'react-transition-group';
 
 import usePaletteManager from '../data/hooks/usePaletteManager';
-import { useColorMatching } from '../data/hooks/useColorMatching';
-import { useLocalStorage } from '../data/hooks/useLocalStorage';
+import {useColorMatching} from '../data/hooks/useColorMatching';
+import {useLocalStorage} from '../data/hooks/useLocalStorage';
 
-import { TbTargetArrow, TbTargetOff, TbTarget } from 'react-icons/tb';
-import { VscDebugRestart } from 'react-icons/vsc';
-import { MdAddCircleOutline } from 'react-icons/md';
-import { FaArrowDown } from 'react-icons/fa';
-import { AiOutlineClose } from 'react-icons/ai';
-import { FaInfo } from 'react-icons/fa';
+import {TbTargetArrow, TbTargetOff, TbTarget} from 'react-icons/tb';
+import {VscDebugRestart} from 'react-icons/vsc';
+import {MdAddCircleOutline} from 'react-icons/md';
+import {FaArrowDown} from 'react-icons/fa';
+import {AiOutlineClose} from 'react-icons/ai';
+import {FaInfo} from 'react-icons/fa';
 
 const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
     const [showAddColorPicker, setShowAddColorPicker] = useState(false);
-    const [addColor, setAddColor] = useState({ h: 214, s: 43, v: 90, a: 1 });
+    const [addColor, setAddColor] = useState({h: 214, s: 43, v: 90, a: 1});
     const [editingColorNameIndex, setEditingColorNameIndex] = useState<number | null>(null);
     const [tempColorName, setTempColorName] = useState<string>('');
-    const [targetColor, setTargetColor] = useState({ h: 214, s: 43, v: 90, a: 1 });
+    const [targetColor, setTargetColor] = useState({h: 214, s: 43, v: 90, a: 1});
     const [isUsingTargetColor, setIsUsingTargetColor] = useState<boolean>(false);
     const [isShowingTargetColorPicker, setIsShowingTargetColorPicker] = useState<boolean>(false);
     const [activeInfoIndex, setActiveInfoIndex] = useState<number | null>(null);
@@ -46,9 +46,9 @@ const Mixer: React.FC = () => {
         addToPalette,
         updateColorName
     } = usePaletteManager(initialPalette);
-    const { colorName: mixedColorName } = useColorMatching(mixedColor);
-    const { colorName: targetColorName } = useColorMatching(hsvaToRgbaString(targetColor));
-    const { colorName: addColorName } = useColorMatching(tinycolor(addColor).toHexString());
+    const {colorName: mixedColorName} = useColorMatching(mixedColor);
+    const {colorName: targetColorName} = useColorMatching(hsvaToRgbaString(targetColor));
+    const {colorName: addColorName} = useColorMatching(tinycolor(addColor).toHexString());
 
     const toggleIsUsingTargetColor = () => {
         setIsUsingTargetColor(!isUsingTargetColor);
@@ -96,7 +96,7 @@ const Mixer: React.FC = () => {
         else return tinycolor('rgba(255,255,255,0)').toRgbString();
     };
 
-    const ColorSwatches = ({ palette, handleSwatchIncrement, handleSwatchDecrement, handleRemoveFromPalette, updateColorName }) => {
+    const ColorSwatches = ({palette, handleSwatchIncrement, handleSwatchDecrement, handleRemoveFromPalette, updateColorName}) => {
         return (
             <TransitionGroup className="palette">
                 {palette.map((swatch, i) => (
@@ -108,13 +108,13 @@ const Mixer: React.FC = () => {
                         <div className="swatch-container">
                             <div
                                 className="swatch"
-                                style={{ backgroundColor: `${swatch.rgbString}` }}
+                                style={{backgroundColor: `${swatch.rgbString}`}}
                             >
                                 <div className="swatch-ui">
                                     <a
                                         className="remove-from-palette"
                                         onClick={() => handleRemoveFromPalette(i)}
-                                        style={{ color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' }}
+                                        style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
                                     >
                                         <AiOutlineClose />
                                     </a>
@@ -138,7 +138,7 @@ const Mixer: React.FC = () => {
                                                 setEditingColorNameIndex(i);
                                                 setTempColorName(swatch.label);
                                             }}
-                                            style={{ color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' }}
+                                            style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
                                         >
                                             {swatch.label}
                                         </div>
@@ -146,14 +146,14 @@ const Mixer: React.FC = () => {
                                     {swatch.recipe && (
                                         <div className="recipe-info-button">
                                             <a
-                                                style={{ color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' }}
+                                                style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
                                                 onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
                                         </div>
                                     )}
                                     <div
                                         className="partsInMix"
                                         onClick={() => handleSwatchIncrement(i)}
-                                        style={{ color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' }}
+                                        style={{color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black'}}
                                     >
                                         {swatch.partsInMix}
                                         <div className="parts-percentage">
@@ -249,7 +249,7 @@ const Mixer: React.FC = () => {
 
                             {isUsingTargetColor && (
                                 <div className='match-pct'
-                                    style={{ color: tinycolor(mixedColor).isDark() ? 'white' : 'black' }}
+                                    style={{color: tinycolor(mixedColor).isDark() ? 'white' : 'black'}}
                                 >
                                     <label>Target Match</label>
                                     <div>{matchPercentage}%</div>
@@ -273,7 +273,7 @@ const Mixer: React.FC = () => {
                                         setTargetColor(newColor);
                                     }}
                                     onClose={() => setIsShowingTargetColorPicker(false)}
-                                    onConfirm={() => { setIsShowingTargetColorPicker(false); }}
+                                    onConfirm={() => {setIsShowingTargetColorPicker(false);}}
                                 />
                             )}
                             {!isShowingTargetColorPicker && (
@@ -364,28 +364,19 @@ const Mixer: React.FC = () => {
                         </button>
 
                         {showAddColorPicker && (
-                            <section style={{
-                                backgroundColor: tinycolor(addColor).toHexString(),
-                                display: 'flex',
-                                flexDirection: 'column',
-                                padding: '0 0.5rem',
-                            }}>
+                            <section
+                                className="color-picker-container"
+                                style={{backgroundColor: tinycolor(addColor).toHexString()}}
+                            >
 
                                 <ColorPicker
                                     color={addColor}
-                                    onChange={(newColor) => { setAddColor(newColor); }}
+                                    onChange={(newColor) => {setAddColor(newColor);}}
                                     onClose={() => setShowAddColorPicker(false)}
                                     onConfirm={confirmColor}
                                 />
 
-                                <p style={{
-                                    display: 'flex',
-                                    position: 'relative',
-                                    alignSelf: 'center',
-                                    margin: '0.5rem',
-                                    height: '2rem',
-                                    justifyContent: 'flex-start',
-                                }}>{addColorName}</p>
+
                             </section>
                         )}
                     </div>
