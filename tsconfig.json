@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
-        "jsx": "react-jsx",
+        "jsx": "react",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true
     },
     "include": [
-        "src/**/*", // or wherever your source files are
-        "src/types/**/*" // or wherever you placed the scss.d.ts file
+        "src/**/*",
+        "src/types/**/*"
     ]
 }

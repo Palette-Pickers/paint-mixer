@@ -3,7 +3,7 @@ import tinycolor from "tinycolor2";
 import {ColorPart} from '../../types/types';
 import {useColorName} from './useColorName';
 
-export const usePalette = (initialPalette: ColorPart[]) => {
+export const useSwatchAdder = (initialPalette: ColorPart[]) => {
     const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
 
     const addToPalette = async (rgbString: string, includeRecipe: boolean) => {
