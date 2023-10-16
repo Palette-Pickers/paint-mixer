@@ -5,6 +5,9 @@ import {defaultPalette} from '../utils/palettes/defaultPalette';
 import {ColorPart, Rgb} from '../types/types';
 import {normalizeRgbString, rgbToXyz, xyzToLab, deltaE94} from '../utils/colorConversion';
 import ColorPicker from './ColorPicker/ColorPicker';
+import ColorBoxUI from './ColorBoxUI/ColorBoxUI';
+import ColorSwatches from './ColorSwatches/ColorSwatches';
+
 
 import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
 import tinycolor from "tinycolor2";
@@ -18,7 +21,7 @@ import {useLocalStorage} from '../data/hooks/useLocalStorage';
 import {TbTargetArrow, TbTargetOff, TbTarget} from 'react-icons/tb';
 import {VscDebugRestart} from 'react-icons/vsc';
 import {MdAddCircleOutline} from 'react-icons/md';
-import {FaArrowDown} from 'react-icons/fa';
+
 import {AiOutlineClose} from 'react-icons/ai';
 import {FaInfo} from 'react-icons/fa';
 
@@ -26,12 +29,10 @@ const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
     const [showAddColorPicker, setShowAddColorPicker] = useState(false);
     const [addColor, setAddColor] = useState({h: 214, s: 43, v: 90, a: 1});
-    const [editingColorNameIndex, setEditingColorNameIndex] = useState<number | null>(null);
-    const [tempColorName, setTempColorName] = useState<string>('');
     const [targetColor, setTargetColor] = useState({h: 214, s: 43, v: 90, a: 1});
     const [isUsingTargetColor, setIsUsingTargetColor] = useState<boolean>(false);
     const [isShowingTargetColorPicker, setIsShowingTargetColorPicker] = useState<boolean>(false);
-    const [activeInfoIndex, setActiveInfoIndex] = useState<number | null>(null);
+
     const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
     const [isSavable, setIsSavable] = useState<boolean>(true);
     const [savedPalette, setSavedPalette] = useLocalStorage('savedPalette', defaultPalette);
@@ -96,105 +97,6 @@ const Mixer: React.FC = () => {
         } else {
             return tinycolor('rgba(255,255,255,0)')?.toRgbString() ?? '';
         }
-    };
-
-    const ColorSwatches = ({palette, handleSwatchIncrement, handleSwatchDecrement, handleRemoveFromPalette, updateColorName}) => {
-        return (
-            <TransitionGroup className="palette">
-                {palette.map((swatch, i) => (
-                    <CSSTransition
-                        key={i}
-                        timeout={500}
-                        classNames="fade"
-                    >
-                        <div className="swatch-container">
-                            <div
-                                className="swatch"
-                                style={{backgroundColor: `${swatch.rgbString}`}}
-                            >
-                                <div className="swatch-ui">
-                                    <a
-                                        className="remove-from-palette"
-                                        onClick={() => handleRemoveFromPalette(i)}
-                                        style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
-                                    >
-                                        <AiOutlineClose />
-                                    </a>
-                                    {editingColorNameIndex === i ? (
-                                        <input
-                                            value={tempColorName}
-                                            onChange={(e) => setTempColorName(e.target.value)}
-                                            onBlur={() => {
-                                                updateColorName(i, tempColorName);
-                                                setEditingColorNameIndex(null);
-                                            }}
-                                            style={{
-                                                color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black',
-                                                backgroundColor: tinycolor(swatch.rgbString)?.isDark() ? 'black' : 'white'
-                                            }}
-                                            autoFocus
-                                        />
-                                    ) : (
-                                        <div className='name'
-                                            onClick={() => {
-                                                setEditingColorNameIndex(i);
-                                                setTempColorName(swatch.label);
-                                            }}
-                                            style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
-                                        >
-                                            {swatch.label}
-                                        </div>
-                                    )}
-                                    {swatch.recipe && (
-                                        <div className="recipe-info-button">
-                                            <a
-                                                style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
-                                                onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
-                                        </div>
-                                    )}
-                                    <div
-                                        className="partsInMix"
-                                        onClick={() => handleSwatchIncrement(i)}
-                                        style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
-                                    >
-                                        {swatch.partsInMix}
-                                        <div className="parts-percentage">
-                                            {(swatch.partsInMix > 0.000001) ? (swatch.partsInMix / totalParts * 100).toFixed(0) + '%' : ''}
-                                        </div>
-                                    </div>
-
-                                    {i === activeInfoIndex && swatch.recipe && (
-                                        <div className="recipe-info"
-                                            style={{
-                                                color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black',
-                                                backgroundColor: swatch.rgbString
-                                            }}
-                                            onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}
-                                        >
-                                            {swatch.recipe.map((ingredient, index) => (
-                                                <div key={index}>
-                                                    <div
-                                                        className="recipe-list"
-                                                        style={{
-                                                            backgroundColor: ingredient.rgbString,
-                                                            color: tinycolor(ingredient.rgbString)?.isDark() ? 'white' : 'black'
-                                                        }}>
-                                                        {ingredient.partsInMix} {ingredient.label}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            <div className='change-parts-qty'>
-                                <button className="subtract-parts" onClick={() => handleSwatchDecrement(i)}>-</button>
-                            </div>
-                        </div>
-                    </CSSTransition>
-                ))}
-            </TransitionGroup>
-        );
     };
 
     // Helper function to check if a color is already in the palette
@@ -289,58 +191,18 @@ const Mixer: React.FC = () => {
                             )}
                         </section>
                     )}
-                    <div className='color-box-ui'>
 
-                        <div>
-                            <button
-                                className='reset-mix'
-                                onClick={resetPalette}
-                                id='reset-mix'
-                                style={{
-                                    color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black',
-                                    opacity: hasPartsInMix() ? 0.5 : 0 // Change the opacity to indicate it's disabled
-                                }}
-                            >
-                                <VscDebugRestart />
-                                <label className='button-reset-mix'>Reset</label>
-                            </button>
-                        </div>
+                    <ColorBoxUI
+                        mixedColor={mixedColor}
+                        isUsingTargetColor={isUsingTargetColor}
+                        targetColor={targetColor}
+                        resetPalette={resetPalette}
+                        toggleIsUsingTargetColor={toggleIsUsingTargetColor}
+                        isSavable={isSavable}
+                        addToPalette={addToPalette}
+                        hasPartsInMix={hasPartsInMix}
+                    />
 
-
-                        <div className='color-box-label'>
-                            <button
-                                className="add-to-palette"
-                                onClick={() => addToPalette(mixedColor, true)}  // Set includeRecipe to true
-                                disabled={!isSavable} // Disable the button based on canSave state
-                                style={{
-                                    color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black',
-                                    opacity: isSavable ? 1 : 0.5 // Change the opacity to indicate it's disabled
-                                }}
-                            >
-                                <FaArrowDown style={{
-                                    color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black',
-                                    opacity: isSavable ? 1 : 0 // Hide the icon when disabled
-                                }}
-                                />
-                                <label className='button-save'>
-                                    {isSavable ? 'Save' : 'Saved'}
-                                </label>
-                            </button>
-                        </div>
-
-                        <button
-                            className="toggle-target-color"
-                            onClick={toggleIsUsingTargetColor}
-                            style={{
-                                color: isUsingTargetColor ?
-                                    tinycolor(hsvaToRgba(targetColor))?.isDark() ? 'white' : 'black' :
-                                    tinycolor(mixedColor)?.isDark() ? 'white' : 'black'
-                            }}
-                        >
-                            {(isUsingTargetColor ? <TbTargetArrow /> : <TbTargetOff />)}
-                            <label className='button-target-color'>Target</label>
-                        </button>
-                    </div>
                     <div className='transparency-box'></div>
                 </div>
 
@@ -351,6 +213,7 @@ const Mixer: React.FC = () => {
                         handleSwatchDecrement={handleSwatchDecrement}
                         handleRemoveFromPalette={handleRemoveFromPalette}
                         updateColorName={updateColorName}
+                        totalParts={totalParts}
                     />
 
                     <div className="add-color-ui">
