@@ -1,32 +1,42 @@
-import { useState, useCallback } from 'react';
-import { ColorPart, PaletteManager } from '../../types/types';
-import { usePalette } from './usePalette';
+import { useCallback } from "react";
+import { ColorPart, PaletteManager } from "../../types/types";
+import { useSwatchAdder } from "./useSwatchAdder";
 
 const usePaletteManager = (initialPalette: ColorPart[]): PaletteManager => {
-    const { palette, setPalette, addToPalette } = usePalette(initialPalette);
-    const handleSwatchIncrement = useCallback((index: number) => {
-        const updatedPalette = [...palette];
-        updatedPalette[index].partsInMix++;
-        setPalette(updatedPalette);
-    }, [palette]);
+    const {palette, setPalette, addToPalette} = useSwatchAdder(initialPalette);
 
-    const handleSwatchDecrement = useCallback((index: number) => {
-        const updatedPalette = [...palette];
-        if (updatedPalette[index].partsInMix > 0)
-            updatedPalette[index].partsInMix--;
-        setPalette(updatedPalette);
-    }, [palette]);
+    const handleSwatchIncrement = useCallback(
+        (index: number) => {
+            const updatedPalette = [...palette];
+            updatedPalette[index].partsInMix++;
+            setPalette(updatedPalette);
+        },
+        [palette]
+    );
 
-    const handleRemoveFromPalette = useCallback((index: number) => {
-        const updatedPalette = [...palette];
-        updatedPalette.splice(index, 1);
-        setPalette(updatedPalette);
-    }, [palette]);
+    const handleSwatchDecrement = useCallback(
+        (index: number) => {
+            const updatedPalette = [...palette];
+            if (updatedPalette[index].partsInMix > 0)
+                updatedPalette[index].partsInMix--;
+            setPalette(updatedPalette);
+        },
+        [palette]
+    );
+
+    const handleRemoveFromPalette = useCallback(
+        (index: number) => {
+            const updatedPalette = [...palette];
+            updatedPalette.splice(index, 1);
+            setPalette(updatedPalette);
+        },
+        [palette]
+    );
 
     const resetPalette = useCallback(() => {
         const resetPalette = palette.map(color => ({
             ...color,
-            partsInMix: 0
+            partsInMix: 0,
         }));
         setPalette(resetPalette);
     }, [palette]);
@@ -43,7 +53,7 @@ const usePaletteManager = (initialPalette: ColorPart[]): PaletteManager => {
         handleRemoveFromPalette,
         resetPalette,
         addToPalette,
-        updateColorName
+        updateColorName,
     };
 };
 

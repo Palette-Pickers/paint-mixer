@@ -174,7 +174,7 @@ export const xyzToLab = (xyz: Xyz): Lab => {
  * The difference score is between 0 and 100. Below 1 is generally imperceptible.
  * @param {Lab} lab1 values between 0 and 1
  * @param {Lab} lab2 values between 0 and 1
- * @return {number} similarity score between 0 and 100
+ * @return {number} difference score between 0 and 100
  */
 export const deltaE94 = (lab1: Lab, lab2: Lab): number => {
     const kL = 1;
