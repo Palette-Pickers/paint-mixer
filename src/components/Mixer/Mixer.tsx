@@ -1,36 +1,37 @@
 import React, {useState, useEffect} from 'react';
 import mixbox from 'mixbox';
 import './Mixer.scss';
-import {defaultPalette} from '../utils/palettes/defaultPalette';
-import {ColorPart, Rgb} from '../types/types';
-import {normalizeRgbString, rgbToXyz, xyzToLab, deltaE94} from '../utils/colorConversion';
-import ColorPicker from './ColorPicker/ColorPicker';
-import ColorBoxUI from './ColorBoxUI/ColorBoxUI';
-import ColorSwatches from './ColorSwatches/ColorSwatches';
+import {defaultPalette} from '../../utils/palettes/defaultPalette';
+import {ColorPart, Rgb} from '../../types/types';
+import {normalizeRgbString, rgbToXyz, xyzToLab, deltaE94} from '../../utils/colorConversion';
+
+import ColorPicker from '../ColorPicker/ColorPicker';
+import ColorBoxUI from '../ColorBoxUI/ColorBoxUI';
+import ColorSwatches from '../ColorSwatches/ColorSwatches';
+import AddColorUI from '../AddColorUI/AddColorUI';
+import MixedColorContainer from '../MixedColorContainer/MixedColorContainer';
 
 
 import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
 import tinycolor from "tinycolor2";
 
-import {TransitionGroup, CSSTransition} from 'react-transition-group';
+import usePaletteManager from '../../data/hooks/usePaletteManager';
+import {useColorMatching} from '../../data/hooks/useColorMatching';
+import {useLocalStorage} from '../../data/hooks/useLocalStorage';
 
-import usePaletteManager from '../data/hooks/usePaletteManager';
-import {useColorMatching} from '../data/hooks/useColorMatching';
-import {useLocalStorage} from '../data/hooks/useLocalStorage';
-
-import {TbTargetArrow, TbTargetOff, TbTarget} from 'react-icons/tb';
-import {VscDebugRestart} from 'react-icons/vsc';
 import {MdAddCircleOutline} from 'react-icons/md';
-
 import {AiOutlineClose} from 'react-icons/ai';
 import {FaInfo} from 'react-icons/fa';
+import {TbTargetArrow, TbTargetOff, TbTarget} from 'react-icons/tb';
+import {VscDebugRestart} from 'react-icons/vsc';
 
 const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
     const [showAddColorPicker, setShowAddColorPicker] = useState(false);
     const [addColor, setAddColor] = useState({h: 214, s: 43, v: 90, a: 1});
-    const [targetColor, setTargetColor] = useState({h: 214, s: 43, v: 90, a: 1});
     const [isUsingTargetColor, setIsUsingTargetColor] = useState<boolean>(false);
+    const [targetColor, setTargetColor] = useState({h: 214, s: 43, v: 90, a: 1});
+
     const [isShowingTargetColorPicker, setIsShowingTargetColorPicker] = useState<boolean>(false);
 
     const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
@@ -93,7 +94,7 @@ const Mixer: React.FC = () => {
                 }
             }
             const mixed_color = mixbox.latentToRgb(latent_mix);
-            return tinycolor(normalizeRgbString(mixed_color))?.toRgbString() ?? '';
+            return tinycolor(mixed_color)?.toRgbString() ?? '';
         } else {
             return tinycolor('rgba(255,255,255,0)')?.toRgbString() ?? '';
         }
@@ -106,8 +107,19 @@ const Mixer: React.FC = () => {
     };
 
     const getRgbColorMatch = (color1: string, color2: string): number => {
-        const color1Lab = xyzToLab(rgbToXyz((tinycolor(color1)).toRgb()));
-        const color2Lab = xyzToLab(rgbToXyz(tinycolor(color2).toRgb()));
+        if (!color1 || (color1===undefined) || !color2 || (color2===undefined)) {
+            return 0;
+        }
+        const color1Rgb = (tinycolor(color1))?.toRgb();
+        const color2Rgb = (tinycolor(color2))?.toRgb();
+        if (!color1Rgb || !color2Rgb) {
+            return 0;
+        }
+        /* tslint:disable-next-line */
+        const color1Lab = xyzToLab(rgbToXyz(color1Rgb));
+        /* tslint:disable-next-line */
+        const color2Lab = xyzToLab(rgbToXyz(color2Rgb));
+        /* tslint:enable */
         return (100 - deltaE94(color1Lab, color2Lab)); //convert % difference to % match
     };
 
@@ -170,25 +182,7 @@ const Mixer: React.FC = () => {
                             }}
                         >
 
-                            {isShowingTargetColorPicker && (
-                                <ColorPicker
-                                    color={targetColor}
-                                    onChange={(newColor) => {
-                                        setTargetColor(newColor);
-                                    }}
-                                    onClose={() => setIsShowingTargetColorPicker(false)}
-                                    onConfirm={() => {setIsShowingTargetColorPicker(false);}}
-                                />
-                            )}
-                            {!isShowingTargetColorPicker && (
-                                <div className='target-color-values'>
-                                    <label htmlFor="target-color">Target Color</label>
-                                    <div id="target-color">
-                                        {tinycolor(targetColor)?.toHexString()}
-                                        <p>{targetColorName}</p>
-                                    </div>
-                                </div>
-                            )}
+
                         </section>
                     )}
 
@@ -229,7 +223,7 @@ const Mixer: React.FC = () => {
                         </button>
 
                         {showAddColorPicker && (
-                            <section
+                            <div
                                 className="color-picker-container"
                                 style={{backgroundColor: tinycolor(addColor)?.toHexString()}}
                             >
@@ -242,7 +236,7 @@ const Mixer: React.FC = () => {
                                 />
 
 
-                            </section>
+                            </div>
                         )}
                     </div>
                 </section>

@@ -20,3 +20,10 @@ export type Rgb = {
     b: number;
     a?: number;
 }
+
+export type Hsva = {
+    h: number;
+    s: number;
+    v: number;
+    a: number;
+}
