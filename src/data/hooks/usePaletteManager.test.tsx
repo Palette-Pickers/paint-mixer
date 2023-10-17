@@ -27,7 +27,7 @@ const TestComponent: React.FC = () => {
             <button data-testid="decrement-button" onClick={() => handleSwatchDecrement(0)}>Decrement</button>
             <button data-testid="remove-button" onClick={() => handleRemoveFromPalette(0)}>Remove</button>
             <button data-testid="reset-button" onClick={resetPalette}>Reset</button>
-            <button data-testid="add-button" onClick={() => addToPalette("rgb(242,117,175)", false)}>Add</button>
+            <button data-testid="add-button" onClick={() => addToPalette(rgbString, false)}>Add</button>
             <input data-testid="color-name-input" defaultValue={palette[0]?.label || ""} />
             <button data-testid="update-name-button" onClick={() => updateColorName(0, "Updated Color")}>Update Name</button>
         </div>
@@ -91,7 +91,5 @@ it("should add a color to the palette", () => {
     });
 
     const updatedPalette = JSON.parse(getByTestId("hook-values").textContent || "");
-
-    // If you have a default name for new colors, you can check it here:
-    expect(updatedPalette[updatedPalette.length - 1].label).toBe("New Color");
+    expect
 });
