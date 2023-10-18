@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
+import styles from './Mixer.module.scss';
 import mixbox from 'mixbox';
-import './Mixer.scss';
 import {defaultPalette} from '../../utils/palettes/defaultPalette';
 import {ColorPart, Rgb} from '../../types/types';
 import {normalizeRgbString, rgbToXyz, xyzToLab, deltaE94} from '../../utils/colorConversion';
@@ -24,6 +24,7 @@ import {AiOutlineClose} from 'react-icons/ai';
 import {FaInfo} from 'react-icons/fa';
 import {TbTargetArrow, TbTargetOff, TbTarget} from 'react-icons/tb';
 import {VscDebugRestart} from 'react-icons/vsc';
+import TargetColorContainer from '../TargetColorContainer/TargetColorContainer';
 
 const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
@@ -78,7 +79,7 @@ const Mixer: React.FC = () => {
             return acc + color.partsInMix;
         }, 0);
 
-        if (totalParts > 0.000001) {
+        if (totalParts !== undefined && totalParts > 0.000001) {
             let latent_mix: number[] = [0, 0, 0, 0, 0, 0, 0];
 
             for (let j = 0; j < palette.length; j++) {
@@ -94,10 +95,9 @@ const Mixer: React.FC = () => {
                 }
             }
             const mixed_color = mixbox.latentToRgb(latent_mix);
-            return tinycolor(mixed_color)?.toRgbString() ?? '';
-        } else {
-            return tinycolor('rgba(255,255,255,0)')?.toRgbString() ?? '';
+            return mixed_color;
         }
+        return tinycolor('rgba(255,255,255,0)')?.toRgbString() ?? '';
     };
 
     // Helper function to check if a color is already in the palette
@@ -115,9 +115,8 @@ const Mixer: React.FC = () => {
         if (!color1Rgb || !color2Rgb) {
             return 0;
         }
-        /* tslint:disable-next-line */
+
         const color1Lab = xyzToLab(rgbToXyz(color1Rgb));
-        /* tslint:disable-next-line */
         const color2Lab = xyzToLab(rgbToXyz(color2Rgb));
         /* tslint:enable */
         return (100 - deltaE94(color1Lab, color2Lab)); //convert % difference to % match
@@ -137,112 +136,109 @@ const Mixer: React.FC = () => {
         setIsSavable(!isColorInPalette(mixedColor, palette));
     }, [mixedColor, palette]);
 
-    return (
-        <>
-            <main className='Mixer'>
-                <div className='color-box'>
-                    <section className='mixed-color-container'
-                        style={{
-                            backgroundColor: mixedColor,
-                            color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black'
-                        }}
-                    >
-                        <div
-                            className='mixed-color-values'>
-                            <div>
-                                <label htmlFor="mixed-color">
-                                    Mixed Color
-                                </label>
-                                <div id="mixed-color">
-                                    <p>
-                                        {tinycolor(mixedColor)?.toHexString()}
-                                    </p>
-                                    <p>
-                                        {mixedColorName}
-                                    </p>
-                                </div>
+return (
+    <>
+        <main className={styles.Mixer}>
+            <div className={styles.colorBox}>
+                <section className={styles.mixedColorContainer}
+                    style={{
+                        backgroundColor: mixedColor,
+                        color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black'
+                    }}
+                >
+                    <div className={styles.mixedColorValues}>
+                        <div>
+                            <label htmlFor="mixed-color">
+                                Mixed Color
+                            </label>
+                            <div id="mixed-color">
+                                <p>
+                                    {(tinycolor(normalizeRgbString(mixedColor)).toHexString())}
+                                </p>
+                                <p>
+                                    {mixedColorName}
+                                </p>
                             </div>
-
-                            {isUsingTargetColor && (
-                                <div className='match-pct'
-                                    style={{color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black'}}
-                                >
-                                    <label>Target Match</label>
-                                    <div>{matchPercentage}%</div>
-                                </div>
-                            )}
                         </div>
-                    </section>
-                    {isUsingTargetColor && (
-                        <section className='target-color-container'
-                            style={{
-                                background: hsvaToRgbaString(targetColor),
-                                color: tinycolor(hsvaToRgba(targetColor))?.isDark() ? 'white' : 'black',
-                                display: (isUsingTargetColor ? 'block' : 'none'),
-                            }}
-                        >
 
-
-                        </section>
-                    )}
-
-                    <ColorBoxUI
-                        mixedColor={mixedColor}
-                        isUsingTargetColor={isUsingTargetColor}
-                        targetColor={targetColor}
-                        resetPalette={resetPalette}
-                        toggleIsUsingTargetColor={toggleIsUsingTargetColor}
-                        isSavable={isSavable}
-                        addToPalette={addToPalette}
-                        hasPartsInMix={hasPartsInMix}
-                    />
-
-                    <div className='transparency-box'></div>
-                </div>
-
-                <section className='swatches'>
-                    <ColorSwatches
-                        palette={palette}
-                        handleSwatchIncrement={handleSwatchIncrement}
-                        handleSwatchDecrement={handleSwatchDecrement}
-                        handleRemoveFromPalette={handleRemoveFromPalette}
-                        updateColorName={updateColorName}
-                        totalParts={totalParts}
-                    />
-
-                    <div className="add-color-ui">
-                        <button
-                            style={{
-                                visibility: (showAddColorPicker) ? 'hidden' : 'visible',
-                                display: (showAddColorPicker) ? 'none' : 'block',
-                                cursor: (showAddColorPicker) ? 'default' : 'pointer'
-                            }}
-                            onClick={() => setShowAddColorPicker(!showAddColorPicker)}
-                        >
-                            <MdAddCircleOutline />
-                        </button>
-
-                        {showAddColorPicker && (
-                            <div
-                                className="color-picker-container"
-                                style={{backgroundColor: tinycolor(addColor)?.toHexString()}}
+                        {isUsingTargetColor && (
+                            <div className={styles.matchPct}
+                                style={{color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black'}}
                             >
-
-                                <ColorPicker
-                                    color={addColor}
-                                    onChange={(newColor) => {setAddColor(newColor);}}
-                                    onClose={() => setShowAddColorPicker(false)}
-                                    onConfirm={confirmColor}
-                                />
-
-
+                                <label>Target Match</label>
+                                <div>{matchPercentage}%</div>
                             </div>
                         )}
                     </div>
                 </section>
-            </main>
-        </>
-    );
+
+                <TargetColorContainer
+                    isUsingTargetColor={isUsingTargetColor}
+                    targetColor={targetColor}
+                    isShowingTargetColorPicker={isShowingTargetColorPicker}
+                    targetColorName={targetColorName}
+                    setTargetColor={setTargetColor}
+                    setIsShowingTargetColorPicker={setIsShowingTargetColorPicker}
+                />
+
+                <ColorBoxUI
+                    mixedColor={mixedColor}
+                    isUsingTargetColor={isUsingTargetColor}
+                    targetColor={targetColor}
+                    resetPalette={resetPalette}
+                    toggleIsUsingTargetColor={toggleIsUsingTargetColor}
+                    isSavable={isSavable}
+                    addToPalette={addToPalette}
+                    hasPartsInMix={hasPartsInMix}
+                    setMixedColor={setMixedColor}
+                    palette={palette}
+                />
+
+                <div className={styles.transparencyBox}></div>
+            </div>
+
+            <section className={styles.swatches}>
+                <ColorSwatches
+                    palette={palette}
+                    handleSwatchIncrement={handleSwatchIncrement}
+                    handleSwatchDecrement={handleSwatchDecrement}
+                    handleRemoveFromPalette={handleRemoveFromPalette}
+                    updateColorName={updateColorName}
+                    totalParts={totalParts}
+                />
+
+                <div className={styles.addColorUi}>
+                    <button
+                        style={{
+                            visibility: (showAddColorPicker) ? 'hidden' : 'visible',
+                            display: (showAddColorPicker) ? 'none' : 'block',
+                            cursor: (showAddColorPicker) ? 'default' : 'pointer'
+                        }}
+                        onClick={() => setShowAddColorPicker(!showAddColorPicker)}
+                    >
+                        <MdAddCircleOutline />
+                    </button>
+
+                    {showAddColorPicker && (
+                        <div
+                            className={styles.colorPickerContainer}
+                            style={{backgroundColor: tinycolor(addColor)?.toHexString()}}
+                        >
+
+                            <ColorPicker
+                                color={addColor}
+                                onChange={(newColor) => {setAddColor(newColor);}}
+                                onClose={() => setShowAddColorPicker(false)}
+                                onConfirm={confirmColor}
+                            />
+                        </div>
+                    )}
+                </div>
+            </section>
+        </main>
+    </>
+);
+
 };
 
 export default Mixer;
