@@ -1,5 +1,3 @@
-// MixedColorContainer.tsx
-
 import React from 'react';
 
 interface MixedColorContainerProps {

@@ -1,52 +1,56 @@
-import React, {useState} from 'react';
-import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
+import React from 'react';
+import styles from './TargetColorContainer.module.scss';
 import tinycolor from "tinycolor2";
-import {Hsva} from "../../types/types";
+import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
 import ColorPicker from '../ColorPicker/ColorPicker';
-import {useColorMatching} from '../../data/hooks/useColorMatching';
+import {Hsva} from '../../types/types';
+
 
 interface TargetColorContainerProps {
+    isUsingTargetColor: boolean;
     targetColor: Hsva;
-    onColorChange: (color: string) => void; // Callback to handle color changes
+    isShowingTargetColorPicker: boolean;
+    targetColorName: string;
+    setTargetColor: (color: any) => void; // Update the type accordingly
+    setIsShowingTargetColorPicker: (value: boolean) => void;
 }
 
-const TargetColorContainer: React.FC<TargetColorContainerProps> = ({targetColor, onColorChange}) => {
-
-    const [isUsingTargetColor, setIsUsingTargetColor] = useState<boolean>(false);
-    const [isShowingTargetColorPicker, setIsShowingTargetColorPicker] = useState<boolean>(false);
-    const {colorName: targetColorName} = useColorMatching(hsvaToRgbaString(targetColor));
-
+const TargetColorContainer: React.FC<TargetColorContainerProps> = ({
+    isUsingTargetColor,
+    targetColor,
+    isShowingTargetColorPicker,
+    targetColorName,
+    setTargetColor,
+    setIsShowingTargetColorPicker
+}) => {
     return (
-        <div className="target-color-container">
-            <div className="color-display"
+        isUsingTargetColor && (
+            <section className={styles.TargetColorContainer}
                 style={{
                     background: hsvaToRgbaString(targetColor),
-                                color: tinycolor(hsvaToRgba(targetColor))?.isDark() ? 'white' : 'black',
-                                display: (isUsingTargetColor ? 'block' : 'none'),
+                    color: tinycolor(hsvaToRgba(targetColor)).isDark() ? 'white' : 'black',
+                    display: (isUsingTargetColor ? 'block' : 'none'),
                 }}
             >
-                {/* Display the target color */}
                 {isShowingTargetColorPicker && (
                     <ColorPicker
                         color={targetColor}
-                        onChange={(newColor) => {
-                            setTargetColor(newColor);
-                        }}
+                        onChange={setTargetColor}
                         onClose={() => setIsShowingTargetColorPicker(false)}
-                        onConfirm={() => {setIsShowingTargetColorPicker(false);}}
+                        onConfirm={() => setIsShowingTargetColorPicker(false)}
                     />
                 )}
                 {!isShowingTargetColorPicker && (
-                    <div className='target-color-values'>
+                    <div className={styles.targetColorValues}>
                         <label htmlFor="target-color">Target Color</label>
                         <div id="target-color">
-                            {tinycolor(targetColor)?.toHexString()}
+                            {tinycolor(targetColor).toHexString()}
                             <p>{targetColorName}</p>
                         </div>
                     </div>
                 )}
-            </div>
-        </div>
+            </section>
+        )
     );
 }
 
