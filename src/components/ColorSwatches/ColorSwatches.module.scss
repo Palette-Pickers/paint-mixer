@@ -1,8 +1,17 @@
 .ColorSwatches {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
+    width: 100%;
 
     .swatchContainer {
+        display: flex;
+        flex-direction: column;
+        margin: 5px 5px 5px 0;
+        width: 9rem;
+        align-content: center;
+        justify-content: center;
+
         .name {
             font-family: 'Roboto Condensed', sans-serif;
             display: block;
@@ -11,7 +20,9 @@
             position: absolute;
             top: 1px;
             z-index: 2;
+            width: 9rem;
         }
+
         .swatch {
             align-content: center;
             border-radius: 0 0 20% 20%;
@@ -19,7 +30,6 @@
             min-height: 6rem;
             height: auto;
             justify-content: center;
-            margin: 5px 5px 5px 0;
             position: relative;
             width: 9rem;
 
@@ -39,7 +49,6 @@
                 left: 0;
                 position: relative;
                 right: 0;
-                width: 100%;
 
                 .removeFromPalette {
                     background-color: transparent;
@@ -51,6 +60,8 @@
                     top: 1px;
                     user-select: none;
                     opacity: 0.5;
+                    display: flex;
+                    align-items: flex-end;
 
                     &:hover,
                     &:active {
@@ -109,12 +120,12 @@
                 align-items: center;
 
                 .partsPercentage {
+                    display: flex;
                     font-size: 1rem;
                     padding: 0 0 0.75rem;
                     margin: 0;
+                    justify-content: center;
                 }
-
-
             }
 
             .recipeInfo {

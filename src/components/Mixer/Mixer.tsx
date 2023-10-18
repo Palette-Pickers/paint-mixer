@@ -5,12 +5,12 @@ import {defaultPalette} from '../../utils/palettes/defaultPalette';
 import {ColorPart, Rgb} from '../../types/types';
 import {normalizeRgbString, rgbToXyz, xyzToLab, deltaE94} from '../../utils/colorConversion';
 
+import MixedColorContainer from '../MixedColorContainer/MixedColorContainer';
 import ColorPicker from '../ColorPicker/ColorPicker';
 import ColorBoxUI from '../ColorBoxUI/ColorBoxUI';
 import ColorSwatches from '../ColorSwatches/ColorSwatches';
+import TargetColorContainer from '../TargetColorContainer/TargetColorContainer';
 import AddColorUI from '../AddColorUI/AddColorUI';
-import MixedColorContainer from '../MixedColorContainer/MixedColorContainer';
-
 
 import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
 import tinycolor from "tinycolor2";
@@ -20,11 +20,6 @@ import {useColorMatching} from '../../data/hooks/useColorMatching';
 import {useLocalStorage} from '../../data/hooks/useLocalStorage';
 
 import {MdAddCircleOutline} from 'react-icons/md';
-import {AiOutlineClose} from 'react-icons/ai';
-import {FaInfo} from 'react-icons/fa';
-import {TbTargetArrow, TbTargetOff, TbTarget} from 'react-icons/tb';
-import {VscDebugRestart} from 'react-icons/vsc';
-import TargetColorContainer from '../TargetColorContainer/TargetColorContainer';
 
 const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
@@ -49,6 +44,7 @@ const Mixer: React.FC = () => {
         addToPalette,
         updateColorName
     } = usePaletteManager(initialPalette);
+
     const {colorName: mixedColorName} = useColorMatching(mixedColor);
     const {colorName: targetColorName} = useColorMatching(hsvaToRgbaString(targetColor));
     const {colorName: addColorName} = useColorMatching(tinycolor(addColor)?.toHexString() ?? '');
@@ -74,6 +70,7 @@ const Mixer: React.FC = () => {
         return acc + color.partsInMix;
     }, 0);
 
+    // Helper function to get the mixed color by mixing the colors based on partsInMix in the palette
     const getMixedRgbStringFromPalette = (palette: ColorPart[]): string => {
         let totalParts = palette.reduce((acc, color) => {
             return acc + color.partsInMix;
@@ -106,6 +103,7 @@ const Mixer: React.FC = () => {
         return palette.some(swatch => tinycolor(swatch.rgbString)?.toHexString() === normalizedColor);
     };
 
+    // Helper function to get the % match between two colors
     const getRgbColorMatch = (color1: string, color2: string): number => {
         if (!color1 || (color1===undefined) || !color2 || (color2===undefined)) {
             return 0;
@@ -140,37 +138,12 @@ return (
     <>
         <main className={styles.Mixer}>
             <div className={styles.colorBox}>
-                <section className={styles.mixedColorContainer}
-                    style={{
-                        backgroundColor: mixedColor,
-                        color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black'
-                    }}
-                >
-                    <div className={styles.mixedColorValues}>
-                        <div>
-                            <label htmlFor="mixed-color">
-                                Mixed Color
-                            </label>
-                            <div id="mixed-color">
-                                <p>
-                                    {(tinycolor(normalizeRgbString(mixedColor)).toHexString())}
-                                </p>
-                                <p>
-                                    {mixedColorName}
-                                </p>
-                            </div>
-                        </div>
-
-                        {isUsingTargetColor && (
-                            <div className={styles.matchPct}
-                                style={{color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black'}}
-                            >
-                                <label>Target Match</label>
-                                <div>{matchPercentage}%</div>
-                            </div>
-                        )}
-                    </div>
-                </section>
+                <MixedColorContainer
+                    mixedColor={mixedColor}
+                    mixedColorName={mixedColorName}
+                    isUsingTargetColor={isUsingTargetColor}
+                    matchPercentage={matchPercentage}
+                />
 
                 <TargetColorContainer
                     isUsingTargetColor={isUsingTargetColor}

@@ -11,8 +11,6 @@
     width: 200px;
     position: relative;
 
-   
-
     .closeButton {
         position: absolute;
         right: 0;
@@ -34,7 +32,7 @@
         width: 180px;
     }
 
-    .color-preview {
+    .colorPreview {
         align-items: center;
         display: flex;
         justify-content: center;
@@ -56,6 +54,4 @@
             opacity: 1;
         }
     }
-
-
 }
