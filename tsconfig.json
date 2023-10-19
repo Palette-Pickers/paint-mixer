@@ -1,20 +1,37 @@
 {
     "compilerOptions": {
-        "jsx": "react",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
+        "jsx": "preserve",
         "lib": [
             "es2017",
-            "dom"
+            "dom",
+            "dom.iterable"
         ],
         "typeRoots": [
             "./node_modules/@types",
             "src/types"
-        ]
+        ],
+        "target": "es5",
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": false,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ]
+        }
     },
     "include": [
         "src/**/*",
         "src/types/**/*",
         "./src/types/scss.d.ts"
+    ],
+    "exclude": [
+        "node_modules"
     ]
 }

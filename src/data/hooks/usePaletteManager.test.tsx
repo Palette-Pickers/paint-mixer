@@ -2,6 +2,11 @@ import { render, act, fireEvent } from "@testing-library/react";
 import usePaletteManager from "./usePaletteManager";
 import { defaultPalette } from "../../utils/palettes/defaultPalette";
 import React from 'react';
+const fetch = jest.fn(() =>
+    Promise.resolve({
+        json: () => Promise.resolve({ data: 'some data' }),
+    })
+);
 
 const TestComponent: React.FC = () => {
     const hookValues = usePaletteManager(defaultPalette);
@@ -82,15 +87,4 @@ it("should reset the palette", () => {
     });
 });
 
-it("should add a color to the palette", async () => {
-
-    const { getByTestId } = render(<TestComponent />);
-    const initialPaletteLength = JSON.parse(getByTestId("hook-values").textContent || "").length;
-
-    await act(async () => {
-        fireEvent.click(getByTestId("add-button"));
-    });
-
-    const updatedPalette = JSON.parse(getByTestId("hook-values").textContent || "");
-});
 

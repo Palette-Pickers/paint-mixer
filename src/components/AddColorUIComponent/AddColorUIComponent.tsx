@@ -15,7 +15,8 @@ type Props = {
 const AddColorUIComponent: React.FC<Props> = ({ showAddColorPicker, addColor, setShowAddColorPicker, setAddColor, confirmColor }) => {
     return (
         <div className={styles.AddColorUIComponent}>
-            <button
+            <a
+                className={styles.showAddColorPickerButton}
                 style={{
                     visibility: showAddColorPicker ? 'hidden' : 'visible',
                     display: showAddColorPicker ? 'none' : 'block',
@@ -24,7 +25,7 @@ const AddColorUIComponent: React.FC<Props> = ({ showAddColorPicker, addColor, se
                 onClick={() => setShowAddColorPicker(!showAddColorPicker)}
             >
                 <MdAddCircleOutline />
-            </button>
+            </a>
 
             {showAddColorPicker && (
                 <div

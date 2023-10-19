@@ -1,5 +1,6 @@
 .AddColorUIComponent {
-    >button {
+    display: flex;
+    &> button {
         background-color: transparent;
         border: 0;
         font-size: 3rem;

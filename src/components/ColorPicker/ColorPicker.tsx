@@ -20,6 +20,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, onChange, onClose, onCo
     return (
         <div className={styles.ColorPicker}
             style={{background: tinycolor(color).toRgbString()}}
+            data-testid="colorPickerContainer"
         >
             <button className={styles.closeButton}
                 style={{
@@ -44,7 +45,6 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, onChange, onClose, onCo
                 <EditableInput
                     label="Hex"
                     value={hsvaToHex(color)}
-
                     style={{
                         width: '4.5rem',
                     }}
