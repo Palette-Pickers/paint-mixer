@@ -3,12 +3,10 @@
     flex-direction: column;
     padding: 0 0.5rem;
     margin: 1rem 0 0;
-    border: 1px solid black;
-    align-items: center;
+    align-items: flex-end;
     border: 0;
     box-sizing: border-box;
-    justify-content: center;
-    width: 200px;
+    justify-content: flex-start;
     position: relative;
 
     .closeButton {

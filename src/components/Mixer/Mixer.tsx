@@ -1,25 +1,27 @@
 import React, {useState, useEffect} from 'react';
 import styles from './Mixer.module.scss';
-import mixbox from 'mixbox';
-import {defaultPalette} from '../../utils/palettes/defaultPalette';
-import {ColorPart, Rgb} from '../../types/types';
-import {normalizeRgbString, rgbToXyz, xyzToLab, deltaE94} from '../../utils/colorConversion';
 
-import MixedColorContainer from '../MixedColorContainer/MixedColorContainer';
-import ColorPicker from '../ColorPicker/ColorPicker';
+
+//components
+import AddColorUIComponent from '../AddColorUIComponent/AddColorUIComponent';
 import ColorBoxUI from '../ColorBoxUI/ColorBoxUI';
 import ColorSwatches from '../ColorSwatches/ColorSwatches';
+import MixedColorContainer from '../MixedColorContainer/MixedColorContainer';
 import TargetColorContainer from '../TargetColorContainer/TargetColorContainer';
-import AddColorUI from '../AddColorUI/AddColorUI';
 
-import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
+//color mixing and conversion libraries
+import mixbox from 'mixbox';
+import {rgbToXyz, xyzToLab, deltaE94} from '../../utils/colorConversion';
 import tinycolor from "tinycolor2";
+import {hsvaToRgbaString} from '@uiw/color-convert';
 
+//custom hooks
 import usePaletteManager from '../../data/hooks/usePaletteManager';
 import {useColorMatching} from '../../data/hooks/useColorMatching';
 import {useLocalStorage} from '../../data/hooks/useLocalStorage';
 
-import {MdAddCircleOutline} from 'react-icons/md';
+import {defaultPalette} from '../../utils/palettes/defaultPalette';
+import {ColorPart} from '../../types/types';
 
 const Mixer: React.FC = () => {
     const [mixedColor, setMixedColor] = useState<string>('rgba(255,255,255,0)');
@@ -134,84 +136,59 @@ const Mixer: React.FC = () => {
         setIsSavable(!isColorInPalette(mixedColor, palette));
     }, [mixedColor, palette]);
 
-return (
-    <>
+    return (
         <main className={styles.Mixer}>
             <div className={styles.colorBox}>
                 <MixedColorContainer
-                    mixedColor={mixedColor}
-                    mixedColorName={mixedColorName}
-                    isUsingTargetColor={isUsingTargetColor}
-                    matchPercentage={matchPercentage}
+                mixedColor={mixedColor}
+                mixedColorName={mixedColorName}
+                isUsingTargetColor={isUsingTargetColor}
+                matchPercentage={matchPercentage}
                 />
 
                 <TargetColorContainer
-                    isUsingTargetColor={isUsingTargetColor}
-                    targetColor={targetColor}
-                    isShowingTargetColorPicker={isShowingTargetColorPicker}
-                    targetColorName={targetColorName}
-                    setTargetColor={setTargetColor}
-                    setIsShowingTargetColorPicker={setIsShowingTargetColorPicker}
+                isUsingTargetColor={isUsingTargetColor}
+                targetColor={targetColor}
+                isShowingTargetColorPicker={isShowingTargetColorPicker}
+                targetColorName={targetColorName}
+                setTargetColor={setTargetColor}
+                setIsShowingTargetColorPicker={setIsShowingTargetColorPicker}
                 />
 
                 <ColorBoxUI
-                    mixedColor={mixedColor}
-                    isUsingTargetColor={isUsingTargetColor}
-                    targetColor={targetColor}
-                    resetPalette={resetPalette}
-                    toggleIsUsingTargetColor={toggleIsUsingTargetColor}
-                    isSavable={isSavable}
-                    addToPalette={addToPalette}
-                    hasPartsInMix={hasPartsInMix}
-                    setMixedColor={setMixedColor}
-                    palette={palette}
+                mixedColor={mixedColor}
+                isUsingTargetColor={isUsingTargetColor}
+                targetColor={targetColor}
+                resetPalette={resetPalette}
+                toggleIsUsingTargetColor={toggleIsUsingTargetColor}
+                isSavable={isSavable}
+                addToPalette={addToPalette}
+                hasPartsInMix={hasPartsInMix}
+                setMixedColor={setMixedColor}
+                palette={palette}
                 />
 
-                <div className={styles.transparencyBox}></div>
-            </div>
-
-            <section className={styles.swatches}>
-                <ColorSwatches
-                    palette={palette}
-                    handleSwatchIncrement={handleSwatchIncrement}
-                    handleSwatchDecrement={handleSwatchDecrement}
-                    handleRemoveFromPalette={handleRemoveFromPalette}
-                    updateColorName={updateColorName}
-                    totalParts={totalParts}
-                />
-
-                <div className={styles.addColorUi}>
-                    <button
-                        style={{
-                            visibility: (showAddColorPicker) ? 'hidden' : 'visible',
-                            display: (showAddColorPicker) ? 'none' : 'block',
-                            cursor: (showAddColorPicker) ? 'default' : 'pointer'
-                        }}
-                        onClick={() => setShowAddColorPicker(!showAddColorPicker)}
-                    >
-                        <MdAddCircleOutline />
-                    </button>
-
-                    {showAddColorPicker && (
-                        <div
-                            className={styles.colorPickerContainer}
-                            style={{backgroundColor: tinycolor(addColor)?.toHexString()}}
-                        >
-
-                            <ColorPicker
-                                color={addColor}
-                                onChange={(newColor) => {setAddColor(newColor);}}
-                                onClose={() => setShowAddColorPicker(false)}
-                                onConfirm={confirmColor}
-                            />
-                        </div>
-                    )}
+                <div className={styles.transparencyBox}>
                 </div>
-            </section>
-        </main>
-    </>
-);
+            </div>
+            <ColorSwatches
+            palette={palette}
+            handleSwatchIncrement={handleSwatchIncrement}
+            handleSwatchDecrement={handleSwatchDecrement}
+            handleRemoveFromPalette={handleRemoveFromPalette}
+            updateColorName={updateColorName}
+            totalParts={totalParts}
+            />
 
+            <AddColorUIComponent
+            showAddColorPicker={showAddColorPicker}
+            addColor={addColor}
+            setShowAddColorPicker={setShowAddColorPicker}
+            setAddColor={setAddColor}
+            confirmColor={confirmColor}
+            />
+        </main>
+    );
 };
 
-export default Mixer;
+    export default Mixer;
