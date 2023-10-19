@@ -10,6 +10,24 @@ A tool for natural media painters to help them build virtual palettes and experi
   - [Installation](#installation)
   - [Usage](#usage)
   - [How It Works](#how-it-works)
+  - [Components Overview](#components-overview)
+    - [Mixer](#mixer)
+    - [AddColorUIComponent](#addcoloruicomponent)
+    - [ColorBoxUI](#colorboxui)
+    - [ColorPicker](#colorpicker)
+    - [ColorSwatches](#colorswatches)
+    - [MixedColorContainer](#mixedcolorcontainer)
+    - [TargetColorContainer](#targetcolorcontainer)
+  - [Hooks Overview](#hooks-overview)
+    - [useColorMatching](#usecolormatching)
+    - [useColorName](#usecolorname)
+    - [useLocalStorage](#uselocalstorage)
+    - [usePaletteManager](#usepalettemanager)
+    - [useSwatchAdder](#useswatchadder)
+  - [Utilities](#utilities)
+    - [colorConversion](#colorconversion)
+    - [isDark](#isdark)
+    - [defaultPalette](#defaultpalette)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -100,6 +118,70 @@ Paint Mixer utilizes a combination of hooks, libraries, and custom utility funct
 
 6. **Local Storage**:
    - The `useLocalStorage` hook ensures the palette is saved to and loaded from local storage, allowing it to persist across browser sessions.
+
+## Components Overview
+
+### Mixer
+The core component where users can mix multiple colors. It provides an interface to add, adjust, or remove colors.
+
+### AddColorUIComponent
+Allows users to add a color to the mixer. It provides an interface for color input and addition.
+
+### ColorBoxUI
+
+Displays a color box with the chosen color. It also provides options to remove or adjust the color.
+
+### ColorPicker
+
+A component that lets users pick a color. It provides a color wheel interface for color selection.
+
+### ColorSwatches
+
+Displays a collection of color swatches. Users can select a color from these swatches to add to the mixer.
+
+### MixedColorContainer
+
+Displays the mixed color result. It shows the outcome of the mixed colors and provides options to save or reset the mix.
+
+### TargetColorContainer
+
+Displays the target color that users aim to match with their mix. It provides options to set or reset the target color.
+
+## Hooks Overview
+
+### useColorMatching
+
+A custom hook that provides functionality to match the mixed color with the target color. It returns a boolean indicating if the colors match.
+
+### useColorName
+
+Fetches the name of a color based on its RGB value. It uses an external API to get the color name.
+
+### useLocalStorage
+
+Manages the storage of color palettes in the browser's local storage. It provides functions to save, retrieve, and delete palettes.
+
+### usePaletteManager
+
+Manages the color palettes in the application. It provides functions to add, remove, and update palettes.
+
+### useSwatchAdder
+
+A custom hook that provides functionality to add a color swatch to the mixer. It returns functions to add and remove swatches.
+
+## Utilities
+
+### colorConversion
+
+Provides utility functions for color conversions, such as RGB to HEX and vice versa.
+
+### isDark
+
+Determines if a color is dark based on its RGB value.
+
+### defaultPalette
+
+Provides a default color palette for the application. I will be adding other palettes to choose as a new base.
 
 ## Contributing
 
