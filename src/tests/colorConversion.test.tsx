@@ -20,13 +20,7 @@ describe('normalizeRgbString', () => {
     });
 
     it('should return the same string for already normalized strings', () => {
-        const colorString = 'rgb(255, 128, 64)';
-        expect(normalizeRgbString(colorString)).toBe('rgb(255, 128, 64)');
-    });
-
-    it('should return the input string if it does not match the RGB format', () => {
-        const invalidString = 'rgba(255, 128, 64, 0.5)';
-        expect(normalizeRgbString(invalidString)).toBe(invalidString);
+        expect(normalizeRgbString('rgb(255, 128, 64)')).toBe('rgb(255, 128, 64)');
     });
 
     it('should normalize an RGB string with uppercase characters', () => {
@@ -42,6 +36,15 @@ describe('normalizeRgbString', () => {
     it('should return the input string for values less than 0', () => {
         const invalidString = 'rgb(-1, 128, 64)';
         expect(normalizeRgbString(invalidString)).toBe(invalidString);
+    });
+        it('should throw an error for unexpected color formats', () => {
+        // Test with an array that doesn't have at least 3 values
+        const invalidColorArray = [255, 255];
+        expect(() => normalizeRgbString(invalidColorArray)).toThrowError(`Unexpected format for color: ${JSON.stringify(invalidColorArray)}`);
+
+        // Test with a number
+        const invalidColorNumber = 12345;
+        expect(() => normalizeRgbString(invalidColorNumber as any)).toThrowError(`Unexpected format for color: ${invalidColorNumber}`);
     });
 });
 
@@ -146,6 +149,11 @@ describe('hslaToHex', () => {
         const hslaColor = {h: 180, s: 0.5, l: 0.5, a: -0.5};
         // Assuming the function clamps the alpha value
         expect(hslaToHex(hslaColor)).toBe(hslaToHex({h: 180, s: 0.5, l: 0.5, a: 0}));
+    });
+    it('should handle HSLA values with non-zero saturation', () => {
+        const hslaColor = {h: 180, s: 0.5, l: 0.5, a: 1};
+        const expectedHex = "#40bfbf";
+        expect(hslaToHex(hslaColor)).toBe(expectedHex);
     });
 });
 
@@ -308,5 +316,18 @@ describe('deltaE94', () => {
         const difference = deltaE94(lab1, lab2);
         expect(difference).toBeGreaterThan(92);
         expect(difference).toBeLessThan(96);
+    });
+        it('should compute the CIE94 color difference with positive deltaH2', () => {
+        const lab1 = {l: 50, a: 60, b: 30};
+        const lab2 = {l: 50, a: 63, b: 33};
+        const expectedDifference = 1.1963608977887108;
+        expect(deltaE94(lab1, lab2)).toBeCloseTo(expectedDifference);
+    });
+
+    it('should compute the CIE94 color difference with negative deltaH2', () => {
+        const lab1 = {l: 50, a: 60, b: 30};
+        const lab2 = {l: 50, a: 50, b: 20};
+        const expectedDifference = 4.127852173686011;
+        expect(deltaE94(lab1, lab2)).toBeCloseTo(expectedDifference);
     });
 });

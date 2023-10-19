@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import styles from './ColorPicker.module.scss';
+import styles from './ColorPicker.module.scss'
 import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider';
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';
@@ -40,7 +40,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, onChange, onClose, onCo
                 />
             </div>
 
-            <div className='colorInputs'>
+            <div className={styles.colorInputs}>
                 <EditableInput
                     label="Hex"
                     value={hsvaToHex(color)}
@@ -67,6 +67,5 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, onChange, onClose, onCo
         </div>
     );
 };
-
 
 export default ColorPicker;

@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inclusive+Sans&family=PT+Serif&family=Roboto+Condensed:ital,wght@0,400;0,700;1,400&display=swap');
+
+.Mixer {
+    * {
+        box-sizing: border-box;
+    }
+
+    font-family: 'Inclusive Sans', sans-serif;
+
+    p {
+        margin: 0;
+    }
+
+
+    .isHidden {
+        display: none;
+    }
+
+    .isVisible {
+        display: block;
+    }
+
+    .fadeEnter {
+        opacity: 0;
+    }
+
+    .fadeEnterActive {
+        opacity: 1;
+        transition: opacity 500ms ease-in;
+    }
+
+    .colorBox {
+        border: 2px solid black;
+        height: 50vh;
+        min-height: 395px;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        width: 100%;
+
+        .transparencyBox {
+            width: 100%;
+            height: 100%;
+            background-image: url("../../assets/images/transparent.png");
+            position: absolute;
+            z-index: -99;
+        }
+    }
+}

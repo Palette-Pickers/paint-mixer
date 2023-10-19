@@ -3,7 +3,7 @@ import tinycolor from "tinycolor2";
 import {ColorPart} from '../../types/types';
 import {useColorName} from './useColorName';
 
-export const usePalette = (initialPalette: ColorPart[]) => {
+export const useSwatchAdder = (initialPalette: ColorPart[]) => {
     const [palette, setPalette] = useState<ColorPart[]>(initialPalette);
 
     const addToPalette = async (rgbString: string, includeRecipe: boolean) => {
@@ -28,6 +28,7 @@ export const usePalette = (initialPalette: ColorPart[]) => {
 
     const isColorInPalette = (rgbString: string) => {
         const normalizedColor = tinycolor(rgbString).toHexString();
+        console.log("normalizedColor", normalizedColor);
         return palette.some(swatch => tinycolor(swatch.rgbString).toHexString() === normalizedColor);
     };
 
