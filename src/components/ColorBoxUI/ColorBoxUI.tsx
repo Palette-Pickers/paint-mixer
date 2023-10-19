@@ -1,13 +1,14 @@
 import React from 'react';
+import styles from './ColorBoxUI.module.scss';
 import { VscDebugRestart } from 'react-icons/vsc';
 import { TbTargetArrow, TbTargetOff } from 'react-icons/tb';
 import tinycolor from "tinycolor2";
 import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
 import {FaArrowDown} from 'react-icons/fa';
 
-
 interface ColorBoxUIProps {
     mixedColor: string;
+    setMixedColor: React.Dispatch<React.SetStateAction<string>>;
     isUsingTargetColor: boolean;
     targetColor: any;
     resetPalette: () => void;
@@ -15,14 +16,15 @@ interface ColorBoxUIProps {
     isSavable: boolean;
     addToPalette: (color: string, includeRecipe: boolean) => void;
     hasPartsInMix: () => boolean;
+    palette: any[];
 }
 
 const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor, targetColor, resetPalette, toggleIsUsingTargetColor, isSavable, addToPalette, hasPartsInMix }) => {
     return (
-        <div className='color-box-ui'>
+        <div className={styles.ColorBoxUi}>
             <div>
                 <button
-                    className='reset-mix'
+                    className={styles.resetMix}
                     onClick={resetPalette}
                     id='reset-mix'
                     style={{
@@ -31,12 +33,12 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                     }}
                 >
                     <VscDebugRestart />
-                    <label className='button-reset-mix'>Reset</label>
+                    <label className={styles.buttonResetMix}>Reset</label>
                 </button>
             </div>
-            <div className='color-box-label'>
+            <div className={styles.colorBoxLabel}>
                 <button
-                    className="add-to-palette"
+                    className={styles.addToPalette}
                     onClick={() => addToPalette(mixedColor, true)}  // Set includeRecipe to true
                     disabled={!isSavable} // Disable the button based on canSave state
                     style={{
@@ -49,13 +51,13 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                         opacity: isSavable ? 1 : 0 // Hide the icon when disabled
                     }}
                     />
-                    <label className='button-save'>
+                    <label className={styles.buttonSave}>
                         {isSavable ? 'Save' : 'Saved'}
                     </label>
                 </button>
             </div>
             <button
-                className="toggle-target-color"
+                className={styles.toggleTargetColor}
                 onClick={toggleIsUsingTargetColor}
                 style={{
                     color: isUsingTargetColor ?
@@ -64,7 +66,7 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                 }}
             >
                 {(isUsingTargetColor ? <TbTargetArrow /> : <TbTargetOff />)}
-                <label className='button-target-color'>Target</label>
+                <label className={styles.buttonTargetColor}>Target</label>
             </button>
         </div>
     );
