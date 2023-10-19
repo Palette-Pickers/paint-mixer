@@ -12,6 +12,9 @@
             "src/types"
         ]
     },
+    "setupFilesAfterEnv": [
+        "@testing-library/jest-dom/extend-expect"
+    ],
     "include": [
         "src/**/*",
         "src/types/**/*",

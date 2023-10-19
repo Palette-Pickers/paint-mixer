@@ -3,6 +3,12 @@ import usePaletteManager from "./usePaletteManager";
 import { defaultPalette } from "../../utils/palettes/defaultPalette";
 import React from 'react';
 
+const fetch = jest.fn(() =>
+    Promise.resolve({
+        json: () => Promise.resolve({ data: 'some data' }),
+    })
+);
+
 const TestComponent: React.FC = () => {
     const hookValues = usePaletteManager(defaultPalette);
 
