@@ -1,10 +1,14 @@
 import React from 'react';
 import styles from './ColorBoxUI.module.scss';
-import { VscDebugRestart } from 'react-icons/vsc';
-import { TbTargetArrow, TbTargetOff } from 'react-icons/tb';
+
+//color conversion libraries
 import tinycolor from "tinycolor2";
-import {hsvaToRgba, hsvaToRgbaString} from '@uiw/color-convert';
+import {hsvaToRgba} from '@uiw/color-convert';
+
+//SVG icons
 import {FaArrowDown} from 'react-icons/fa';
+import { TbTargetArrow, TbTargetOff } from 'react-icons/tb';
+import { VscDebugRestart } from 'react-icons/vsc';
 
 interface ColorBoxUIProps {
     mixedColor: string;
@@ -65,7 +69,9 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                         tinycolor(mixedColor)?.isDark() ? 'white' : 'black'
                 }}
             >
-                {(isUsingTargetColor ? <TbTargetArrow /> : <TbTargetOff />)}
+                {isUsingTargetColor ?
+                    <TbTargetArrow data-testid="target-arrow-icon" /> :
+                    <TbTargetOff data-testid="target-off-icon" />}
                 <label className={styles.buttonTargetColor}>Target</label>
             </button>
         </div>

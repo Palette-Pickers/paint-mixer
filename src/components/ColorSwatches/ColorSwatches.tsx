@@ -28,19 +28,21 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({palette, handleSwatchIncre
                     timeout={500}
                     classNames="fade"
                 >
-                    <div className={styles.swatchContainer}>
+                    <div className={styles.swatchContainer}
+                    data-testid="swatchContainer">
                         <div
                             className={styles.swatch}
                             style={{backgroundColor: `${swatch.rgbString}`}}
                         >
                             <div className={styles.swatchUi}>
-                                <a
+                                <button
                                     className={styles.removeFromPalette}
                                     onClick={() => handleRemoveFromPalette(i)}
                                     style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
+                                    data-testid="swatchRemove"
                                 >
                                     <AiOutlineClose />
-                                </a>
+                                </button>
                                 {editingColorNameIndex === i ? (
                                     <input
                                         value={tempColorName}
@@ -108,7 +110,7 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({palette, handleSwatchIncre
                                 )}
                             </div>
                         </div>
-                        
+
                         <div className={styles.changePartsQty}>
                             <button className={styles.subtractParts} onClick={() => handleSwatchDecrement(i)}>-</button>
                         </div>
