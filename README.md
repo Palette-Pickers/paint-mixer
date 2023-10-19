@@ -122,9 +122,11 @@ Paint Mixer utilizes a combination of hooks, libraries, and custom utility funct
 ## Components Overview
 
 ### Mixer
+
 The core component where users can mix multiple colors. It provides an interface to add, adjust, or remove colors.
 
 ### AddColorUIComponent
+
 Allows users to add a color to the mixer. It provides an interface for color input and addition.
 
 ### ColorBoxUI
