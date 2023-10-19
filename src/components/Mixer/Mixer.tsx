@@ -11,7 +11,7 @@ import TargetColorContainer from '../TargetColorContainer/TargetColorContainer';
 
 //color mixing and conversion libraries
 import mixbox from 'mixbox';
-import {rgbToXyz, xyzToLab, deltaE94} from '../../utils/colorConversion';
+import {rgbToXyz, xyzToLab, deltaE94, normalizeRgbString} from '../../utils/colorConversion';
 import tinycolor from "tinycolor2";
 import {hsvaToRgbaString} from '@uiw/color-convert';
 
@@ -31,7 +31,6 @@ const Mixer: React.FC = () => {
     const [targetColor, setTargetColor] = useState({h: 214, s: 43, v: 90, a: 1});
 
     const [isShowingTargetColorPicker, setIsShowingTargetColorPicker] = useState<boolean>(false);
-
     const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
     const [isSavable, setIsSavable] = useState<boolean>(true);
     const [savedPalette, setSavedPalette] = useLocalStorage('savedPalette', defaultPalette);
@@ -94,15 +93,16 @@ const Mixer: React.FC = () => {
                 }
             }
             const mixed_color = mixbox.latentToRgb(latent_mix);
-            return mixed_color;
+            return normalizeRgbString(mixed_color);
         }
-        return tinycolor('rgba(255,255,255,0)')?.toRgbString() ?? '';
+        return tinycolor('rgba(255,255,255,0)').toRgbString() ?? '';
     };
 
     // Helper function to check if a color is already in the palette
     const isColorInPalette = (rgbString: string, palette: ColorPart[]): boolean => {
-        const normalizedColor = tinycolor(rgbString)?.toHexString();
-        return palette.some(swatch => tinycolor(swatch.rgbString)?.toHexString() === normalizedColor);
+        const normalizedColor = tinycolor(normalizeRgbString(rgbString)).toHexString();
+        return palette.some(swatch => tinycolor(swatch.rgbString).toHexString() === normalizedColor);
+        console.log("Palette:", palette);
     };
 
     // Helper function to get the % match between two colors
@@ -125,6 +125,8 @@ const Mixer: React.FC = () => {
 
 
     useEffect(() => {
+        const newMixedColor = getMixedRgbStringFromPalette(palette);
+
         setMixedColor(getMixedRgbStringFromPalette(palette));
     }, [palette]);
 

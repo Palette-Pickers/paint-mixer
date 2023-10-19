@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import tinycolor from "tinycolor2";
-import { useDebounce } from 'use-debounce';
+import {useDebounce} from 'use-debounce';
 import {useColorName} from './useColorName';
 import {normalizeRgbString} from '../../utils/colorConversion';
 
@@ -16,7 +16,7 @@ export const useColorMatching = (initialColor: string) => {
             setColorName(fetchedColorName);
         };
         fetchAndSetColorName();
-    }, [debouncedColorName]); //update a maximum of once every 250ms
+    }, [debouncedColorName]); //update no more than once every 250ms
 
     return { colorName };
 };

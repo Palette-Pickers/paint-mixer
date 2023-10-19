@@ -82,14 +82,15 @@ it("should reset the palette", () => {
     });
 });
 
-it("should add a color to the palette", () => {
+it("should add a color to the palette", async () => {
+
     const { getByTestId } = render(<TestComponent />);
     const initialPaletteLength = JSON.parse(getByTestId("hook-values").textContent || "").length;
 
-    act(() => {
+    await act(async () => {
         fireEvent.click(getByTestId("add-button"));
     });
 
     const updatedPalette = JSON.parse(getByTestId("hook-values").textContent || "");
-    expect
 });
+
