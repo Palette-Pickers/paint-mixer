@@ -28,19 +28,28 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({palette, handleSwatchIncre
                     timeout={500}
                     classNames="fade"
                 >
-                    <div className={styles.swatchContainer}>
+                    <div className={styles.swatchContainer}
+                    data-testid="swatchContainer">
                         <div
                             className={styles.swatch}
                             style={{backgroundColor: `${swatch.rgbString}`}}
                         >
                             <div className={styles.swatchUi}>
-                                <a
+                                {swatch.recipe && (
+                                    <div className={styles.recipeInfoButton}>
+                                        <a
+                                            style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
+                                            onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
+                                    </div>
+                                )}
+                                <button
                                     className={styles.removeFromPalette}
                                     onClick={() => handleRemoveFromPalette(i)}
                                     style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
+                                    data-testid={`remove-button-${i}`}
                                 >
                                     <AiOutlineClose />
-                                </a>
+                                </button>
                                 {editingColorNameIndex === i ? (
                                     <input
                                         value={tempColorName}
@@ -61,21 +70,17 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({palette, handleSwatchIncre
                                             setEditingColorNameIndex(i);
                                             setTempColorName(swatch.label);
                                         }}
-                                        style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
-                                    >
+                                            style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
+                                            data-testid={`name-${i}`}
+                                        >
                                         {swatch.label}
                                     </div>
                                 )}
-                                {swatch.recipe && (
-                                    <div className={styles.recipeInfoButton}>
-                                        <a
-                                            style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
-                                            onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
-                                    </div>
-                                )}
+
                                 <div
                                     className={styles.partsInMix}
                                     onClick={() => handleSwatchIncrement(i)}
+                                    data-testid={`swatch-parts-${i}`}
                                     style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
                                 >
                                     {swatch.partsInMix}
@@ -108,9 +113,15 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({palette, handleSwatchIncre
                                 )}
                             </div>
                         </div>
-                        
+
                         <div className={styles.changePartsQty}>
-                            <button className={styles.subtractParts} onClick={() => handleSwatchDecrement(i)}>-</button>
+                            <button
+                            className={styles.subtractParts}
+                            onClick={() => handleSwatchDecrement(i)}
+                            data-testid={`subtract-button-${i}`}
+                            >
+                                -
+                            </button>
                         </div>
                     </div>
                 </CSSTransition>
