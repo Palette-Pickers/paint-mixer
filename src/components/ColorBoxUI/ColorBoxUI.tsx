@@ -65,8 +65,8 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                 onClick={toggleIsUsingTargetColor}
                 style={{
                     color: isUsingTargetColor ?
-                        tinycolor(hsvaToRgba(targetColor))?.isDark() ? 'white' : 'black' :
-                        tinycolor(mixedColor)?.isDark() ? 'white' : 'black'
+                        tinycolor(hsvaToRgba(targetColor))?.isDark() ? 'white' : 'black' : //when the targetColor is visible, contrast with that background color
+                        tinycolor(mixedColor)?.isDark() ? 'white' : 'black' //when the targetColor is not visible, contrast with the mixedColor filling the background
                 }}
             >
                 {isUsingTargetColor ?

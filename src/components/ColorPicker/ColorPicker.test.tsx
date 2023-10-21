@@ -23,13 +23,12 @@ describe('<ColorPicker />', () => {
         }
     });
 
-it('calls onClose when close button is clicked', () => {
-    const { getByTestId } = render(<ColorPicker color={mockColor} onChange={mockOnChange} onClose={mockOnClose} onConfirm={mockOnConfirm} />);
-    const closeButton = getByTestId('swatchRemove');
-    fireEvent.click(closeButton);
-    expect(mockOnClose).toHaveBeenCalled();
-});
-
+    it('calls onClose when close button is clicked', () => {
+        const { getByTestId } = render(<ColorPicker color={mockColor} onChange={mockOnChange} onClose={mockOnClose} onConfirm={mockOnConfirm} />);
+        const closeButton = getByTestId('swatch-remove');
+        fireEvent.click(closeButton);
+        expect(mockOnClose).toHaveBeenCalled();
+    });
 
     it('calls onConfirm when OK button is clicked', () => {
         const { getByRole } = render(<ColorPicker color={mockColor} onChange={mockOnChange} onClose={mockOnClose} onConfirm={mockOnConfirm} />);

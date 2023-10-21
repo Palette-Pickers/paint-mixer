@@ -33,7 +33,7 @@ const TargetColorContainer: React.FC<TargetColorContainerProps> = ({
                 }}
             >
                 {isShowingTargetColorPicker && (
-                    <div data-testid="color-picker">
+                    <div data-testid="target-color-picker">
                         <ColorPicker
                         color={targetColor}
                         onChange={setTargetColor}

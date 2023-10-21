@@ -26,7 +26,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({color, onChange, onClose, onCo
                     color: tinycolor(hsvaToRgba(color)).isDark() ? 'white' : 'black',
                     transition: 'color 0.1s ease-in-out'
                 }}
-                data-testid="swatchRemove"
+                data-testid="swatch-remove"
                 onClick={onClose}
             >
                 <AiOutlineClose />

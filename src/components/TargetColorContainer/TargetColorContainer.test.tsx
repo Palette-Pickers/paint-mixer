@@ -39,7 +39,7 @@ describe('<TargetColorContainer />', () => {
                 setIsShowingTargetColorPicker={mockSetIsShowingTargetColorPicker}
             />
         );
-        const colorPicker = getByTestId('color-picker'); // Assuming ColorPicker has a data-testid="color-picker"
+        const colorPicker = getByTestId('target-color-picker');
         expect(colorPicker).toBeInTheDocument();
     });
 

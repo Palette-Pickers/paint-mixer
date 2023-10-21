@@ -112,5 +112,6 @@ it("should add a color to the palette", async () => {
     });
 
     const updatedPalette = JSON.parse(getByTestId("hook-values").textContent || "");
+    expect(updatedPalette.length).toBe(initialPaletteLength + 1);
 });
 

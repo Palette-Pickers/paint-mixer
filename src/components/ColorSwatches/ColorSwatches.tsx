@@ -35,11 +35,18 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({palette, handleSwatchIncre
                             style={{backgroundColor: `${swatch.rgbString}`}}
                         >
                             <div className={styles.swatchUi}>
+                                {swatch.recipe && (
+                                    <div className={styles.recipeInfoButton}>
+                                        <a
+                                            style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
+                                            onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
+                                    </div>
+                                )}
                                 <button
                                     className={styles.removeFromPalette}
                                     onClick={() => handleRemoveFromPalette(i)}
                                     style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
-                                    data-testid="swatchRemove"
+                                    data-testid={`remove-button-${i}`}
                                 >
                                     <AiOutlineClose />
                                 </button>
@@ -63,21 +70,17 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({palette, handleSwatchIncre
                                             setEditingColorNameIndex(i);
                                             setTempColorName(swatch.label);
                                         }}
-                                        style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
-                                    >
+                                            style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
+                                            data-testid={`name-${i}`}
+                                        >
                                         {swatch.label}
                                     </div>
                                 )}
-                                {swatch.recipe && (
-                                    <div className={styles.recipeInfoButton}>
-                                        <a
-                                            style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
-                                            onClick={() => setActiveInfoIndex(i === activeInfoIndex ? null : i)}><FaInfo /></a>
-                                    </div>
-                                )}
+
                                 <div
                                     className={styles.partsInMix}
                                     onClick={() => handleSwatchIncrement(i)}
+                                    data-testid={`swatch-parts-${i}`}
                                     style={{color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black'}}
                                 >
                                     {swatch.partsInMix}
@@ -112,7 +115,13 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({palette, handleSwatchIncre
                         </div>
 
                         <div className={styles.changePartsQty}>
-                            <button className={styles.subtractParts} onClick={() => handleSwatchDecrement(i)}>-</button>
+                            <button
+                            className={styles.subtractParts}
+                            onClick={() => handleSwatchDecrement(i)}
+                            data-testid={`subtract-button-${i}`}
+                            >
+                                -
+                            </button>
                         </div>
                     </div>
                 </CSSTransition>

@@ -11,6 +11,19 @@ interface ColorSwatchesProps {
     totalParts: number; // Represents the total parts in the mix.
 }
 
+const mockHandleRemoveFromPalette = jest.fn();
+const mockHandleSwatchIncrement = jest.fn();
+const mockHandleSwatchDecrement = jest.fn();
+const mockUpdateColorName = jest.fn();
+
+beforeEach(() => {
+  mockHandleRemoveFromPalette.mockClear();
+  mockHandleSwatchIncrement.mockClear();
+  mockHandleSwatchDecrement.mockClear();
+  mockUpdateColorName.mockClear();
+});
+
+
 const mockPalette = [
   {
     rgbString: "#FF5733",
@@ -29,25 +42,6 @@ const mockPalette = [
   }
 ];
 
-// Mock function to handle the increment of a swatch's parts
-const mockHandleSwatchIncrement = (index: number) => {
-  console.log(`Incrementing parts for swatch at index ${index}`);
-};
-
-// Mock function to handle the decrement of a swatch's parts
-const mockHandleSwatchDecrement = (index: number) => {
-  console.log(`Decrementing parts for swatch at index ${index}`);
-};
-
-// Mock function to handle the removal of a swatch from the palette
-const mockHandleRemoveFromPalette = (index: number) => {
-  console.log(`Removing swatch at index ${index} from palette`);
-};
-
-// Mock function to update the name of a color swatch
-const mockUpdateColorName = (index: number, name: string) => {
-  console.log(`Updating name of swatch at index ${index} to ${name}`);
-};
 
 // Mock total parts in the mix
 const mockTotalParts = mockPalette.reduce((acc, swatch) => acc + swatch.partsInMix, 0);
@@ -78,10 +72,76 @@ describe('<ColorSwatches />', () => {
                 totalParts={mockTotalParts}
           />
       );
-    const swatches = getAllByTestId('swatchContainer'); // Assuming you add data-testid="swatch-container" to each swatch container div
+    const swatches = getAllByTestId('swatchContainer');
         expect(swatches.length).toBe(mockPalette.length);
   });
 
-  // ... other tests ...
+it('calls handleRemoveFromPalette with correct index when remove button is clicked', () => {
+  const {getByTestId} = render(
+    <ColorSwatches
+    palette={mockPalette}
+    handleSwatchIncrement={mockHandleSwatchIncrement}
+    handleSwatchDecrement={mockHandleSwatchDecrement}
+    handleRemoveFromPalette={mockHandleRemoveFromPalette}
+    updateColorName={mockUpdateColorName}
+    totalParts={mockTotalParts}
+    />);
+
+    const removeButton = getByTestId('remove-button-0');
+    fireEvent.click(removeButton);
+    expect(mockHandleRemoveFromPalette).toHaveBeenCalledWith(0);
+  });
+
+  it('allows editing color name and calls updateColorName with correct parameters', () => {
+    const {getByTestId, getByRole} = render(
+      <ColorSwatches
+        palette={mockPalette}
+        handleSwatchIncrement={mockHandleSwatchIncrement}
+        handleSwatchDecrement={mockHandleSwatchDecrement}
+        handleRemoveFromPalette={mockHandleRemoveFromPalette}
+        updateColorName={mockUpdateColorName}
+        totalParts={mockTotalParts}
+      />
+    );
+    const colorLabel = getByTestId('name-0');
+    fireEvent.click(colorLabel);
+    const input = getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'New Red' } });
+    fireEvent.blur(input);
+
+    expect(mockUpdateColorName).toHaveBeenCalledWith(0, 'New Red');
+  });
+
+  it('calls handleSwatchIncrement when swatch parts are clicked', () => {
+    const {getByTestId} = render(
+      <ColorSwatches
+        palette={mockPalette}
+        handleSwatchIncrement={mockHandleSwatchIncrement}
+        handleSwatchDecrement={mockHandleSwatchDecrement}
+        handleRemoveFromPalette={mockHandleRemoveFromPalette}
+        updateColorName={mockUpdateColorName}
+        totalParts={mockTotalParts}
+      />
+    );
+    const swatchParts = getByTestId('swatch-parts-0');
+    fireEvent.click(swatchParts);
+    expect(mockHandleSwatchIncrement).toHaveBeenCalledWith(0);
+  });
+
+  it('calls handleSwatchDecrement when subtract button is clicked', () => {
+    const {getByTestId} = render(
+      <ColorSwatches
+        palette={mockPalette}
+        handleSwatchIncrement={mockHandleSwatchIncrement}
+        handleSwatchDecrement={mockHandleSwatchDecrement}
+        handleRemoveFromPalette={mockHandleRemoveFromPalette}
+        updateColorName={mockUpdateColorName}
+        totalParts={mockTotalParts}
+      />
+    );
+    const subtractButton = getByTestId('subtract-button-0');
+    fireEvent.click(subtractButton);
+    expect(mockHandleSwatchDecrement).toHaveBeenCalledWith(0);
+  });
 
 });
