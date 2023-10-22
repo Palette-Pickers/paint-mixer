@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
         "jsx": "react",
-        "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
         "lib": [
             "es2017",
             "dom"
