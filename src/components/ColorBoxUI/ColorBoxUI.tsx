@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from './ColorBoxUI.module.scss';
-import '../../types/scss.d';
 
 //color conversion libraries
 import tinycolor from "tinycolor2";
