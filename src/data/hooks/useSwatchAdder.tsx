@@ -28,7 +28,6 @@ export const useSwatchAdder = (initialPalette: ColorPart[]) => {
 
     const isColorInPalette = (rgbString: string) => {
         const normalizedColor = tinycolor(rgbString).toHexString();
-        console.log("normalizedColor", normalizedColor);
         return palette.some(swatch => tinycolor(swatch.rgbString).toHexString() === normalizedColor);
     };
 

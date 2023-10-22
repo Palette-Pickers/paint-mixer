@@ -3,6 +3,26 @@ import usePaletteManager from "./usePaletteManager";
 import { defaultPalette } from "../../utils/palettes/defaultPalette";
 import React from 'react';
 
+class MockResponse {
+  body: any;
+
+  constructor(body: any) {
+    this.body = body;
+  }
+
+  json() {
+    return Promise.resolve(this.body);
+  }
+}
+
+const mockJson = jest.fn().mockResolvedValue({ data: 'some data' });
+const mockResponse = new MockResponse({ data: 'some data' });
+
+const fetch = jest.fn().mockResolvedValue(mockResponse);
+global.fetch = fetch as any;
+
+
+
 const TestComponent: React.FC = () => {
     const hookValues = usePaletteManager(defaultPalette);
 
@@ -92,5 +112,6 @@ it("should add a color to the palette", async () => {
     });
 
     const updatedPalette = JSON.parse(getByTestId("hook-values").textContent || "");
+    expect(updatedPalette.length).toBe(initialPaletteLength + 1);
 });
 

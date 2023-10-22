@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import styles from './Mixer.module.scss';
 
-
 //components
 import AddColorUIComponent from '../AddColorUIComponent/AddColorUIComponent';
 import ColorBoxUI from '../ColorBoxUI/ColorBoxUI';
