@@ -31,7 +31,7 @@ const AddColorUIComponent: React.FC<Props> = ({ showAddColorPicker, addColor, se
             {showAddColorPicker && (
                 <div
                 className={styles.colorPickerContainer}
-                style={{backgroundColor: tinycolor(addColor)?.toHexString()}}
+                
                 data-testid="add-color-picker"
                 >
                     <ColorPicker
