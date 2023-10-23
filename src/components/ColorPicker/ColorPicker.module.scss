@@ -1,18 +1,19 @@
 .ColorPicker {
     display: flex;
     flex-direction: column;
-    padding: 0 0.5rem;
-    margin: 1rem 0 0;
+    padding: 5px;
+    margin:  0;
     align-items: center;
     border: 0;
     box-sizing: border-box;
     justify-content: flex-start;
     position: relative;
+    width: 210px;
 
     .closeButton {
         position: absolute;
-        right: 0;
-        top: 0;
+        right: 3px;
+        top: 3px;
         background-color: transparent;
         border: none;
         margin: 0;
