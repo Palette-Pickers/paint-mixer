@@ -1,7 +1,6 @@
 .ColorBoxUi {
     display: flex;
-    position: absolute;
-    bottom: 0;
+    align-items: flex-end;
     justify-content: space-between;
     width: 100%;
 
@@ -20,7 +19,7 @@
 
         &:hover,
         &:active {
-            opacity: 1;
+            opacity: 0.9;
         }
 
         svg {
