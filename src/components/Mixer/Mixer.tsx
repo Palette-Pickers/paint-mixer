@@ -9,8 +9,8 @@ import MixedColorContainer from '../MixedColorContainer/MixedColorContainer';
 import TargetColorContainer from '../TargetColorContainer/TargetColorContainer';
 
 //color mixing and conversion libraries
-import mixbox from 'mixbox';
 import {rgbToXyz, xyzToLab, deltaE94, normalizeRgbString} from '../../utils/colorConversion';
+import mixbox from 'mixbox';
 import tinycolor from "tinycolor2";
 import {hsvaToRgbaString} from '@uiw/color-convert';
 
@@ -101,7 +101,6 @@ const Mixer: React.FC = () => {
     const isColorInPalette = (rgbString: string, palette: ColorPart[]): boolean => {
         const normalizedColor = tinycolor(normalizeRgbString(rgbString)).toHexString();
         return palette.some(swatch => tinycolor(swatch.rgbString).toHexString() === normalizedColor);
-        console.log("Palette:", palette);
     };
 
     // Helper function to get the % match between two colors
