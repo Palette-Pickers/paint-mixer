@@ -10,7 +10,14 @@ interface MixedColorContainerProps {
     matchPercentage: string;
 }
 
-const MixedColorContainer: React.FC<MixedColorContainerProps> = ({ mixedColor, mixedColorName, isUsingTargetColor, matchPercentage }) => {
+const MixedColorContainer: React.FC<MixedColorContainerProps> = ({mixedColor, mixedColorName, isUsingTargetColor, matchPercentage}) => {
+
+    const isTransparentMixedColor = tinycolor(normalizeRgbString(mixedColor)).getAlpha() === 0;
+    //only show the color hex and name if the color is not transparent
+
+    if (isTransparentMixedColor) {
+    }
+
     return (
         <section className={styles.MixedColorContainer}
             style={{
@@ -20,16 +27,24 @@ const MixedColorContainer: React.FC<MixedColorContainerProps> = ({ mixedColor, m
         >
             <div className={styles.mixedColorValues}>
                 <div>
-                    <label htmlFor="mixed-color">
-                        Mixed Color
-                    </label>
+                    {!isTransparentMixedColor && (
+                        <label htmlFor="mixed-color">
+                            Mixed Color
+                        </label>
+                    )}
+
                     <div id="mixed-color">
+                        {!isTransparentMixedColor && (
                         <p>
                             {(tinycolor(normalizeRgbString(mixedColor)).toHexString())}
                         </p>
+                        )}
+
+                        {!isTransparentMixedColor && (
                         <p>
                             {mixedColorName}
                         </p>
+                        )}
                     </div>
                 </div>
 
@@ -43,7 +58,7 @@ const MixedColorContainer: React.FC<MixedColorContainerProps> = ({ mixedColor, m
                 )}
             </div>
         </section>
-    );
+    )
 }
 
 export default MixedColorContainer;

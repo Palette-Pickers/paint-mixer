@@ -126,7 +126,7 @@ const Mixer: React.FC = () => {
     useEffect(() => {
         const newMixedColor = getMixedRgbStringFromPalette(palette);
 
-        setMixedColor(getMixedRgbStringFromPalette(palette));
+        setMixedColor(newMixedColor);
     }, [palette]);
 
     useEffect(() => {
