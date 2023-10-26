@@ -1,9 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import MixGraph from './MixGraph';
-import '@testing-library/jest-dom';
 import styles from './MixGraph.module.scss';
-
+import '@testing-library/jest-dom/';
 describe('MixGraph', () => {
     const palette = [
         {label: "Red", partsInMix: 2, rgbString: "rgb(255,0,0)"},
