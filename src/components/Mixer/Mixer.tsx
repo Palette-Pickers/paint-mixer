@@ -166,7 +166,6 @@ const Mixer: React.FC = () => {
                 addToPalette={addToPalette}
                 hasPartsInMix={hasPartsInMix}
                 setMixedColor={setMixedColor}
-                palette={palette}
                 />
 
 

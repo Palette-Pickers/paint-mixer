@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './ColorBoxUI.module.scss';
+import { ColorPart } from '../../types/types';
 
 //color conversion libraries
 import tinycolor from "tinycolor2";
@@ -20,7 +21,6 @@ interface ColorBoxUIProps {
     isSavable: boolean;
     addToPalette: (color: string, includeRecipe: boolean) => void;
     hasPartsInMix: () => boolean;
-    palette: any[];
 }
 
 const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor, targetColor, resetPalette, toggleIsUsingTargetColor, isSavable, addToPalette, hasPartsInMix }) => {
@@ -47,7 +47,7 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                     disabled={!isSavable} // Disable the button based on canSave state
                     style={{
                         color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black',
-                        opacity: isSavable ? 1 : 0.5 // Change the opacity to indicate it's disabled
+                        opacity: isSavable ? 1 : 0.5 // Change the opacity when it's disabled
                     }}
                 >
                     <FaArrowDown style={{

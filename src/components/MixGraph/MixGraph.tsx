@@ -1,20 +1,21 @@
 import React from 'react';
+import styles from './MixGraph.module.scss';
+import { ColorPart } from '../../types/types';
 
-type MixGraphProps = {
-    palette: any[];
+interface MixGraphProps {
+    palette: ColorPart[];
     totalParts: number;
 };
 
 const MixGraph: React.FC<MixGraphProps> = ({ palette, totalParts }) => {
   return (
-    <div style={{ display: 'flex', height: '20px', width: '100%', border: '1px solid black'}}>
-        {palette.map((swatch, i) => (
+    <div className={styles.MixGraph}>
+        {palette.filter(swatch => swatch.partsInMix > 0).map((swatch, i) => (
             <div
             key={i}
-            style={{
+            style={{ //render bar color segment with a width proportional to its use in the mixed color
                 backgroundColor: swatch.rgbString,
                 width: `${(swatch.partsInMix / totalParts * 100) + '%'}`
-                //render swatch's background color with a width proportional to its use in the mixed color.
             }}
             >
             </div>
