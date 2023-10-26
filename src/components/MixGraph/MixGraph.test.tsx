@@ -15,15 +15,16 @@ describe('MixGraph', () => {
     });
 
     it('renders the correct number of color segments', () => {
-        const {container} = render(<MixGraph palette={palette} totalParts={5} />);
-        const segments = container.querySelectorAll('div > span'); // direct children divs of the main div
+        const { container } = render(<MixGraph palette={palette} totalParts={5} />);
+        const segments = Array.from(container.querySelectorAll('div > span')); // direct children divs of the main div
         expect(segments.length).toBe(2); // only two have non-zero partsInMix
     });
 
     it('does not render segments with zero parts', () => {
-        const {container} = render(<MixGraph palette={palette} totalParts={5} />);
-        const blueSegment = [...container.getElementsByClassName(styles.segment)].find(div => (div as HTMLElement).style.backgroundColor === "rgb(0,0,255)");
+        const { container } = render(<MixGraph palette={palette} totalParts={5} />);
+        const blueSegment = Array.from(container.getElementsByClassName(styles.segment)).find(
+            (div) => (div as HTMLElement).style.backgroundColor === 'rgb(0,0,255)'
+            );
         expect(blueSegment).toBeUndefined(); // should not find the blue segment
     });
-
 });
