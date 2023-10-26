@@ -11,7 +11,7 @@ const MixGraph: React.FC<MixGraphProps> = ({ palette, totalParts }) => {
   return (
     <div className={styles.MixGraph}>
         {palette.filter(swatch => swatch.partsInMix > 0).map((swatch, i) => (
-            <div
+            <span
             key={i}
             className={styles.segment}
             style={{ //render bar color segment with a width proportional to its use in the mixed color
@@ -19,7 +19,7 @@ const MixGraph: React.FC<MixGraphProps> = ({ palette, totalParts }) => {
                 width: `${(swatch.partsInMix / totalParts * 100) + '%'}`
             }}
             >
-            </div>
+            </span>
         ))}
     </div>
   );

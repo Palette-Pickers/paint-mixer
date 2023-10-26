@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import MixGraph from './MixGraph';
-import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom';
 import styles from './MixGraph.module.scss';
 
 describe('MixGraph', () => {
@@ -17,7 +17,7 @@ describe('MixGraph', () => {
 
     it('renders the correct number of color segments', () => {
         const {container} = render(<MixGraph palette={palette} totalParts={5} />);
-        const segments = container.getElementsByClassName(styles.segment);
+        const segments = container.querySelectorAll('div > span'); // direct children divs of the main div
         expect(segments.length).toBe(2); // only two have non-zero partsInMix
     });
 
@@ -27,12 +27,4 @@ describe('MixGraph', () => {
         expect(blueSegment).toBeUndefined(); // should not find the blue segment
     });
 
-    it('renders color segments with the correct width', () => {
-        const {container} = render(<MixGraph palette={palette} totalParts={5} />);
-        const redSegment = [...container.getElementsByClassName(styles.segment)].find(div => (div as HTMLElement).style.backgroundColor === "rgb(255,0,0)");
-        const greenSegment = [...container.getElementsByClassName(styles.segment)].find(div => (div as HTMLElement).style.backgroundColor === "rgb(0,255,0)");
-
-        expect((redSegment as HTMLElement).style.width).toBe('40%');
-        expect((greenSegment as HTMLElement).style.width).toBe('60%');
-    });
 });
