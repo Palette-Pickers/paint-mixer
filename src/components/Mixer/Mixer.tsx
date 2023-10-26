@@ -171,6 +171,12 @@ const Mixer: React.FC = () => {
                 <div className={styles.transparencyBox}>
                 </div>
             </div>
+
+            <MixGraph
+            palette={palette}
+            totalParts={totalParts}
+            />
+
             <ColorSwatches
             palette={palette}
             handleSwatchIncrement={handleSwatchIncrement}
