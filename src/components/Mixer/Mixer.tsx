@@ -4,6 +4,7 @@ import styles from './Mixer.module.scss';
 //components
 import AddColorUIComponent from '../AddColorUIComponent/AddColorUIComponent';
 import ColorBoxUI from '../ColorBoxUI/ColorBoxUI';
+import MixGraph from '../MixGraph/MixGraph';
 import ColorSwatches from '../ColorSwatches/ColorSwatches';
 import MixedColorContainer from '../MixedColorContainer/MixedColorContainer';
 import TargetColorContainer from '../TargetColorContainer/TargetColorContainer';
@@ -168,15 +169,14 @@ const Mixer: React.FC = () => {
                 palette={palette}
                 />
 
+
                 <div className={styles.transparencyBox}>
                 </div>
             </div>
-
             <MixGraph
-            palette={palette}
-            totalParts={totalParts}
-            />
-
+                    palette={palette}
+                    totalParts={totalParts}
+                />
             <ColorSwatches
             palette={palette}
             handleSwatchIncrement={handleSwatchIncrement}
