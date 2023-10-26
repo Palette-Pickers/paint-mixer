@@ -4,13 +4,14 @@ import styles from './Mixer.module.scss';
 //components
 import AddColorUIComponent from '../AddColorUIComponent/AddColorUIComponent';
 import ColorBoxUI from '../ColorBoxUI/ColorBoxUI';
+import MixGraph from '../MixGraph/MixGraph';
 import ColorSwatches from '../ColorSwatches/ColorSwatches';
 import MixedColorContainer from '../MixedColorContainer/MixedColorContainer';
 import TargetColorContainer from '../TargetColorContainer/TargetColorContainer';
 
 //color mixing and conversion libraries
-import mixbox from 'mixbox';
 import {rgbToXyz, xyzToLab, deltaE94, normalizeRgbString} from '../../utils/colorConversion';
+import mixbox from 'mixbox';
 import tinycolor from "tinycolor2";
 import {hsvaToRgbaString} from '@uiw/color-convert';
 
@@ -101,7 +102,6 @@ const Mixer: React.FC = () => {
     const isColorInPalette = (rgbString: string, palette: ColorPart[]): boolean => {
         const normalizedColor = tinycolor(normalizeRgbString(rgbString)).toHexString();
         return palette.some(swatch => tinycolor(swatch.rgbString).toHexString() === normalizedColor);
-        console.log("Palette:", palette);
     };
 
     // Helper function to get the % match between two colors
@@ -166,12 +166,16 @@ const Mixer: React.FC = () => {
                 addToPalette={addToPalette}
                 hasPartsInMix={hasPartsInMix}
                 setMixedColor={setMixedColor}
-                palette={palette}
                 />
+
 
                 <div className={styles.transparencyBox}>
                 </div>
             </div>
+            <MixGraph
+                    palette={palette}
+                    totalParts={totalParts}
+                />
             <ColorSwatches
             palette={palette}
             handleSwatchIncrement={handleSwatchIncrement}

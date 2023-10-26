@@ -4,6 +4,7 @@ export type ColorPart = {
     rgbString: string;
     recipe?: ColorPart[];
 }
+
 export type PaletteManager = {
     palette: ColorPart[];
     handleSwatchIncrement: (index: number) => void;
