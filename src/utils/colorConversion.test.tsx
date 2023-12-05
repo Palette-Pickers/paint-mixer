@@ -6,7 +6,7 @@ import {
     rgbToXyz,
     xyzToLab,
     deltaE94
-} from '../utils/colorConversion';
+} from './colorConversion';
 
 describe('normalizeRgbString', () => {
     it('should normalize an RGB array to a string', () => {
