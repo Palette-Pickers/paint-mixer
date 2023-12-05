@@ -50,11 +50,13 @@ const Mixer: React.FC = () => {
     const {colorName: targetColorName} = useColorMatching(hsvaToRgbaString(targetColor));
     const {colorName: addColorName} = useColorMatching(tinycolor(addColor)?.toHexString() ?? '');
 
+    // Helper function to toggle the isUsingTargetColor state
     const toggleIsUsingTargetColor = () => {
         setIsUsingTargetColor(!isUsingTargetColor);
         setIsShowingTargetColorPicker(true);
     };
 
+    // Helper function to add the color selected in the color picker to the palette
     const confirmColor = () => {
         if (addColor) {
             const selectedRgbString = tinycolor(addColor)?.toRgbString() ?? '';
@@ -63,10 +65,12 @@ const Mixer: React.FC = () => {
         }
     };
 
+    // Helper function to determine if the palette has any colors with partsInMix > 0
     const hasPartsInMix = (): boolean => {
         return palette.some(color => color.partsInMix > 0);
     };
 
+    // Helper function to calculate the total number of parts in the palette
     const totalParts = palette.reduce((acc, color) => {
         return acc + color.partsInMix;
     }, 0);
@@ -121,18 +125,18 @@ const Mixer: React.FC = () => {
         return (100 - deltaE94(color1Lab, color2Lab)); //convert % difference to % match
     };
 
-
-
+    //when the palette changes, update the mixed color
     useEffect(() => {
         const newMixedColor = getMixedRgbStringFromPalette(palette);
-
         setMixedColor(newMixedColor);
     }, [palette]);
 
+    //when the mixed or target colors change, update the match percentage
     useEffect(() => {
         setMatchPercentage(getRgbColorMatch((mixedColor), (hsvaToRgbaString(targetColor))).toFixed(2));
     }, [mixedColor, targetColor]);
 
+    //when the mixed color or palette changes, update the savable state
     useEffect(() => {
         setIsSavable(!isColorInPalette(mixedColor, palette));
     }, [mixedColor, palette]);
