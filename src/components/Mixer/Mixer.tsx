@@ -29,12 +29,12 @@ const Mixer: React.FC = () => {
     const [addColor, setAddColor] = useState({h: 214, s: 43, v: 90, a: 1});
     const [isUsingTargetColor, setIsUsingTargetColor] = useState<boolean>(false);
     const [targetColor, setTargetColor] = useState({h: 214, s: 43, v: 90, a: 1});
-
     const [isShowingTargetColorPicker, setIsShowingTargetColorPicker] = useState<boolean>(false);
     const [matchPercentage, setMatchPercentage] = useState<string>('0.00');
-    const [isSavable, setIsSavable] = useState<boolean>(true);
+
     const [savedPalette, setSavedPalette] = useLocalStorage('savedPalette', defaultPalette);
     const initialPalette: (any) = savedPalette;
+    const [isSavable, setIsSavable] = useState<boolean>(true);
 
     const {
         palette,
@@ -81,6 +81,7 @@ const Mixer: React.FC = () => {
             return acc + color.partsInMix;
         }, 0);
 
+        // If there are colors with non-zero partsInMix, mix them
         if (totalParts !== undefined && totalParts > 0.000001) {
             let latent_mix: number[] = [0, 0, 0, 0, 0, 0, 0];
 
@@ -99,6 +100,8 @@ const Mixer: React.FC = () => {
             const mixed_color = mixbox.latentToRgb(latent_mix);
             return normalizeRgbString(mixed_color);
         }
+        // If there are no colors with non-zero partsInMix,
+        // return a transparent color
         return tinycolor('rgba(255,255,255,0)').toRgbString() ?? '';
     };
 
@@ -144,6 +147,7 @@ const Mixer: React.FC = () => {
     return (
         <main className={styles.Mixer}>
             <div className={styles.colorBox}>
+
                 <MixedColorContainer
                 mixedColor={mixedColor}
                 mixedColorName={mixedColorName}
@@ -172,14 +176,15 @@ const Mixer: React.FC = () => {
                 setMixedColor={setMixedColor}
                 />
 
-
                 <div className={styles.transparencyBox}>
                 </div>
             </div>
+
             <MixGraph
-                    palette={palette}
-                    totalParts={totalParts}
-                />
+            palette={palette}
+            totalParts={totalParts}
+            />
+
             <ColorSwatches
             palette={palette}
             handleSwatchIncrement={handleSwatchIncrement}
