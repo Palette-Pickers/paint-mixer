@@ -176,6 +176,7 @@ const Mixer: React.FC = () => {
                 setMixedColor={setMixedColor}
                 />
 
+
                 <div className={styles.transparencyBox}>
                 </div>
             </div>
