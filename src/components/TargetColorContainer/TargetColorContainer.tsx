@@ -3,7 +3,7 @@ import styles from './TargetColorContainer.module.scss';
 import tinycolor from "tinycolor2";
 import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
 import ColorPicker from '../ColorPicker/ColorPicker';
-import {Hsva} from '../../types/types';
+import { Hsva } from '../../types/types';
 
 
 interface TargetColorContainerProps {

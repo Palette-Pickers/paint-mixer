@@ -1,13 +1,12 @@
-import React, {useState} from 'react';
+import React from 'react';
 import styles from './ColorPicker.module.scss'
 import Wheel from "@uiw/react-color-wheel";
 import ShadeSlider from '@uiw/react-color-shade-slider';
 import EditableInputRGBA from '@uiw/react-color-editable-input-rgba';
 import EditableInput from '@uiw/react-color-editable-input';
 import tinycolor from "tinycolor2";
-import {AiOutlineClose} from 'react-icons/ai';
-import {hsvaToRgba, hsvaToHex} from '@uiw/color-convert';
-
+import { AiOutlineClose } from 'react-icons/ai';
+import { hsvaToRgba, hsvaToHex } from '@uiw/color-convert';
 
 interface ColorPickerProps {
     color: any;

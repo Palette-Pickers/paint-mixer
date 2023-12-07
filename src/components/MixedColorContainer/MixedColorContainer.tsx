@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './MixedColorContainer.module.scss';
-import {normalizeRgbString} from '../../utils/colorConversion';
+import { normalizeRgbString } from '../../utils/colorConversion';
 import tinycolor from "tinycolor2";
 
 interface MixedColorContainerProps {

@@ -4,10 +4,10 @@ import { ColorPart } from '../../types/types';
 
 //color conversion libraries
 import tinycolor from "tinycolor2";
-import {hsvaToRgba} from '@uiw/color-convert';
+import { hsvaToRgba } from '@uiw/color-convert';
 
 //SVG icons
-import {FaArrowDown} from 'react-icons/fa';
+import { FaArrowDown } from 'react-icons/fa';
 import { TbTargetArrow, TbTargetOff } from 'react-icons/tb';
 import { VscDebugRestart } from 'react-icons/vsc';
 
