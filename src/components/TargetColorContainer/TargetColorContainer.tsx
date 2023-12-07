@@ -1,18 +1,18 @@
-import React from 'react';
-import styles from './TargetColorContainer.module.scss';
-import tinycolor from "tinycolor2";
-import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert';
-import ColorPicker from '../ColorPicker/ColorPicker';
-import { Hsva } from '../../types/types';
+import React from 'react'
+import styles from './TargetColorContainer.module.scss'
+import tinycolor from "tinycolor2"
+import { hsvaToRgba, hsvaToRgbaString } from '@uiw/color-convert'
+import ColorPicker from '../ColorPicker/ColorPicker'
+import { Hsva } from '../../types/types'
 
 
 interface TargetColorContainerProps {
-    isUsingTargetColor: boolean;
-    targetColor: Hsva;
-    isShowingTargetColorPicker: boolean;
-    targetColorName: string;
-    setTargetColor: (color: any) => void; // Update the type accordingly
-    setIsShowingTargetColorPicker: (value: boolean) => void;
+    isUsingTargetColor: boolean
+    targetColor: Hsva
+    isShowingTargetColorPicker: boolean
+    targetColorName: string
+    setTargetColor: (color: any) => void // Update the type accordingly
+    setIsShowingTargetColorPicker: (value: boolean) => void
 }
 
 const TargetColorContainer: React.FC<TargetColorContainerProps> = ({
@@ -25,35 +25,35 @@ const TargetColorContainer: React.FC<TargetColorContainerProps> = ({
 }) => {
     return (
         isUsingTargetColor && (
-            <section className={styles.TargetColorContainer}
-                style={{
+            <section className={ styles.TargetColorContainer }
+                style={ {
                     background: hsvaToRgbaString(targetColor),
                     color: tinycolor(hsvaToRgba(targetColor)).isDark() ? 'white' : 'black',
                     display: (isUsingTargetColor ? 'block' : 'none'),
-                }}
+                } }
             >
-                {isShowingTargetColorPicker && (
-                    <div data-testid="target-color-picker" className={styles.targetColorPickerWrapper}>
+                { isShowingTargetColorPicker && (
+                    <div data-testid="target-color-picker" className={ styles.targetColorPickerWrapper }>
                         <ColorPicker
-                        color={targetColor}
-                        onChange={setTargetColor}
-                        onClose={() => setIsShowingTargetColorPicker(false)}
-                        onConfirm={() => setIsShowingTargetColorPicker(false)}
+                            color={ targetColor }
+                            onChange={ setTargetColor }
+                            onClose={ () => setIsShowingTargetColorPicker(false) }
+                            onConfirm={ () => setIsShowingTargetColorPicker(false) }
                         />
                     </div>
-                )}
-                {!isShowingTargetColorPicker && (
-                    <div className={styles.targetColorValues}>
+                ) }
+                { !isShowingTargetColorPicker && (
+                    <div className={ styles.targetColorValues }>
                         <label htmlFor="target-color">Target Color</label>
                         <div id="target-color">
-                            {tinycolor(targetColor).toHexString()}
-                            <p>{targetColorName}</p>
+                            { tinycolor(targetColor).toHexString() }
+                            <p>{ targetColorName }</p>
                         </div>
                     </div>
-                )}
+                ) }
             </section>
         )
-    );
+    )
 }
 
-export default TargetColorContainer;
+export default TargetColorContainer
