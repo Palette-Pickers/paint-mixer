@@ -24,6 +24,7 @@ import { defaultPalette } from '../../utils/palettes/defaultPalette'
 import { ColorPart } from '../../types/types'
 
 const Mixer: React.FC = () => {
+
     const [ mixedColor, setMixedColor ] = useState<string>('rgba(255,255,255,0)')
     const [ showAddColorPicker, setShowAddColorPicker ] = useState(false)
     const [ addColor, setAddColor ] = useState({ h: 214, s: 43, v: 90, a: 1 })
@@ -102,6 +103,7 @@ const Mixer: React.FC = () => {
         }
         // If there are no colors with non-zero partsInMix,
         // return a transparent color
+
         return tinycolor('rgba(255,255,255,0)').toRgbString() ?? ''
     }
 
@@ -145,6 +147,7 @@ const Mixer: React.FC = () => {
     }, [ mixedColor, palette ])
 
     return (
+
         <main className={ styles.Mixer }>
             <div className={ styles.colorBox }>
 
