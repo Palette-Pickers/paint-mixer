@@ -1,6 +1,6 @@
-import React from 'react';
-import Mixer from './components/Mixer/Mixer';
+import React from 'react'
+import Mixer from './components/Mixer/Mixer'
 
-const App = () => <Mixer />;
+const App = () => <Mixer />
 
-export default App;
+export default App
