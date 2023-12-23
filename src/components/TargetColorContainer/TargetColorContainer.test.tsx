@@ -42,6 +42,4 @@ describe('<TargetColorContainer />', () => {
         const colorPicker = getByTestId('target-color-picker')
         expect(colorPicker).toBeInTheDocument()
     })
-
-    // Add more tests as needed...
 })
