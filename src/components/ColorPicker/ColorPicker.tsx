@@ -22,8 +22,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, onClose, onC
         >
             <button className={ styles.closeButton }
                 style={ {
-                    color: tinycolor(hsvaToRgba(color)).isDark() ? 'white' : 'black',
-                    transition: 'color 0.1s ease-in-out'
+                    color: tinycolor(hsvaToRgba(color)).isDark() ? 'white' : 'black'
                 } }
                 data-testid="swatch-remove"
                 onClick={ onClose }

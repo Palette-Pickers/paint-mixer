@@ -20,6 +20,7 @@
         padding: 0;
         z-index: 3;
         opacity: 0.5;
+        transition: color 0.1s ease-in-out;
 
         &:hover {
             opacity: 1;
