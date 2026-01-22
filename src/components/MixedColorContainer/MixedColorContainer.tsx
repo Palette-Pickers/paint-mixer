@@ -22,7 +22,7 @@ const MixedColorContainer: React.FC<MixedColorContainerProps> = ({ mixedColor, m
         <section className={ styles.MixedColorContainer }
             style={ {
                 backgroundColor: mixedColor,
-                color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black'
+                color: tinycolor(mixedColor).isDark() ? 'white' : 'black'
             } }
         >
             <div className={ styles.mixedColorValues }>
@@ -50,7 +50,7 @@ const MixedColorContainer: React.FC<MixedColorContainerProps> = ({ mixedColor, m
 
                 { isUsingTargetColor && (
                     <div className={ styles.matchPct }
-                        style={ { color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black' } }
+                        style={ { color: tinycolor(mixedColor).isDark() ? 'white' : 'black' } }
                     >
                         <label>Target Match</label>
                         <div>{ matchPercentage }%</div>

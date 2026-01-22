@@ -46,6 +46,29 @@ const usePaletteManager = (initialPalette: ColorPart[]): PaletteManager => {
 		updatedPalette[index].label = newName
 		setPalette(updatedPalette)
 	}
+
+	const applyMixParts = useCallback(
+		(updates: Array<{ index: number; parts: number }>) => {
+			setPalette((currentPalette) => {
+				const updatedPalette = currentPalette.map((color) => ({
+					...color,
+					partsInMix: 0,
+				}))
+
+				for (const update of updates) {
+					if (updatedPalette[update.index]) {
+						updatedPalette[update.index] = {
+							...updatedPalette[update.index],
+							partsInMix: update.parts,
+						}
+					}
+				}
+
+				return updatedPalette
+			})
+		},
+		[setPalette]
+	)
 	return {
 		palette,
 		handleSwatchIncrement,
@@ -54,6 +77,7 @@ const usePaletteManager = (initialPalette: ColorPart[]): PaletteManager => {
 		resetPalette,
 		addToPalette,
 		updateColorName,
+		applyMixParts,
 	}
 }
 

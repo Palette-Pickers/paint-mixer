@@ -1,7 +1,6 @@
 import React from 'react'
 import styles from './AddColorUiComponent.module.scss'
 import { MdAddCircleOutline } from 'react-icons/md'
-import tinycolor from "tinycolor2"
 import ColorPicker from '../ColorPicker/ColorPicker'
 
 type Props = {
@@ -18,9 +17,9 @@ const AddColorUIComponent: React.FC<Props> = ({ showAddColorPicker, addColor, se
             { !showAddColorPicker && (
                 <button
                     style={ {
-                        visibility: showAddColorPicker ? 'hidden' : 'visible',
-                        display: showAddColorPicker ? 'none' : 'block',
-                        cursor: showAddColorPicker ? 'default' : 'pointer'
+                        visibility: 'visible',
+                        display: 'block',
+                        cursor: 'pointer'
                     } }
                     onClick={ () => setShowAddColorPicker(!showAddColorPicker) }
                 >

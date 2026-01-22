@@ -41,14 +41,18 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({ palette, handleSwatchIncr
                                     { swatch.recipe && (
                                         <div className={ styles.recipeInfoButton }>
                                             <a
-                                                style={ { color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black' } }
-                                                onClick={ () => setActiveInfoIndex(i === activeInfoIndex ? null : i) }><FaInfo /></a>
+                                                style={ { color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' } }
+                                                onClick={ () => setActiveInfoIndex(i === activeInfoIndex ? null : i) }
+                                                data-testid={ `recipe-info-button-${ i }` }
+                                            >
+                                                <FaInfo />
+                                            </a>
                                         </div>
                                     ) }
                                     <button
                                         className={ styles.removeFromPalette }
                                         onClick={ () => handleRemoveFromPalette(i) }
-                                        style={ { color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black' } }
+                                        style={ { color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' } }
                                         data-testid={ `remove-button-${ i }` }
                                     >
                                         <AiOutlineClose />
@@ -62,8 +66,8 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({ palette, handleSwatchIncr
                                                 setEditingColorNameIndex(null)
                                             } }
                                             style={ {
-                                                color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black',
-                                                backgroundColor: tinycolor(swatch.rgbString)?.isDark() ? 'black' : 'white'
+                                                color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
+                                                backgroundColor: tinycolor(swatch.rgbString).isDark() ? 'black' : 'white'
                                             } }
                                             autoFocus
                                         />
@@ -73,7 +77,7 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({ palette, handleSwatchIncr
                                                 setEditingColorNameIndex(i)
                                                 setTempColorName(swatch.label)
                                             } }
-                                            style={ { color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black' } }
+                                            style={ { color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' } }
                                             data-testid={ `name-${ i }` }
                                         >
                                             { swatch.label }
@@ -84,7 +88,7 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({ palette, handleSwatchIncr
                                         className={ styles.partsInMix }
                                         onClick={ () => handleSwatchIncrement(i) }
                                         data-testid={ `swatch-parts-${ i }` }
-                                        style={ { color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black' } }
+                                        style={ { color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black' } }
                                     >
                                         { swatch.partsInMix }
                                         <div className={ styles.partsPercentage }>
@@ -95,10 +99,11 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({ palette, handleSwatchIncr
                                     { i === activeInfoIndex && swatch.recipe && (
                                         <div className={ styles.recipeInfo }
                                             style={ {
-                                                color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black',
+                                                color: tinycolor(swatch.rgbString).isDark() ? 'white' : 'black',
                                                 backgroundColor: swatch.rgbString
                                             } }
-                                            onClick={ () => setActiveInfoIndex(i === activeInfoIndex ? null : i) }
+                                            onClick={ () => setActiveInfoIndex(null) }
+                                            data-testid={ `recipe-info-${ i }` }
                                         >
                                             { swatch.recipe.map((ingredient, index) => (
                                                 <div key={ index }>
@@ -106,7 +111,7 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({ palette, handleSwatchIncr
                                                         className={ styles.recipeList }
                                                         style={ {
                                                             backgroundColor: ingredient.rgbString,
-                                                            color: tinycolor(ingredient.rgbString)?.isDark() ? 'white' : 'black'
+                                                            color: tinycolor(ingredient.rgbString).isDark() ? 'white' : 'black'
                                                         } }>
                                                         { ingredient.partsInMix } { ingredient.label }
                                                     </div>

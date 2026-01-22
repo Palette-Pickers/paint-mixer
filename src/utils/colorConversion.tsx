@@ -191,7 +191,7 @@ export const deltaE94 = (lab1: Lab, lab2: Lab): number => {
     const deltaB = lab1.b - lab2.b
     const deltaC = Math.sqrt(lab1.a * lab1.a + lab1.b * lab1.b) - Math.sqrt(lab2.a * lab2.a + lab2.b * lab2.b)
     const deltaH2 = deltaA * deltaA + deltaB * deltaB - deltaC * deltaC
-    const deltaH = deltaH2 < 0 ? 0 : Math.sqrt(deltaH2)
+    const deltaH = Math.sqrt(Math.max(deltaH2, 0))
 
     const l = deltaL / (kL * SL)
     const c = deltaC / (kC * SC)

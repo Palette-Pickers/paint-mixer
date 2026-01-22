@@ -7,6 +7,7 @@ import {
     xyzToLab,
     deltaE94
 } from './colorConversion'
+import tinycolor from "tinycolor2"
 
 describe('normalizeRgbString', () => {
     it('should normalize an RGB array to a string', () => {
@@ -153,6 +154,12 @@ describe('hslaToHex', () => {
     it('should handle HSLA values with non-zero saturation', () => {
         const hslaColor = { h: 180, s: 0.5, l: 0.5, a: 1 }
         const expectedHex = "#40bfbf"
+        expect(hslaToHex(hslaColor)).toBe(expectedHex)
+    })
+
+    it('should handle non-zero saturation when lightness is below 0.5', () => {
+        const hslaColor = { h: 210, s: 0.5, l: 0.25, a: 1 }
+        const expectedHex = tinycolor(hslaColor).toHexString()
         expect(hslaToHex(hslaColor)).toBe(expectedHex)
     })
 })

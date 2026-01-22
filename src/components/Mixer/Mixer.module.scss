@@ -46,4 +46,37 @@
             z-index: -99;
         }
     }
+
+    .referenceControls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-start;
+        margin: 1rem 0;
+    }
+
+    .colorCount {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        font-size: 0.9rem;
+
+        select {
+            padding: 0.25rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    .distinctToggle {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        font-size: 0.9rem;
+
+        input {
+            width: 1rem;
+            height: 1rem;
+        }
+    }
 }

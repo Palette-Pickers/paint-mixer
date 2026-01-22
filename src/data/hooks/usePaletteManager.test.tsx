@@ -33,7 +33,8 @@ const TestComponent: React.FC = () => {
         handleRemoveFromPalette,
         resetPalette,
         addToPalette,
-        updateColorName
+        updateColorName,
+        applyMixParts
     } = usePaletteManager(defaultPalette)
 
     const rgbString = "rgb(242, 117, 175)"
@@ -50,6 +51,15 @@ const TestComponent: React.FC = () => {
             <button data-testid="add-button" onClick={ () => addToPalette(rgbString, false) }>Add</button>
             <input data-testid="color-name-input" defaultValue={ palette[ 0 ]?.label || "" } />
             <button data-testid="update-name-button" onClick={ () => updateColorName(0, "Updated Color") }>Update Name</button>
+            <button
+                data-testid="apply-button"
+                onClick={ () => applyMixParts([
+                    { index: 0, parts: 2 },
+                    { index: 1, parts: 1 },
+                ]) }
+            >
+                Apply Mix
+            </button>
         </div>
     )
 
@@ -115,3 +125,26 @@ it("should add a color to the palette", async () => {
     expect(updatedPalette.length).toBe(initialPaletteLength + 1)
 });
 
+it("should update a color name", () => {
+    const { getByTestId } = render(<TestComponent />)
+
+    act(() => {
+        fireEvent.click(getByTestId("update-name-button"))
+    })
+
+    const updatedPalette = JSON.parse(getByTestId("hook-values").textContent || "")
+    expect(updatedPalette[ 0 ].label).toBe("Updated Color")
+})
+
+it("should apply mix parts to the palette", () => {
+    const { getByTestId } = render(<TestComponent />)
+
+    act(() => {
+        fireEvent.click(getByTestId("apply-button"))
+    })
+
+    const updatedPalette = JSON.parse(getByTestId("hook-values").textContent || "")
+    expect(updatedPalette[ 0 ].partsInMix).toBe(2)
+    expect(updatedPalette[ 1 ].partsInMix).toBe(1)
+    expect(updatedPalette[ 2 ].partsInMix).toBe(0)
+})

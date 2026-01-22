@@ -6,14 +6,14 @@ import { useColorName } from './useColorName'
 export const useSwatchAdder = (initialPalette: ColorPart[]) => {
     const [ palette, setPalette ] = useState<ColorPart[]>(initialPalette)
 
-    const addToPalette = async (rgbString: string, includeRecipe: boolean) => {
+    const addToPalette = async (rgbString: string, includeRecipe: boolean, labelOverride?: string) => {
         //check that the color doesn’t already exist in the palette
         if (!isColorInPalette(rgbString)) {
 
             let updatedPalette = [ ...palette ]
             const hexColor = tinycolor(rgbString).toHexString()
             //look up the color name in the database
-            const colorName = await useColorName(hexColor.substring(1))
+            const colorName = labelOverride?.trim() || await useColorName(hexColor.substring(1))
 
             //add the color to the palette
             const newColor: ColorPart = {

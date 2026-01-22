@@ -29,7 +29,6 @@ const TargetColorContainer: React.FC<TargetColorContainerProps> = ({
                 style={ {
                     background: hsvaToRgbaString(targetColor),
                     color: tinycolor(hsvaToRgba(targetColor)).isDark() ? 'white' : 'black',
-                    display: (isUsingTargetColor ? 'block' : 'none'),
                 } }
             >
                 { isShowingTargetColorPicker && (

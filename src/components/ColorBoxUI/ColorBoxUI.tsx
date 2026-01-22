@@ -19,7 +19,7 @@ interface ColorBoxUIProps {
     resetPalette: () => void
     toggleIsUsingTargetColor: () => void
     isSavable: boolean
-    addToPalette: (color: string, includeRecipe: boolean) => void
+    addToPalette: (color: string, includeRecipe: boolean, labelOverride?: string) => void
     hasPartsInMix: () => boolean
 }
 
@@ -32,7 +32,7 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                     onClick={ resetPalette }
                     id='reset-mix'
                     style={ {
-                        color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black',
+                        color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
                         opacity: hasPartsInMix() ? 0.5 : 0 // Change the opacity to indicate it's disabled
                     } }
                 >
@@ -46,12 +46,12 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                     onClick={ () => addToPalette(mixedColor, true) }  // Set includeRecipe to true
                     disabled={ !isSavable } // Disable the button based on canSave state
                     style={ {
-                        color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black',
+                        color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
                         opacity: isSavable ? 1 : 0.5 // Change the opacity when it's disabled
                     } }
                 >
                     <FaArrowDown style={ {
-                        color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black',
+                        color: tinycolor(mixedColor).isDark() ? 'white' : 'black',
                         opacity: isSavable ? 1 : 0 // Hide the icon when disabled
                     } }
                     />
@@ -65,8 +65,8 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                 onClick={ toggleIsUsingTargetColor }
                 style={ {
                     color: isUsingTargetColor ?
-                        tinycolor(hsvaToRgba(targetColor))?.isDark() ? 'white' : 'black' : //when the targetColor is visible, contrast with that background color
-                        tinycolor(mixedColor)?.isDark() ? 'white' : 'black' //when the targetColor is not visible, contrast with the mixedColor filling the background
+                        tinycolor(hsvaToRgba(targetColor)).isDark() ? 'white' : 'black' : //when the targetColor is visible, contrast with that background color
+                        tinycolor(mixedColor).isDark() ? 'white' : 'black' //when the targetColor is not visible, contrast with the mixedColor filling the background
                 } }
             >
                 { isUsingTargetColor ?

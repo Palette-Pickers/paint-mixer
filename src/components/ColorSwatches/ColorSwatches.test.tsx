@@ -144,4 +144,125 @@ describe('<ColorSwatches />', () => {
     expect(mockHandleSwatchDecrement).toHaveBeenCalledWith(0)
   })
 
+  it('toggles recipe info display when info button is clicked', async () => {
+    const { getByTestId, queryByText, findByText } = render(
+      <ColorSwatches
+        palette={ mockPalette }
+        handleSwatchIncrement={ mockHandleSwatchIncrement }
+        handleSwatchDecrement={ mockHandleSwatchDecrement }
+        handleRemoveFromPalette={ mockHandleRemoveFromPalette }
+        updateColorName={ mockUpdateColorName }
+        totalParts={ mockTotalParts }
+      />
+    )
+
+    expect(queryByText(/Pure Red/i)).toBeNull()
+
+    fireEvent.click(getByTestId('recipe-info-button-0'))
+    await findByText(/Pure Red/i)
+
+    fireEvent.click(getByTestId('recipe-info-button-0'))
+    expect(queryByText(/Pure Red/i)).toBeNull()
+
+    fireEvent.click(getByTestId('recipe-info-button-0'))
+    await findByText(/Pure Red/i)
+
+    fireEvent.click(getByTestId('recipe-info-0'))
+    expect(queryByText(/Pure Red/i)).toBeNull()
+  })
+
+  it('edits a dark swatch name to cover dark input styles', () => {
+    const darkPalette = [
+      {
+        rgbString: "rgb(0, 0, 0)",
+        label: "Dark",
+        partsInMix: 1,
+        recipe: null
+      }
+    ]
+
+    const { getByTestId, getByRole } = render(
+      <ColorSwatches
+        palette={ darkPalette }
+        handleSwatchIncrement={ mockHandleSwatchIncrement }
+        handleSwatchDecrement={ mockHandleSwatchDecrement }
+        handleRemoveFromPalette={ mockHandleRemoveFromPalette }
+        updateColorName={ mockUpdateColorName }
+        totalParts={ 1 }
+      />
+    )
+
+    fireEvent.click(getByTestId('name-0'))
+    const input = getByRole('textbox')
+    fireEvent.change(input, { target: { value: 'Darker' } })
+    fireEvent.blur(input)
+
+    expect(mockUpdateColorName).toHaveBeenCalledWith(0, 'Darker')
+  })
+
+  it('handles dark swatches and hides percentages for zero parts', () => {
+    const darkPalette = [
+      {
+        rgbString: "rgb(0, 0, 0)",
+        label: "Dark",
+        partsInMix: 0,
+        recipe: [
+          { rgbString: "rgb(255, 255, 255)", partsInMix: 1, label: "Light" },
+          { rgbString: "rgb(0, 0, 0)", partsInMix: 1, label: "Dark" }
+        ]
+      },
+      {
+        rgbString: "rgb(255, 255, 255)",
+        label: "Light",
+        partsInMix: 1,
+        recipe: null
+      }
+    ]
+
+    const totalParts = darkPalette.reduce((acc, swatch) => acc + swatch.partsInMix, 0)
+
+    const { getByTestId } = render(
+      <ColorSwatches
+        palette={ darkPalette }
+        handleSwatchIncrement={ mockHandleSwatchIncrement }
+        handleSwatchDecrement={ mockHandleSwatchDecrement }
+        handleRemoveFromPalette={ mockHandleRemoveFromPalette }
+        updateColorName={ mockUpdateColorName }
+        totalParts={ totalParts }
+      />
+    )
+
+    expect(getByTestId('swatch-parts-0').textContent).not.toMatch(/%/)
+
+    fireEvent.click(getByTestId('recipe-info-button-0'))
+    expect(getByTestId('recipe-info-0')).toBeInTheDocument()
+  })
+
+  it('renders recipe info with a light swatch', () => {
+    const lightPalette = [
+      {
+        rgbString: "rgb(255, 255, 255)",
+        label: "Light",
+        partsInMix: 1,
+        recipe: [
+          { rgbString: "rgb(0, 0, 0)", partsInMix: 1, label: "Dark" }
+        ]
+      }
+    ]
+
+    const { getByTestId } = render(
+      <ColorSwatches
+        palette={ lightPalette }
+        handleSwatchIncrement={ mockHandleSwatchIncrement }
+        handleSwatchDecrement={ mockHandleSwatchDecrement }
+        handleRemoveFromPalette={ mockHandleRemoveFromPalette }
+        updateColorName={ mockUpdateColorName }
+        totalParts={ 1 }
+      />
+    )
+
+    fireEvent.click(getByTestId('recipe-info-button-0'))
+    expect(getByTestId('recipe-info-0')).toBeInTheDocument()
+  })
+
 })
