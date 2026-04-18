@@ -1,8 +1,8 @@
-import colornames from 'color-name-list/dist/colornames.json'
+import { colornames } from 'color-name-list'
 import nearestColor from 'nearest-color'
 
 const colorMap: Record<string, string> = Object.fromEntries(
-    (colornames as Array<{ name: string; hex: string }>).map(({ name, hex }) => [name, hex])
+    colornames.map(({ name, hex }: { name: string; hex: string }) => [name, hex])
 )
 
 const findNearestColor = nearestColor.from(colorMap)

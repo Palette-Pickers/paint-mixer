@@ -38,14 +38,14 @@ module.exports = {
                         }
                     },
                     'postcss-loader',
-                    'sass-loader'
+                    { loader: 'sass-loader', options: { api: 'modern' } }
                 ],
             },
             {
                 test: /\.scss$/,  // for non-module scss
                 exclude: /\.module\.scss$/,
                 include: path.resolve(__dirname, 'src'),
-                use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
+                use: ['style-loader', 'css-loader', 'postcss-loader', { loader: 'sass-loader', options: { api: 'modern' } }],
             },
         ],
     },
