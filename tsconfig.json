@@ -4,6 +4,7 @@
         "esModuleInterop": true,
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
         "lib": [
             "es2017",
             "dom"

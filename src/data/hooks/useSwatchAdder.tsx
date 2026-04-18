@@ -1,34 +1,27 @@
 import { useState } from 'react'
-import tinycolor from "tinycolor2"
+import tinycolor from 'tinycolor2'
 import { ColorPart } from '../../types/types'
-import { useColorName } from './useColorName'
+import { getColorName } from '../../utils/colorName'
 
 export const useSwatchAdder = (initialPalette: ColorPart[]) => {
     const [ palette, setPalette ] = useState<ColorPart[]>(initialPalette)
 
-    const addToPalette = async (rgbString: string, includeRecipe: boolean) => {
-        //check that the color doesn’t already exist in the palette
-        if (!isColorInPalette(rgbString)) {
-            let updatedPalette = [ ...palette ]
-            const hexColor = tinycolor(rgbString).toHexString()
-            //look up the color name in the database
-            const colorName = await useColorName(hexColor.substring(1))
-            //add the color to the palette
-            const newColor: ColorPart = {
-                "rgbString": rgbString,
-                "label": colorName,
-                "partsInMix": 0,
-            }
-            //if the color's been mixed, add the recipe to the swatch data.
-            if (includeRecipe) {
-                newColor.recipe = palette.filter(color => color.partsInMix > 0)
-            }
-            //add the new color to the palette
-            updatedPalette.push(newColor)
-            setPalette(updatedPalette)
-        } else {
+    const addToPalette = (rgbString: string, includeRecipe: boolean) => {
+        if (isColorInPalette(rgbString)) {
             console.error("Selected color already in palette", rgbString)
+            return
         }
+        const hexColor = tinycolor(rgbString).toHexString()
+        const colorName = getColorName(hexColor.substring(1))
+        const newColor: ColorPart = {
+            rgbString,
+            label: colorName,
+            partsInMix: 0,
+        }
+        if (includeRecipe) {
+            newColor.recipe = palette.filter(color => color.partsInMix > 0)
+        }
+        setPalette(prev => [ ...prev, newColor ])
     }
 
     const isColorInPalette = (rgbString: string) => {
