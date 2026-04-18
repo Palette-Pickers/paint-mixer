@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styles from './ColorBoxUI.module.scss'
 import { ColorPart } from '../../types/types'
 
@@ -24,6 +24,11 @@ interface ColorBoxUIProps {
 }
 
 const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor, targetColor, resetPalette, toggleIsUsingTargetColor, isSavable, addToPalette, hasPartsInMix }) => {
+    const mixedIsDark = useMemo(() => tinycolor(mixedColor).isDark(), [mixedColor])
+    const targetIsDark = useMemo(() => tinycolor(hsvaToRgba(targetColor)).isDark(), [targetColor])
+    const contrastColor = mixedIsDark ? 'white' : 'black'
+    const targetContrastColor = isUsingTargetColor ? (targetIsDark ? 'white' : 'black') : contrastColor
+
     return (
         <div className={ styles.ColorBoxUi }>
             <div>
@@ -32,8 +37,8 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                     onClick={ resetPalette }
                     id='reset-mix'
                     style={ {
-                        color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black',
-                        opacity: hasPartsInMix() ? 0.5 : 0 // Change the opacity to indicate it's disabled
+                        color: contrastColor,
+                        opacity: hasPartsInMix() ? 0.5 : 0
                     } }
                 >
                     <VscDebugRestart />
@@ -43,18 +48,17 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
             <div className={ styles.colorBoxLabel }>
                 <button
                     className={ styles.addToPalette }
-                    onClick={ () => addToPalette(mixedColor, true) }  // Set includeRecipe to true
-                    disabled={ !isSavable } // Disable the button based on canSave state
+                    onClick={ () => addToPalette(mixedColor, true) }
+                    disabled={ !isSavable }
                     style={ {
-                        color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black',
-                        opacity: isSavable ? 1 : 0.5 // Change the opacity when it's disabled
+                        color: contrastColor,
+                        opacity: isSavable ? 1 : 0.5
                     } }
                 >
                     <FaArrowDown style={ {
-                        color: tinycolor(mixedColor)?.isDark() ? 'white' : 'black',
-                        opacity: isSavable ? 1 : 0 // Hide the icon when disabled
-                    } }
-                    />
+                        color: contrastColor,
+                        opacity: isSavable ? 1 : 0
+                    } } />
                     <label className={ styles.buttonSave }>
                         { isSavable ? 'Save' : 'Saved' }
                     </label>
@@ -63,11 +67,7 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
             <button
                 className={ styles.toggleTargetColor }
                 onClick={ toggleIsUsingTargetColor }
-                style={ {
-                    color: isUsingTargetColor ?
-                        tinycolor(hsvaToRgba(targetColor))?.isDark() ? 'white' : 'black' : //when the targetColor is visible, contrast with that background color
-                        tinycolor(mixedColor)?.isDark() ? 'white' : 'black' //when the targetColor is not visible, contrast with the mixedColor filling the background
-                } }
+                style={ { color: targetContrastColor } }
             >
                 { isUsingTargetColor ?
                     <TbTargetArrow data-testid="target-arrow-icon" /> :

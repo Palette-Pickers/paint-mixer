@@ -13,8 +13,7 @@ Tasks are removed when their PR is merged. Completed work goes in CHANGELOG.md.
 
 ## Housekeeping
 
-- [ ] Performance audit: profile re-render frequency in Mixer; review `useEffect` chains and redundant `tinycolor()` calls in ColorBoxUI/ColorSwatches
-- [ ] Accessibility audit: keyboard navigation, ARIA labels on icon-only buttons, focus management in color picker
+- [ ] Profile re-render frequency in Mixer; review `useEffect` chains on palette changes
 - [ ] Add unit tests for `isDark.ts`
 - [ ] Add tests for `useColorMatching`, `useColorName`, `useLocalStorage`, `useSwatchAdder`
 - [ ] Add tests for `Mixer.tsx` (orchestrator — currently untested)

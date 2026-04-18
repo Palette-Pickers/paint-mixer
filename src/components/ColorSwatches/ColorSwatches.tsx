@@ -25,110 +25,144 @@ const ColorSwatches: React.FC<ColorSwatchesProps> = ({ palette, handleSwatchIncr
             <div className={ styles.proportionalParts }>
             </div>
             <TransitionGroup className={ styles.ColorSwatches }>
-                { palette.map((swatch, i) => (
-                    <CSSTransition
-                        key={ i }
-                        timeout={ 500 }
-                        classNames="fade"
-                    >
-                        <div className={ styles.swatchContainer }
-                            data-testid="swatchContainer">
-                            <div
-                                className={ styles.swatch }
-                                style={ { backgroundColor: `${ swatch.rgbString }` } }
-                            >
-                                <div className={ styles.swatchUi }>
-                                    { swatch.recipe && (
-                                        <div className={ styles.recipeInfoButton }>
-                                            <a
-                                                style={ { color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black' } }
-                                                onClick={ () => setActiveInfoIndex(i === activeInfoIndex ? null : i) }><FaInfo /></a>
-                                        </div>
-                                    ) }
-                                    <button
-                                        className={ styles.removeFromPalette }
-                                        onClick={ () => handleRemoveFromPalette(i) }
-                                        style={ { color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black' } }
-                                        data-testid={ `remove-button-${ i }` }
-                                    >
-                                        <AiOutlineClose />
-                                    </button>
-                                    { editingColorNameIndex === i ? (
-                                        <input
-                                            value={ tempColorName }
-                                            onChange={ (e) => setTempColorName(e.target.value) }
-                                            onBlur={ () => {
-                                                updateColorName(i, tempColorName)
-                                                setEditingColorNameIndex(null)
-                                            } }
-                                            style={ {
-                                                color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black',
-                                                backgroundColor: tinycolor(swatch.rgbString)?.isDark() ? 'black' : 'white'
-                                            } }
-                                            autoFocus
-                                        />
-                                    ) : (
-                                        <div className={ styles.name }
-                                            onClick={ () => {
-                                                setEditingColorNameIndex(i)
-                                                setTempColorName(swatch.label)
-                                            } }
-                                            style={ { color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black' } }
-                                            data-testid={ `name-${ i }` }
-                                        >
-                                            { swatch.label }
-                                        </div>
-                                    ) }
+                { palette.map((swatch, i) => {
+                    const swatchIsDark = tinycolor(swatch.rgbString).isDark()
+                    const swatchContrast = swatchIsDark ? 'white' : 'black'
 
-                                    <div
-                                        className={ styles.partsInMix }
-                                        onClick={ () => handleSwatchIncrement(i) }
-                                        data-testid={ `swatch-parts-${ i }` }
-                                        style={ { color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black' } }
-                                    >
-                                        { swatch.partsInMix }
-                                        <div className={ styles.partsPercentage }>
-                                            { (swatch.partsInMix > 0.000001) ? (swatch.partsInMix / totalParts * 100).toFixed(0) + '%' : '' }
-                                        </div>
-                                    </div>
-
-                                    { i === activeInfoIndex && swatch.recipe && (
-                                        <div className={ styles.recipeInfo }
-                                            style={ {
-                                                color: tinycolor(swatch.rgbString)?.isDark() ? 'white' : 'black',
-                                                backgroundColor: swatch.rgbString
-                                            } }
-                                            onClick={ () => setActiveInfoIndex(i === activeInfoIndex ? null : i) }
+                    return (
+                        <CSSTransition
+                            key={ swatch.rgbString }
+                            timeout={ 500 }
+                            classNames="fade"
+                        >
+                            <div className={ styles.swatchContainer }
+                                data-testid="swatchContainer">
+                                <div
+                                    className={ styles.swatch }
+                                    style={ { backgroundColor: swatch.rgbString } }
+                                >
+                                    <div className={ styles.swatchUi }>
+                                        { swatch.recipe && (
+                                            <div className={ styles.recipeInfoButton }>
+                                                <button
+                                                    style={ {
+                                                        color: swatchContrast,
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        cursor: 'pointer',
+                                                        padding: 0,
+                                                    } }
+                                                    onClick={ () => setActiveInfoIndex(i === activeInfoIndex ? null : i) }
+                                                    aria-label={ `Show recipe for ${ swatch.label }` }
+                                                >
+                                                    <FaInfo />
+                                                </button>
+                                            </div>
+                                        ) }
+                                        <button
+                                            className={ styles.removeFromPalette }
+                                            onClick={ () => handleRemoveFromPalette(i) }
+                                            style={ { color: swatchContrast } }
+                                            data-testid={ `remove-button-${ i }` }
+                                            aria-label={ `Remove ${ swatch.label }` }
                                         >
-                                            { swatch.recipe.map((ingredient, index) => (
-                                                <div key={ index }>
-                                                    <div
-                                                        className={ styles.recipeList }
-                                                        style={ {
-                                                            backgroundColor: ingredient.rgbString,
-                                                            color: tinycolor(ingredient.rgbString)?.isDark() ? 'white' : 'black'
-                                                        } }>
-                                                        { ingredient.partsInMix } { ingredient.label }
+                                            <AiOutlineClose />
+                                        </button>
+                                        { editingColorNameIndex === i ? (
+                                            <input
+                                                value={ tempColorName }
+                                                onChange={ (e) => setTempColorName(e.target.value) }
+                                                onBlur={ () => {
+                                                    updateColorName(i, tempColorName)
+                                                    setEditingColorNameIndex(null)
+                                                } }
+                                                style={ {
+                                                    color: swatchContrast,
+                                                    backgroundColor: swatchIsDark ? 'black' : 'white'
+                                                } }
+                                                autoFocus
+                                            />
+                                        ) : (
+                                            <div
+                                                className={ styles.name }
+                                                onClick={ () => {
+                                                    setEditingColorNameIndex(i)
+                                                    setTempColorName(swatch.label)
+                                                } }
+                                                onKeyDown={ (e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        setEditingColorNameIndex(i)
+                                                        setTempColorName(swatch.label)
+                                                    }
+                                                } }
+                                                role="button"
+                                                tabIndex={ 0 }
+                                                style={ { color: swatchContrast } }
+                                                data-testid={ `name-${ i }` }
+                                            >
+                                                { swatch.label }
+                                            </div>
+                                        ) }
+
+                                        <button
+                                            className={ styles.partsInMix }
+                                            onClick={ () => handleSwatchIncrement(i) }
+                                            data-testid={ `swatch-parts-${ i }` }
+                                            style={ { color: swatchContrast } }
+                                            aria-label={ `${ swatch.label }: ${ swatch.partsInMix } parts, click to add` }
+                                        >
+                                            { swatch.partsInMix }
+                                            <div className={ styles.partsPercentage }>
+                                                { (swatch.partsInMix > 0.000001) ? (swatch.partsInMix / totalParts * 100).toFixed(0) + '%' : '' }
+                                            </div>
+                                        </button>
+
+                                        { i === activeInfoIndex && swatch.recipe && (
+                                            <div
+                                                className={ styles.recipeInfo }
+                                                style={ {
+                                                    color: swatchContrast,
+                                                    backgroundColor: swatch.rgbString
+                                                } }
+                                                onClick={ () => setActiveInfoIndex(i === activeInfoIndex ? null : i) }
+                                                onKeyDown={ (e) => {
+                                                    if (e.key === 'Escape' || e.key === 'Enter') setActiveInfoIndex(null)
+                                                } }
+                                                role="dialog"
+                                                aria-label={ `Recipe for ${ swatch.label }` }
+                                                tabIndex={ -1 }
+                                            >
+                                                { swatch.recipe.map((ingredient, index) => (
+                                                    <div key={ index }>
+                                                        <div
+                                                            className={ styles.recipeList }
+                                                            style={ {
+                                                                backgroundColor: ingredient.rgbString,
+                                                                color: tinycolor(ingredient.rgbString).isDark() ? 'white' : 'black'
+                                                            } }>
+                                                            { ingredient.partsInMix } { ingredient.label }
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )) }
-                                        </div>
-                                    ) }
+                                                )) }
+                                            </div>
+                                        ) }
+                                    </div>
+                                </div>
+
+                                <div className={ styles.changePartsQty }>
+                                    <button
+                                        className={ styles.subtractParts }
+                                        onClick={ () => handleSwatchDecrement(i) }
+                                        data-testid={ `subtract-button-${ i }` }
+                                        aria-label={ `Remove one part of ${ swatch.label }` }
+                                    >
+                                        -
+                                    </button>
                                 </div>
                             </div>
-
-                            <div className={ styles.changePartsQty }>
-                                <button
-                                    className={ styles.subtractParts }
-                                    onClick={ () => handleSwatchDecrement(i) }
-                                    data-testid={ `subtract-button-${ i }` }
-                                >
-                                    -
-                                </button>
-                            </div>
-                        </div>
-                    </CSSTransition>
-                )) }
+                        </CSSTransition>
+                    )
+                }) }
             </TransitionGroup>
         </>
     )
