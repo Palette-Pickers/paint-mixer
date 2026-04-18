@@ -14,6 +14,7 @@ Tasks are removed when their PR is merged. Completed work goes in CHANGELOG.md.
 ## Housekeeping
 
 - [ ] Profile re-render frequency in Mixer; review `useEffect` chains on palette changes
+- [ ] Lazy-load `color-name-list` + `nearest-color` initialization to reduce initial bundle size (~500KB gzipped impact)
 - [ ] Add unit tests for `isDark.ts`
 - [ ] Add tests for `useColorMatching`, `useColorName`, `useLocalStorage`, `useSwatchAdder`
 - [ ] Add tests for `Mixer.tsx` (orchestrator — currently untested)
