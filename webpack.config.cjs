@@ -51,6 +51,9 @@ module.exports = {
     },
     resolve: {
         extensions: ['.*', '.js', '.jsx', '.ts', '.tsx', ".scss"],
+        alias: {
+            'color-name-list': path.resolve(__dirname, 'node_modules/color-name-list/dist/colornames.esm.js'),
+        },
     },
     plugins: [
         new HtmlWebpackPlugin({

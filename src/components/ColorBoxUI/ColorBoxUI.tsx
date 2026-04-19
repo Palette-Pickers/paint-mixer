@@ -13,14 +13,13 @@ import { VscDebugRestart } from 'react-icons/vsc'
 
 interface ColorBoxUIProps {
     mixedColor: string
-    setMixedColor: React.Dispatch<React.SetStateAction<string>>
     isUsingTargetColor: boolean
     targetColor: any
     resetPalette: () => void
     toggleIsUsingTargetColor: () => void
     isSavable: boolean
     addToPalette: (color: string, includeRecipe: boolean) => void
-    hasPartsInMix: () => boolean
+    hasPartsInMix: boolean
 }
 
 const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor, targetColor, resetPalette, toggleIsUsingTargetColor, isSavable, addToPalette, hasPartsInMix }) => {
@@ -38,7 +37,7 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                     id='reset-mix'
                     style={ {
                         color: contrastColor,
-                        opacity: hasPartsInMix() ? 0.5 : 0
+                        opacity: hasPartsInMix ? 0.5 : 0
                     } }
                 >
                     <VscDebugRestart />

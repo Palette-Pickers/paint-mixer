@@ -11,5 +11,5 @@ declare module 'nearest-color' {
     }
 
     function from(colors: Record<string, string>): NearestColorFn
-    export = { from }
+    export { from }
 }
