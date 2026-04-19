@@ -38,19 +38,22 @@ module.exports = {
                         }
                     },
                     'postcss-loader',
-                    'sass-loader'
+                    { loader: 'sass-loader', options: { api: 'modern' } }
                 ],
             },
             {
                 test: /\.scss$/,  // for non-module scss
                 exclude: /\.module\.scss$/,
                 include: path.resolve(__dirname, 'src'),
-                use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
+                use: ['style-loader', 'css-loader', 'postcss-loader', { loader: 'sass-loader', options: { api: 'modern' } }],
             },
         ],
     },
     resolve: {
         extensions: ['.*', '.js', '.jsx', '.ts', '.tsx', ".scss"],
+        alias: {
+            'color-name-list': path.resolve(__dirname, 'node_modules/color-name-list/dist/colornames.esm.js'),
+        },
     },
     plugins: [
         new HtmlWebpackPlugin({

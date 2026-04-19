@@ -5,14 +5,13 @@ import ColorBoxUI from './ColorBoxUI'
 describe('<ColorBoxUI />', () => {
     const mockProps = {
         mixedColor: "#FFFFFF",
-        setMixedColor: jest.fn(),
         isUsingTargetColor: true,
         targetColor: {},
         resetPalette: jest.fn(),
         toggleIsUsingTargetColor: jest.fn(),
         isSavable: true,
         addToPalette: jest.fn(),
-        hasPartsInMix: jest.fn(),
+        hasPartsInMix: false,
         palette: []
     }
 

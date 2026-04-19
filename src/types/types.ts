@@ -11,7 +11,7 @@ export type PaletteManager = {
 	handleSwatchDecrement: (index: number) => void
 	handleRemoveFromPalette: (index: number) => void
 	resetPalette: () => void
-	addToPalette: (rgbString: string, includeRecipe: boolean) => void
+	addToPalette: (rgbString: string, includeRecipe: boolean) => Promise<void>
 	updateColorName: (index: number, newName: string) => void
 }
 

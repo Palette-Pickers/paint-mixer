@@ -20,12 +20,12 @@
 
 
         .swatch {
-            align-content: center;
+            align-content: flex-start;
             border-radius: 0 0 20% 20%;
             border: 1px solid black;
             min-height: 6rem;
             height: auto;
-            justify-content: center;
+            justify-content: flex-start;
             position: relative;
             width: 9rem;
 
@@ -36,15 +36,15 @@
             }
 
             .swatchUi {
-                align-items: center;
-                bottom: 0;
+                align-items: flex-start;
                 display: flex;
                 flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: space-between;
                 left: 0;
-                position: relative;
+                position: absolute;
                 right: 0;
+                top: 0;
 
                 .name {
                     font-family: 'Roboto Condensed', sans-serif;

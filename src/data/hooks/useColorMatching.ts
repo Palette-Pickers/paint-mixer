@@ -1,22 +1,23 @@
-import { useState, useEffect } from "react"
-import tinycolor from "tinycolor2"
-import { useDebounce } from "use-debounce"
-import { useColorName } from "./useColorName"
-import { normalizeRgbString } from "../../utils/colorConversion"
+import { useState, useEffect } from 'react'
+import tinycolor from 'tinycolor2'
+import { getColorName } from '../../utils/colorName'
+import { normalizeRgbString } from '../../utils/colorConversion'
 
-export const useColorMatching = (initialColor: string) => {
-	const [colorName, setColorName] = useState<string>("")
-	const [debouncedColorName] = useDebounce(initialColor, 250)
+export const useColorMatching = (color: string) => {
+    const [colorName, setColorName] = useState('')
 
-	useEffect(() => {
-		setColorName("") //reset the color name while we fetch the new one
-		const fetchAndSetColorName = async () => {
-			const hexColor = tinycolor(normalizeRgbString(initialColor)).toHexString()
-			const fetchedColorName = await useColorName(hexColor.substring(1)) //remove the # from the hex string
-			setColorName(fetchedColorName)
-		}
-		fetchAndSetColorName()
-	}, [debouncedColorName]) //update no more than once every 250ms
+    useEffect(() => {
+        let cancelled = false
+        try {
+            const hex = tinycolor(normalizeRgbString(color)).toHexString()
+            getColorName(hex.substring(1)).then(name => {
+                if (!cancelled) setColorName(name)
+            })
+        } catch {
+            // leave colorName as-is on bad input
+        }
+        return () => { cancelled = true }
+    }, [color])
 
-	return { colorName }
+    return { colorName }
 }

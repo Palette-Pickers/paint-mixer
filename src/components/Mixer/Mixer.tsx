@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import styles from './Mixer.module.scss'
 
 //components
@@ -23,19 +23,54 @@ import { useLocalStorage } from '../../data/hooks/useLocalStorage'
 import { defaultPalette } from '../../utils/palettes/defaultPalette'
 import { ColorPart } from '../../types/types'
 
-const Mixer: React.FC = () => {
+const getMixedRgbStringFromPalette = (palette: ColorPart[]): string => {
+    const totalParts = palette.reduce((acc, color) => acc + color.partsInMix, 0)
 
-    const [ mixedColor, setMixedColor ] = useState<string>('rgba(255,255,255,0)')
+    if (totalParts > 0.000001) {
+        let latent_mix: number[] = [ 0, 0, 0, 0, 0, 0, 0 ]
+
+        for (let j = 0; j < palette.length; j++) {
+            if (palette[ j ].partsInMix > 0.000001) {
+                const latent = mixbox.rgbToLatent(palette[ j ].rgbString)
+                if (latent !== undefined) {
+                    const percentageUsedInMix = palette[ j ].partsInMix / totalParts
+                    for (let k = 0; k < latent.length; k++) {
+                        latent_mix[ k ] += latent[ k ] * percentageUsedInMix
+                    }
+                }
+            }
+        }
+        const mixed_color = mixbox.latentToRgb(latent_mix)
+        return normalizeRgbString(mixed_color)
+    }
+
+    return tinycolor('rgba(255,255,255,0)').toRgbString() ?? ''
+}
+
+const getRgbColorMatch = (color1: string, color2: string): number => {
+    if (!color1 || !color2) return 0
+    const color1Rgb = tinycolor(color1)?.toRgb()
+    const color2Rgb = tinycolor(color2)?.toRgb()
+    if (!color1Rgb || !color2Rgb) return 0
+    const color1Lab = xyzToLab(rgbToXyz(color1Rgb))
+    const color2Lab = xyzToLab(rgbToXyz(color2Rgb))
+    return 100 - deltaE94(color1Lab, color2Lab)
+}
+
+const isColorInPalette = (rgbString: string, palette: ColorPart[]): boolean => {
+    const normalizedColor = tinycolor(normalizeRgbString(rgbString)).toHexString()
+    return palette.some(swatch => tinycolor(swatch.rgbString).toHexString() === normalizedColor)
+}
+
+const Mixer: React.FC = () => {
     const [ showAddColorPicker, setShowAddColorPicker ] = useState(false)
     const [ addColor, setAddColor ] = useState({ h: 214, s: 43, v: 90, a: 1 })
     const [ isUsingTargetColor, setIsUsingTargetColor ] = useState<boolean>(false)
     const [ targetColor, setTargetColor ] = useState({ h: 214, s: 43, v: 90, a: 1 })
     const [ isShowingTargetColorPicker, setIsShowingTargetColorPicker ] = useState<boolean>(false)
-    const [ matchPercentage, setMatchPercentage ] = useState<string>('0.00')
 
-    const [ savedPalette, setSavedPalette ] = useLocalStorage('savedPalette', defaultPalette)
+    const [ savedPalette ] = useLocalStorage('savedPalette', defaultPalette)
     const initialPalette: (any) = savedPalette
-    const [ isSavable, setIsSavable ] = useState<boolean>(true)
 
     const {
         palette,
@@ -47,107 +82,34 @@ const Mixer: React.FC = () => {
         updateColorName
     } = usePaletteManager(initialPalette)
 
+    // Derived values — no useEffect chains, no cascading re-renders
+    const mixedColor = useMemo(() => getMixedRgbStringFromPalette(palette), [ palette ])
+    const totalParts = useMemo(() => palette.reduce((acc, color) => acc + color.partsInMix, 0), [ palette ])
+    const targetRgbaString = useMemo(() => hsvaToRgbaString(targetColor), [ targetColor ])
+    const matchPercentage = useMemo(
+        () => getRgbColorMatch(mixedColor, targetRgbaString).toFixed(2),
+        [ mixedColor, targetRgbaString ]
+    )
+    const isSavable = useMemo(() => !isColorInPalette(mixedColor, palette), [ mixedColor, palette ])
+    const hasPartsInMix = useMemo(() => palette.some(color => color.partsInMix > 0), [ palette ])
+
     const { colorName: mixedColorName } = useColorMatching(mixedColor)
-    const { colorName: targetColorName } = useColorMatching(hsvaToRgbaString(targetColor))
-    const { colorName: addColorName } = useColorMatching(tinycolor(addColor)?.toHexString() ?? '')
+    const { colorName: targetColorName } = useColorMatching(targetRgbaString)
 
-    // Helper function to toggle the isUsingTargetColor state
-    const toggleIsUsingTargetColor = () => {
-        setIsUsingTargetColor(!isUsingTargetColor)
+    const toggleIsUsingTargetColor = useCallback(() => {
+        setIsUsingTargetColor(prev => !prev)
         setIsShowingTargetColorPicker(true)
-    }
+    }, [])
 
-    // Helper function to add the color selected in the color picker to the palette
-    const confirmColor = () => {
+    const confirmColor = useCallback(() => {
         if (addColor) {
             const selectedRgbString = tinycolor(addColor)?.toRgbString() ?? ''
-            addToPalette(selectedRgbString, false)  // No recipe for colors added from the color picker
+            addToPalette(selectedRgbString, false)
             setShowAddColorPicker(false)
         }
-    }
-
-    // Helper function to determine if the palette has any colors with partsInMix > 0
-    const hasPartsInMix = (): boolean => {
-        return palette.some(color => color.partsInMix > 0)
-    }
-
-    // Helper function to calculate the total number of parts in the palette
-    const totalParts = palette.reduce((acc, color) => {
-        return acc + color.partsInMix
-    }, 0)
-
-    // Helper function to get the mixed color by mixing the colors based on partsInMix in the palette
-    const getMixedRgbStringFromPalette = (palette: ColorPart[]): string => {
-        let totalParts = palette.reduce((acc, color) => {
-            return acc + color.partsInMix
-        }, 0)
-
-        // If there are colors with non-zero partsInMix, mix them
-        if (totalParts !== undefined && totalParts > 0.000001) {
-            let latent_mix: number[] = [ 0, 0, 0, 0, 0, 0, 0 ]
-
-            for (let j = 0; j < palette.length; j++) {
-                if (palette[ j ].partsInMix > 0.000001) {
-                    const latent = mixbox.rgbToLatent(palette[ j ].rgbString)
-                    if (latent !== undefined) {
-                        const percentageUsedInMix = palette[ j ].partsInMix / totalParts
-
-                        for (let k = 0; k < latent.length; k++) {
-                            latent_mix[ k ] += latent[ k ] * percentageUsedInMix
-                        }
-                    }
-                }
-            }
-            const mixed_color = mixbox.latentToRgb(latent_mix)
-            return normalizeRgbString(mixed_color)
-        }
-        // If there are no colors with non-zero partsInMix,
-        // return a transparent color
-
-        return tinycolor('rgba(255,255,255,0)').toRgbString() ?? ''
-    }
-
-    // Helper function to check if a color is already in the palette
-    const isColorInPalette = (rgbString: string, palette: ColorPart[]): boolean => {
-        const normalizedColor = tinycolor(normalizeRgbString(rgbString)).toHexString()
-        return palette.some(swatch => tinycolor(swatch.rgbString).toHexString() === normalizedColor)
-    }
-
-    // Helper function to get the % match between two colors
-    const getRgbColorMatch = (color1: string, color2: string): number => {
-        if (!color1 || (color1 === undefined) || !color2 || (color2 === undefined)) {
-            return 0
-        }
-        const color1Rgb = (tinycolor(color1))?.toRgb()
-        const color2Rgb = (tinycolor(color2))?.toRgb()
-        if (!color1Rgb || !color2Rgb) {
-            return 0
-        }
-
-        const color1Lab = xyzToLab(rgbToXyz(color1Rgb))
-        const color2Lab = xyzToLab(rgbToXyz(color2Rgb))
-        /* tslint:enable */
-        return (100 - deltaE94(color1Lab, color2Lab)) //convert % difference to % match
-    }
-
-    //when the palette changes, update the mixed color
-    useEffect(() => {
-        const newMixedColor = getMixedRgbStringFromPalette(palette)
-        setMixedColor(newMixedColor)
-    }, [ palette ])
-
-    //when the mixed or target colors change, update the match percentage
-    useEffect(() => {
-        setMatchPercentage(getRgbColorMatch((mixedColor), (hsvaToRgbaString(targetColor))).toFixed(2))
-    }, [ mixedColor, targetColor ])
-
-    //when the mixed color or palette changes, update the savable state
-    useEffect(() => {
-        setIsSavable(!isColorInPalette(mixedColor, palette))
-    }, [ mixedColor, palette ])
+    }, [ addColor, addToPalette ])
 
     return (
-
         <main className={ styles.Mixer }>
             <div className={ styles.colorBox }>
 
@@ -176,9 +138,7 @@ const Mixer: React.FC = () => {
                     isSavable={ isSavable }
                     addToPalette={ addToPalette }
                     hasPartsInMix={ hasPartsInMix }
-                    setMixedColor={ setMixedColor }
                 />
-
 
                 <div className={ styles.transparencyBox }>
                 </div>
