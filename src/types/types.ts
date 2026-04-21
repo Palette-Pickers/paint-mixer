@@ -13,6 +13,7 @@ export type PaletteManager = {
 	resetPalette: () => void
 	addToPalette: (rgbString: string, includeRecipe: boolean) => Promise<void>
 	updateColorName: (index: number, newName: string) => void
+	applyMix: (mix: Array<{ index: number; parts: number }>) => void
 }
 
 export type Rgb = {

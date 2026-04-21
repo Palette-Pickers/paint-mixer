@@ -6,7 +6,7 @@ module.exports = {
     mode: 'development',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js',
+        filename: '[name].bundle.js',
     },
     module: {
         rules: [
@@ -69,6 +69,13 @@ module.exports = {
         hot: true,
         compress: true,
         historyApiFallback: true,
+    },
+    optimization: {
+        splitChunks: {
+            // Only split synchronous (entry-point) chunks.
+            // Worker bundles must be self-contained — their deps can't be loaded via importScripts.
+            chunks: 'initial',
+        },
     },
     stats: {
         errorDetails: true,

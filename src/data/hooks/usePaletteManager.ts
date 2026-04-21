@@ -31,6 +31,13 @@ const usePaletteManager = (initialPalette: ColorPart[]): PaletteManager => {
         ))
     }, [setPalette])
 
+    const applyMix = useCallback((mix: Array<{ index: number; parts: number }>) => {
+        setPalette(prev => prev.map((color, i) => {
+            const entry = mix.find(m => m.index === i)
+            return { ...color, partsInMix: entry ? entry.parts : 0 }
+        }))
+    }, [setPalette])
+
     return {
         palette,
         handleSwatchIncrement,
@@ -39,6 +46,7 @@ const usePaletteManager = (initialPalette: ColorPart[]): PaletteManager => {
         resetPalette,
         addToPalette,
         updateColorName,
+        applyMix,
     }
 }
 

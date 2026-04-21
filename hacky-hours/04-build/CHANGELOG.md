@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.0
+
+**Color Solver:**
+- Brute-force simplex grid solver finds the best 1–3 color mix from the palette to match a target color (minimizes deltaE94)
+- Runs in a Web Worker to avoid blocking the UI
+- Solver banner shows suggested colors, parts, and match percentage when target mode is active
+- "Apply" button sets the suggested mix on the palette directly
+- "Precision mode" checkbox doubles part granularity (12 → 24 steps) for higher accuracy at ~4.5× solve time; disabled while solving
+- Algorithm decision documented in `02-design/decisions/solver-algorithm.md`
+
 ## v1.1.0
 
 **Performance:**
