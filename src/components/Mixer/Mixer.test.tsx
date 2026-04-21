@@ -6,6 +6,10 @@ jest.mock('nearest-color', () => ({
     from: () => () => ({ name: 'Red', value: '#ff0000', rgb: { r: 255, g: 0, b: 0 }, distance: 0 }),
 }))
 
+jest.mock('../../data/hooks/useColorSolver', () => ({
+    useColorSolver: () => ({ result: null, isRunning: false }),
+}))
+
 beforeEach(() => {
     localStorage.clear()
 })

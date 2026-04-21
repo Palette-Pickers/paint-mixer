@@ -29,6 +29,89 @@
         transition: opacity 500ms ease-in;
     }
 
+    .solverBanner {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        background: #f5f5f5;
+        border-bottom: 1px solid #ddd;
+        flex-wrap: wrap;
+
+        .solverLabel {
+            font-weight: bold;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .solverChips {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+
+        .solverChip {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+
+            .chipSwatch {
+                width: 1rem;
+                height: 1rem;
+                border-radius: 50%;
+                border: 1px solid #0003;
+                flex-shrink: 0;
+            }
+        }
+
+        .solverMatch {
+            font-size: 0.8rem;
+            color: #555;
+            white-space: nowrap;
+        }
+
+        .precisionLabel {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+            color: #555;
+            cursor: pointer;
+            margin-left: auto;
+            white-space: nowrap;
+
+            input[type='checkbox'] {
+                cursor: pointer;
+
+                &:disabled {
+                    cursor: not-allowed;
+                }
+            }
+
+            &:has(input:disabled) {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+
+        .solverApply {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border: 1px solid #999;
+            border-radius: 4px;
+            background: white;
+            white-space: nowrap;
+
+            &:hover {
+                background: #e8e8e8;
+            }
+        }
+    }
+
     .colorBox {
         border: 2px solid black;
         height: 50vh;

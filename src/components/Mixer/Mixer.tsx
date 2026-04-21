@@ -22,6 +22,7 @@ import { useLocalStorage } from '../../data/hooks/useLocalStorage'
 
 import { defaultPalette } from '../../utils/palettes/defaultPalette'
 import { ColorPart } from '../../types/types'
+import { useColorSolver } from '../../data/hooks/useColorSolver'
 
 const getMixedRgbStringFromPalette = (palette: ColorPart[]): string => {
     const totalParts = palette.reduce((acc, color) => acc + color.partsInMix, 0)
@@ -68,6 +69,7 @@ const Mixer: React.FC = () => {
     const [ isUsingTargetColor, setIsUsingTargetColor ] = useState<boolean>(false)
     const [ targetColor, setTargetColor ] = useState({ h: 214, s: 43, v: 90, a: 1 })
     const [ isShowingTargetColorPicker, setIsShowingTargetColorPicker ] = useState<boolean>(false)
+    const [ precisionMode, setPrecisionMode ] = useState(false)
 
     const [ savedPalette ] = useLocalStorage('savedPalette', defaultPalette)
     const initialPalette: (any) = savedPalette
@@ -79,7 +81,8 @@ const Mixer: React.FC = () => {
         handleRemoveFromPalette,
         resetPalette,
         addToPalette,
-        updateColorName
+        updateColorName,
+        applyMix,
     } = usePaletteManager(initialPalette)
 
     // Derived values — no useEffect chains, no cascading re-renders
@@ -95,6 +98,13 @@ const Mixer: React.FC = () => {
 
     const { colorName: mixedColorName } = useColorMatching(mixedColor)
     const { colorName: targetColorName } = useColorMatching(targetRgbaString)
+
+    const { result: solverResult, isRunning: solverRunning } = useColorSolver(
+        palette,
+        targetRgbaString,
+        isUsingTargetColor && palette.length > 0,
+        precisionMode
+    )
 
     const toggleIsUsingTargetColor = useCallback(() => {
         setIsUsingTargetColor(prev => !prev)
@@ -148,6 +158,47 @@ const Mixer: React.FC = () => {
                 palette={ palette }
                 totalParts={ totalParts }
             />
+
+            { isUsingTargetColor && (
+                <div className={ styles.solverBanner } data-testid="solver-banner">
+                    <span className={ styles.solverLabel }>
+                        { solverRunning ? 'Solving…' : 'Suggested Mix:' }
+                    </span>
+                    { !solverRunning && solverResult && (
+                        <>
+                            <div className={ styles.solverChips }>
+                                { solverResult.mix.map(({ index, parts }) => (
+                                    <span key={ index } className={ styles.solverChip }>
+                                        <span
+                                            className={ styles.chipSwatch }
+                                            style={ { background: palette[index]?.rgbString } }
+                                        />
+                                        { palette[index]?.label } × { parts }
+                                    </span>
+                                )) }
+                            </div>
+                            <span className={ styles.solverMatch }>
+                                { solverResult.matchPercentage }% match
+                            </span>
+                            <button
+                                className={ styles.solverApply }
+                                onClick={ () => applyMix(solverResult.mix) }
+                            >
+                                Apply
+                            </button>
+                        </>
+                    ) }
+                    <label className={ styles.precisionLabel }>
+                        <input
+                            type="checkbox"
+                            checked={ precisionMode }
+                            disabled={ solverRunning }
+                            onChange={ e => setPrecisionMode(e.target.checked) }
+                        />
+                        Precision mode
+                    </label>
+                </div>
+            ) }
 
             <ColorSwatches
                 palette={ palette }
