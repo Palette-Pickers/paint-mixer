@@ -19,6 +19,7 @@ import { hsvaToRgbaString } from '@uiw/color-convert'
 import usePaletteManager from '../../data/hooks/usePaletteManager'
 import { useColorMatching } from '../../data/hooks/useColorMatching'
 import { useLocalStorage } from '../../data/hooks/useLocalStorage'
+import { useTheme } from '../../data/hooks/useTheme'
 
 import { defaultPalette } from '../../utils/palettes/defaultPalette'
 import { ColorPart } from '../../types/types'
@@ -64,6 +65,8 @@ const isColorInPalette = (rgbString: string, palette: ColorPart[]): boolean => {
 }
 
 const Mixer: React.FC = () => {
+    const { theme, toggleTheme } = useTheme()
+
     const [ showAddColorPicker, setShowAddColorPicker ] = useState(false)
     const [ addColor, setAddColor ] = useState({ h: 214, s: 43, v: 90, a: 1 })
     const [ isUsingTargetColor, setIsUsingTargetColor ] = useState<boolean>(false)
@@ -148,6 +151,8 @@ const Mixer: React.FC = () => {
                     isSavable={ isSavable }
                     addToPalette={ addToPalette }
                     hasPartsInMix={ hasPartsInMix }
+                    theme={ theme }
+                    toggleTheme={ toggleTheme }
                 />
 
                 <div className={ styles.transparencyBox }>

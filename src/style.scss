@@ -1,3 +1,5 @@
+@import './theme.scss';
+
 .w-color-editable-input:nth-of-type(4) {
     visibility: hidden;
     display: none !important;
@@ -14,7 +16,7 @@
     flex-direction: row;
     justify-content: space-between;
     width: 200px;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: var(--color-picker-inputs-bg);
 }
 
 .w-color-editable-input {
