@@ -28,7 +28,7 @@ const MEDIUMS: { value: string; label: string }[] = [
 ]
 
 interface PaintLibraryProps {
-    addToPalette: (rgbString: string, includeRecipe: boolean) => Promise<void>
+    addToPalette: (rgbString: string, includeRecipe: boolean, label?: string) => Promise<void>
 }
 
 const PaintLibrary: React.FC<PaintLibraryProps> = ({ addToPalette }) => {
@@ -74,7 +74,7 @@ const PaintLibrary: React.FC<PaintLibraryProps> = ({ addToPalette }) => {
                             key={ `${ color.brand }-${ color.name }-${ i }` }
                             className={ styles.colorRow }
                             role="listitem"
-                            onClick={ () => addToPalette(rgbString, false) }
+                            onClick={ () => addToPalette(rgbString, false, color.name) }
                             title={ `${ color.brand } — ${ color.name }` }
                         >
                             <span
