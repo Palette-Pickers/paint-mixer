@@ -47,7 +47,11 @@ export const usePaintLibrary = (medium: string, brand: string) => {
 
     const filtered = state.colors
         .filter(c => !brand || c.brand === brand)
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => {
+            const keyA = brand ? a.name : `${a.brand} ${a.name}`
+            const keyB = brand ? b.name : `${b.brand} ${b.name}`
+            return keyA.localeCompare(keyB)
+        })
 
     return { ...state, filtered }
 }
