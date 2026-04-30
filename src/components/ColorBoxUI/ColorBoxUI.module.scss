@@ -27,4 +27,20 @@
             width: 1.6rem;
         }
     }
+
+    .toggleTheme {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 0.6rem;
+
+        svg {
+            height: 1.6rem;
+            width: 1.6rem;
+        }
+
+        label {
+            cursor: pointer;
+        }
+    }
 }
