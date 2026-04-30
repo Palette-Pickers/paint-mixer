@@ -24,6 +24,7 @@ import { useTheme } from '../../data/hooks/useTheme'
 import { defaultPalette } from '../../utils/palettes/defaultPalette'
 import { ColorPart } from '../../types/types'
 import { useColorSolver } from '../../data/hooks/useColorSolver'
+import { MdLightMode, MdDarkMode } from 'react-icons/md'
 
 const getMixedRgbStringFromPalette = (palette: ColorPart[]): string => {
     const totalParts = palette.reduce((acc, color) => acc + color.partsInMix, 0)
@@ -151,8 +152,6 @@ const Mixer: React.FC = () => {
                     isSavable={ isSavable }
                     addToPalette={ addToPalette }
                     hasPartsInMix={ hasPartsInMix }
-                    theme={ theme }
-                    toggleTheme={ toggleTheme }
                 />
 
                 <div className={ styles.transparencyBox }>
@@ -213,6 +212,15 @@ const Mixer: React.FC = () => {
                 updateColorName={ updateColorName }
                 totalParts={ totalParts }
             />
+
+            <button
+                className={ styles.themeToggle }
+                onClick={ toggleTheme }
+                aria-label={ theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode' }
+                data-testid="theme-toggle"
+            >
+                { theme === 'dark' ? <MdLightMode /> : <MdDarkMode /> }
+            </button>
 
             <AddColorUIComponent
                 showAddColorPicker={ showAddColorPicker }

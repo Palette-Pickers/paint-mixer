@@ -10,7 +10,6 @@ import { hsvaToRgba } from '@uiw/color-convert'
 import { FaArrowDown } from 'react-icons/fa'
 import { TbTargetArrow, TbTargetOff } from 'react-icons/tb'
 import { VscDebugRestart } from 'react-icons/vsc'
-import { MdLightMode, MdDarkMode } from 'react-icons/md'
 
 interface ColorBoxUIProps {
     mixedColor: string
@@ -21,11 +20,9 @@ interface ColorBoxUIProps {
     isSavable: boolean
     addToPalette: (color: string, includeRecipe: boolean) => void
     hasPartsInMix: boolean
-    theme: 'light' | 'dark'
-    toggleTheme: () => void
 }
 
-const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor, targetColor, resetPalette, toggleIsUsingTargetColor, isSavable, addToPalette, hasPartsInMix, theme, toggleTheme }) => {
+const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor, targetColor, resetPalette, toggleIsUsingTargetColor, isSavable, addToPalette, hasPartsInMix }) => {
     const mixedIsDark = useMemo(() => tinycolor(mixedColor).isDark(), [mixedColor])
     const targetIsDark = useMemo(() => tinycolor(hsvaToRgba(targetColor)).isDark(), [targetColor])
     const contrastColor = mixedIsDark ? 'white' : 'black'
@@ -75,16 +72,6 @@ const ColorBoxUI: React.FC<ColorBoxUIProps> = ({ mixedColor, isUsingTargetColor,
                     <TbTargetArrow data-testid="target-arrow-icon" /> :
                     <TbTargetOff data-testid="target-off-icon" /> }
                 <label className={ styles.buttonTargetColor }>Target</label>
-            </button>
-            <button
-                className={ styles.toggleTheme }
-                onClick={ toggleTheme }
-                style={ { color: contrastColor } }
-                aria-label={ theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode' }
-                data-testid="theme-toggle"
-            >
-                { theme === 'dark' ? <MdLightMode /> : <MdDarkMode /> }
-                <label className={ styles.buttonTheme }>{ theme === 'dark' ? 'Light' : 'Dark' }</label>
             </button>
         </div>
     )
