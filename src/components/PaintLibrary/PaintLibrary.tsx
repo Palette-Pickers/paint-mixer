@@ -69,12 +69,13 @@ const PaintLibrary: React.FC<PaintLibraryProps> = ({ addToPalette }) => {
                 ) }
                 { !isLoading && filtered.map((color, i) => {
                     const rgbString = `rgb(${ color.rgb })`
+                    const displayLabel = brand ? color.name : `${ color.brand } ${ color.name }`
                     return (
                         <button
                             key={ `${ color.brand }-${ color.name }-${ i }` }
                             className={ styles.colorRow }
                             role="listitem"
-                            onClick={ () => addToPalette(rgbString, false, color.name) }
+                            onClick={ () => addToPalette(rgbString, false, displayLabel) }
                             title={ `${ color.brand } — ${ color.name }` }
                         >
                             <span
@@ -82,8 +83,8 @@ const PaintLibrary: React.FC<PaintLibraryProps> = ({ addToPalette }) => {
                                 style={ { background: color.hex } }
                                 aria-hidden="true"
                             />
-                            <span className={ styles.colorName }>{ color.name }</span>
-                            <span className={ styles.brandName }>{ color.brand }</span>
+                            <span className={ styles.colorName }>{ displayLabel }</span>
+                            { brand && <span className={ styles.brandName }>{ color.brand }</span> }
                         </button>
                     )
                 }) }
