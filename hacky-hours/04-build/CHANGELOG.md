@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.4.0
+
+**Dark Mode:**
+- Full dark mode driven by CSS custom properties — all UI chrome colors are now theme-aware
+- Respects `prefers-color-scheme` on first visit; persists user's choice to localStorage
+- Dark/Light toggle button in the color box (sun/moon icon), styled to stay readable on any mixed color background
+- All hardcoded colors in SCSS modules replaced with CSS variables across the full component tree
+
 ## v1.3.0
 
 **Paint Library:**
