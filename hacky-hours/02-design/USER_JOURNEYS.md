@@ -40,14 +40,29 @@ flowchart TD
     B --> C[Recipe displayed\nshowing ingredient colors and proportions]
 ```
 
-## Future Journey: Color Solver (Planned — V1)
+## Journey: Color Solver
 
 A painter wants the app to suggest the best mix automatically.
 
 ```mermaid
 flowchart TD
-    A[Set target color] --> B[Trigger solver]
-    B --> C[Algorithm searches palette combinations]
-    C --> D[Returns suggested mix with proportions]
-    D --> E[User reviews and applies suggested mix]
+    A[Set target color] --> B[Solver runs automatically in background]
+    B --> C[Suggested mix appears in solver banner\nbelow mix graph]
+    C --> D{Happy with suggestion?}
+    D -- Yes --> E[Click Apply\nPalette parts updated]
+    D -- No --> F[Toggle Precision mode\nfor higher accuracy\nor adjust manually]
+```
+
+## Journey: Browse Paint Library
+
+A painter wants to add a specific real-world paint color to their palette.
+
+```mermaid
+flowchart TD
+    A[Click + to open add-color panel] --> B[Select Paint Library tab]
+    B --> C[Choose a medium\ne.g. Oil, Acrylic, Watercolor]
+    C --> D[Optionally filter by brand]
+    D --> E[Browse alphabetized color list\nwith inline swatches]
+    E --> F[Click a color to select it]
+    F --> G[Color added to palette\nwith real paint name]
 ```

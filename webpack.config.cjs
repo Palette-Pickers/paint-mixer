@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: './src/index.tsx',
@@ -59,11 +60,20 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: path.join(__dirname, 'public', 'index.html'),
         }),
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: path.resolve(__dirname, 'paint-crawl/data'),
+                    to: path.resolve(__dirname, 'dist/paint-data'),
+                },
+            ],
+        }),
     ],
     devServer: {
-        static: {
-            directory: path.resolve(__dirname, 'dist'),
-        },
+        static: [
+            { directory: path.resolve(__dirname, 'dist') },
+            { directory: path.resolve(__dirname, 'paint-crawl/data'), publicPath: '/paint-data' },
+        ],
         port: 3000,
         open: true,
         hot: true,

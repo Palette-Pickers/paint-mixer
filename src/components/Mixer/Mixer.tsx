@@ -215,6 +215,7 @@ const Mixer: React.FC = () => {
                 setShowAddColorPicker={ setShowAddColorPicker }
                 setAddColor={ setAddColor }
                 confirmColor={ confirmColor }
+                addToPalette={ addToPalette }
             />
         </main>
     )

@@ -16,6 +16,11 @@ Paint Mixer is a client-side React SPA with no backend. All state is managed in 
 - `@uiw/color-convert`, `@uiw/react-color-wheel` etc. — color picker UI components
 - `color-name-list` — human-readable color names by hex value
 
+**Data submodule:**
+- `paint-crawl/` — git submodule (`beekman/paint-crawl`); ~53K real paint colors across 21 mediums
+- JSON files are copied to `dist/paint-data/` at build time via `CopyWebpackPlugin`
+- Fetched at runtime per medium; never bundled into the main JS chunk
+
 ## Component Tree
 
 ```
@@ -26,7 +31,9 @@ App
     ├── ColorBoxUI            (Save / Reset / Target controls)
     ├── MixGraph              (visual breakdown of mix proportions)
     ├── ColorSwatches         (palette display + increment/decrement)
-    └── AddColorUIComponent   (color picker to add new paint to palette)
+    └── AddColorUIComponent   (tabbed panel to add new paint to palette)
+        ├── ColorPicker tab   (color wheel — existing)
+        └── PaintLibrary tab  (browse paint-crawl data by medium/brand/name)
 ```
 
 ```mermaid
@@ -64,6 +71,8 @@ flowchart LR
 | `useLocalStorage` | Persist/load palette to localStorage |
 | `useSwatchAdder` | Handles the add-to-palette flow |
 | `useColorName` | Resolves a human-readable name for any color |
+| `useColorSolver` | Manages Web Worker lifecycle for the color solver |
+| `usePaintLibrary` | Fetches and filters paint-crawl medium data |
 
 ## Utilities (in `src/utils/`)
 

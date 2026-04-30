@@ -9,7 +9,8 @@ describe('<AddColorUIComponent />', () => {
         addColor: "#FF5733",
         setShowAddColorPicker: jest.fn(),
         setAddColor: jest.fn(),
-        confirmColor: jest.fn()
+        confirmColor: jest.fn(),
+        addToPalette: jest.fn().mockResolvedValue(undefined),
     }
 
     it('renders without crashing', () => {

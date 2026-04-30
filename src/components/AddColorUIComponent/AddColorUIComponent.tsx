@@ -1,18 +1,30 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './AddColorUiComponent.module.scss'
 import { MdAddCircleOutline } from 'react-icons/md'
-import tinycolor from "tinycolor2"
 import ColorPicker from '../ColorPicker/ColorPicker'
+import PaintLibrary from '../PaintLibrary/PaintLibrary'
+
+type Tab = 'picker' | 'library'
 
 type Props = {
     showAddColorPicker: boolean
-    addColor: any  // type could be improved
+    addColor: any
     setShowAddColorPicker: (value: boolean) => void
-    setAddColor: (color: any) => void  // type could be improved
+    setAddColor: (color: any) => void
     confirmColor: () => void
+    addToPalette: (rgbString: string, includeRecipe: boolean) => Promise<void>
 }
 
-const AddColorUIComponent: React.FC<Props> = ({ showAddColorPicker, addColor, setShowAddColorPicker, setAddColor, confirmColor }) => {
+const AddColorUIComponent: React.FC<Props> = ({
+    showAddColorPicker,
+    addColor,
+    setShowAddColorPicker,
+    setAddColor,
+    confirmColor,
+    addToPalette,
+}) => {
+    const [activeTab, setActiveTab] = useState<Tab>('picker')
+
     return (
         <div className={ styles.AddColorUIComponent }>
             { !showAddColorPicker && (
@@ -29,17 +41,43 @@ const AddColorUIComponent: React.FC<Props> = ({ showAddColorPicker, addColor, se
             ) }
 
             { showAddColorPicker && (
-                <div
-                    className={ styles.colorPickerContainer }
+                <div className={ styles.colorPickerContainer } data-testid="add-color-picker">
+                    <div className={ styles.tabs }>
+                        <button
+                            className={ activeTab === 'picker' ? styles.activeTab : styles.tab }
+                            onClick={ () => setActiveTab('picker') }
+                        >
+                            Color Picker
+                        </button>
+                        <button
+                            className={ activeTab === 'library' ? styles.activeTab : styles.tab }
+                            onClick={ () => setActiveTab('library') }
+                        >
+                            Paint Library
+                        </button>
+                    </div>
 
-                    data-testid="add-color-picker"
-                >
-                    <ColorPicker
-                        color={ addColor }
-                        onChange={ (newColor) => { setAddColor(newColor) } }
-                        onClose={ () => setShowAddColorPicker(false) }
-                        onConfirm={ confirmColor }
-                    />
+                    { activeTab === 'picker' && (
+                        <ColorPicker
+                            color={ addColor }
+                            onChange={ (newColor) => { setAddColor(newColor) } }
+                            onClose={ () => setShowAddColorPicker(false) }
+                            onConfirm={ confirmColor }
+                        />
+                    ) }
+
+                    { activeTab === 'library' && (
+                        <div className={ styles.libraryWrapper }>
+                            <button
+                                className={ styles.libraryClose }
+                                onClick={ () => setShowAddColorPicker(false) }
+                                aria-label="Close"
+                            >
+                                ×
+                            </button>
+                            <PaintLibrary addToPalette={ addToPalette } />
+                        </div>
+                    ) }
                 </div>
             ) }
         </div>
