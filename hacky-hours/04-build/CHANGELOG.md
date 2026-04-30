@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.3.0
+
+**Paint Library:**
+- Browse ~53K real-world paint colors across 21 mediums (oil, acrylic, watercolor, gouache, and more) via the `beekman/paint-crawl` submodule
+- "Paint Library" tab added to the add-color panel alongside the existing color picker
+- Filter by medium and optionally by brand; colors listed alphabetically with inline swatches
+- Clicking a color adds it directly to the palette
+- Paint data fetched on demand per medium, cached in memory — never bundled into the main JS chunk
+- Oil Paint loads by default when the tab is opened
+
 ## v1.2.0
 
 **Color Solver:**

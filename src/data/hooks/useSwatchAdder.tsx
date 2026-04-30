@@ -6,16 +6,15 @@ import { getColorName } from '../../utils/colorName'
 export const useSwatchAdder = (initialPalette: ColorPart[]) => {
     const [ palette, setPalette ] = useState<ColorPart[]>(initialPalette)
 
-    const addToPalette = async (rgbString: string, includeRecipe: boolean) => {
+    const addToPalette = async (rgbString: string, includeRecipe: boolean, label?: string) => {
         if (isColorInPalette(rgbString)) {
             console.error("Selected color already in palette", rgbString)
             return
         }
-        const hexColor = tinycolor(rgbString).toHexString()
-        const colorName = await getColorName(hexColor.substring(1))
+        const resolvedLabel = label ?? await getColorName(tinycolor(rgbString).toHexString().substring(1))
         const newColor: ColorPart = {
             rgbString,
-            label: colorName,
+            label: resolvedLabel,
             partsInMix: 0,
         }
         if (includeRecipe) {
