@@ -42,12 +42,27 @@ Before saving a mixed color to the palette, `isColorInPalette()` in `Mixer.tsx` 
 
 The `isSavable` flag is `true` when the mixed color is not already in the palette. The Save button is disabled when `isSavable` is false.
 
-## Future: Color Solver Algorithm (Planned — V1)
+## Color Solver
 
-Given a target color and an existing palette, find the mix of palette colors (and their proportions) that minimizes deltaE94 against the target.
+Given a target color and an existing palette, the solver finds the mix of palette colors (and their proportions) that minimizes deltaE94 against the target. See `02-design/decisions/solver-algorithm.md` for the algorithm decision.
 
-Design considerations:
-- Search space: all combinations of N palette colors with varying part ratios
-- The mixing function is non-linear (Kubelka-Munk latent space), so brute force or gradient-based optimization may both be viable
-- Result should suggest the simplest mix (fewest colors) that achieves an acceptable match threshold
-- This is computationally heavier than the current live mixing — may need to run in a Web Worker to avoid blocking the UI
+- Brute-force simplex grid over all 1–3 color subsets of the palette
+- Runs in a Web Worker (`src/workers/colorSolver.worker.ts`) to avoid blocking the UI
+- Standard mode: 12-part grid (~26K evaluations for a 15-color palette)
+- Precision mode: 24-part grid (~117K evaluations, ~4.5× slower)
+- Result displayed in a solver banner with an Apply button
+
+## Paint Library
+
+The app can browse and add real paint colors from the `paint-crawl` dataset (git submodule at `paint-crawl/`).
+
+**Data:** ~53,000 entries across 21 medium types. Each entry has `medium`, `brand`, `name`, `hex`, `rgb`, and `hex_available`. Only entries with `hex_available: true` are shown.
+
+**Loading:** JSON files are served as static assets at `/paint-data/<medium>.json` (copied at build time via CopyWebpackPlugin). A medium file is fetched on demand when the user selects it — never bundled into the main chunk.
+
+**Selection flow:**
+1. Panel opens with Oil Paint pre-selected and its data already loading
+2. User may change the medium from the dropdown (triggers fetch of that medium's JSON)
+3. User optionally filters by brand (populated from loaded data)
+4. User picks a color name from an alphabetized list with inline color swatches
+5. Color is added to the palette via the existing `addToPalette` flow

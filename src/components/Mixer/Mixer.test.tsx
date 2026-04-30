@@ -10,6 +10,11 @@ jest.mock('../../data/hooks/useColorSolver', () => ({
     useColorSolver: () => ({ result: null, isRunning: false }),
 }))
 
+jest.mock('../PaintLibrary/PaintLibrary', () => ({
+    __esModule: true,
+    default: () => null,
+}))
+
 beforeEach(() => {
     localStorage.clear()
 })

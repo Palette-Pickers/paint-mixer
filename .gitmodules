@@ -1,0 +1,3 @@
+[submodule "paint-crawl"]
+	path = paint-crawl
+	url = https://github.com/beekman/paint-crawl.git
