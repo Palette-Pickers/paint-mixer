@@ -13,8 +13,6 @@ describe('<ColorBoxUI />', () => {
         addToPalette: jest.fn(),
         hasPartsInMix: false,
         palette: [],
-        theme: 'light' as const,
-        toggleTheme: jest.fn(),
     }
 
     it('renders without crashing', () => {
