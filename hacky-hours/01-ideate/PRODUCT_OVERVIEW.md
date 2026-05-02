@@ -12,7 +12,7 @@ Users can also set a target color and see how closely their mix matches it.
 React single-page application. Runs entirely in the browser — no install, no account. Deployed at [paint-mixer.netlify.app](https://paint-mixer.netlify.app).
 
 ## When
-Active project. Core palette, mixing, and target-matching features are live. Next priority is a color solver (automatically suggest the best mix to achieve a target color).
+Active project. Core palette, mixing, target-matching, color solver, paint library (53K real-world colors across 21 mediums), and dark mode are all live at v1.4.0. Actively iterating — next priorities are driven by user feedback and the backlog.
 
 ## Why
 Mixing physical paint is expensive (wasted paint) and time-consuming. Getting a color right by trial and error means ruining paint and canvas. A digital simulator lets painters experiment freely — testing ratios, checking match percentages — before touching a brush.
