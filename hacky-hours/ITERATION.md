@@ -1,3 +1,29 @@
+# Iteration Log — post v1.4.0
+
+## Captured
+
+### Dark mode: missing text color on Apply button and + button (bug)
+Two elements inherited black text color instead of using the theme variable in dark mode:
+- "Apply" button in the Suggested Mix solver banner (`Mixer.module.scss` `.solverApply`)
+- "+" add-to-palette button (`AddColorUiComponent.module.scss` `>button`)
+
+Both fixed by adding `color: var(--color-text-primary)`.
+
+## Synthesized
+
+| Item | Type | Design doc affected |
+|---|---|---|
+| Dark mode incomplete — missing color vars on two buttons | Bug fix | none (implementation-only) |
+
+## Prioritized
+
+- **Hotfix:** Both fixes applied directly; ready to commit.
+
+## Status
+Triaged. Fixes applied.
+
+---
+
 # Iteration Log — post v1.2.0
 
 ## Captured
