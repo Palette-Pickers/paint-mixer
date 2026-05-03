@@ -24,7 +24,7 @@ import { useTheme } from '../../data/hooks/useTheme'
 import { defaultPalette } from '../../utils/palettes/defaultPalette'
 import { ColorPart } from '../../types/types'
 import { useColorSolver } from '../../data/hooks/useColorSolver'
-import { MdSettings } from 'react-icons/md'
+import { MdSettings, MdLightMode, MdDarkMode } from 'react-icons/md'
 
 const getMixedRgbStringFromPalette = (palette: ColorPart[]): string => {
     const totalParts = palette.reduce((acc, color) => acc + color.partsInMix, 0)
@@ -66,7 +66,7 @@ const isColorInPalette = (rgbString: string, palette: ColorPart[]): boolean => {
 }
 
 const Mixer: React.FC = () => {
-    const { theme } = useTheme()
+    const { theme, toggleTheme } = useTheme()
 
     const [ showAddColorPicker, setShowAddColorPicker ] = useState(false)
     const [ showPreferences, setShowPreferences ] = useState(false)
@@ -245,7 +245,25 @@ const Mixer: React.FC = () => {
 
             { showPreferences && (
                 <div ref={ bannerRef } className={ styles.preferencesBanner } data-testid="preferences-banner">
-                    {/* toggles added in task 3 */}
+                    <div className={ styles.preferenceRow }>
+                        <span>{ theme === 'dark' ? 'Dark mode' : 'Light mode' }</span>
+                        <button
+                            className={ styles.preferenceThemeButton }
+                            onClick={ toggleTheme }
+                            aria-label={ theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode' }
+                        >
+                            { theme === 'dark' ? <MdLightMode /> : <MdDarkMode /> }
+                        </button>
+                    </div>
+                    <label className={ styles.preferencePrecisionLabel }>
+                        <input
+                            type="checkbox"
+                            checked={ precisionMode }
+                            disabled={ solverRunning }
+                            onChange={ e => setPrecisionMode(e.target.checked) }
+                        />
+                        Suggested Mix Precision mode
+                    </label>
                 </div>
             ) }
 
