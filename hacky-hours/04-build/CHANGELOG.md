@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.1
+
+- Precision mode solver now searches up to 4-color mixes (was capped at 3)
+- Precision mode preference persisted to localStorage — survives page reloads
+- Fixed `useLocalStorage` return type to a proper TypeScript tuple
+
 ## v1.5.0
 
 **Preferences Panel:**
