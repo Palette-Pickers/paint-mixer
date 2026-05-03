@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.5.0
+
+**Preferences Panel:**
+- Gear icon button fixed to bottom-right corner replaces standalone dark mode toggle
+- On desktop, gear is invisible at rest and fades in when cursor is within ~100px; always visible at reduced opacity on touch devices
+- Clicking gear opens a full-width horizontal preferences banner expanding left along the bottom of the screen
+- Banner contains dark/light mode toggle (with hover tooltip label) and Suggested Mix Precision mode checkbox, synced with the solver banner
+- Banner closes on outside click or second gear click
+
+**Bug fixes:**
+- Fixed dark mode text color missing on the solver Apply button and palette + button
+- Fixed deprecated Sass `@import` → `@use`
+
 ## v1.4.0
 
 **Dark Mode:**
