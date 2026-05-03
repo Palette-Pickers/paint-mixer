@@ -77,7 +77,7 @@ const Mixer: React.FC = () => {
     const [ isUsingTargetColor, setIsUsingTargetColor ] = useState<boolean>(false)
     const [ targetColor, setTargetColor ] = useState({ h: 214, s: 43, v: 90, a: 1 })
     const [ isShowingTargetColorPicker, setIsShowingTargetColorPicker ] = useState<boolean>(false)
-    const [ precisionMode, setPrecisionMode ] = useState(false)
+    const [ precisionMode, setPrecisionMode ] = useLocalStorage('precisionMode', false)
 
     const [ savedPalette ] = useLocalStorage('savedPalette', defaultPalette)
     const initialPalette: (any) = savedPalette

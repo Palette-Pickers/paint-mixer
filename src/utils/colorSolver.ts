@@ -57,7 +57,7 @@ export function solve(palette: ColorPart[], targetRgbString: string, precision =
     let bestDeltaE = Infinity
     let bestMix: Array<{ index: number; parts: number }> = []
 
-    const maxSubsetSize = Math.min(3, n)
+    const maxSubsetSize = Math.min(precision ? 4 : 3, n)
     for (let subsetSize = 1; subsetSize <= maxSubsetSize; subsetSize++) {
         for (const indices of indexCombinations(0, n, subsetSize)) {
             const colors = indices.map(i => palette[i])
