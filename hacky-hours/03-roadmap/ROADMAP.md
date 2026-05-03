@@ -13,26 +13,44 @@ Core palette builder, physics-based mixing, and target color matching.
 - localStorage persistence
 - Deployed on Netlify
 
-## V1 — Color Solver
+## Shipped — v1.1.0
 
-The app can already tell you how well a mix matches a target. V1 closes the loop: given a target color, calculate the best mix automatically.
+Performance overhaul and test coverage.
 
-**Milestone goal:** A user sets a target color, triggers the solver, and receives a suggested mix from their existing palette.
+- Eliminated cascading `useEffect` re-renders — palette changes now trigger 1 render instead of 3–4
+- Lazy-load `color-name-list` + `nearest-color` into a separate chunk (~500KB deferred)
+- Unit and integration tests for core hooks and Mixer orchestrator
 
-**Features:**
-- Color solver algorithm (search/optimize over palette combinations to minimize deltaE94)
-- Web Worker for non-blocking computation
-- Solver result displayed as a suggested mix the user can apply or adjust
+## Shipped — v1.2.0
 
-## V2+ — Commercial Paint Database
+Color solver.
 
-Allow users to browse and select commercial paint colors by brand and name, with accurate RGB values.
+- Brute-force simplex grid solver finds the best 1–3 color mix from the palette to match a target
+- Runs in a Web Worker to avoid blocking the UI
+- Solver banner with suggested mix, match percentage, Apply button, and Precision mode toggle
 
-**Dependencies:** Requires a separate web crawler application to populate a database from online paint store listings. Build this last.
+## Shipped — v1.3.0
 
-**Features:**
-- Paint brand/product browser
-- Search by name (e.g. "Winsor & Newton Cadmium Yellow")
-- One-click add to palette with accurate RGB
-- Crawler app (separate project)
-- Database + lookup API
+Paint Library.
+
+- Browse ~53K real-world paint colors across 21 mediums via the `beekman/paint-crawl` submodule
+- Filter by medium and brand; colors listed alphabetically with inline swatches
+- Paint data fetched on demand per medium, never bundled into the main JS chunk
+- When All Brands is selected, colors are sorted and labeled as "Brand Name"
+
+## Shipped — v1.4.0
+
+Dark mode.
+
+- Full dark mode driven by CSS custom properties across the entire component tree
+- Respects `prefers-color-scheme` on first visit; persists user choice to localStorage
+- Dark/Light toggle button fixed to bottom-right corner
+
+## v1.5.0 — Preferences Panel
+
+Replace the standalone dark mode toggle with a unified Preferences system.
+
+- Gear icon button fixed to bottom-right; visually muted on desktop until cursor is within ~100px
+- Clicking gear opens a Preferences banner above the button
+- Banner contains: Dark/Light mode toggle + Suggested Mix Precision mode toggle
+- Precision mode remains in the solver banner as well
