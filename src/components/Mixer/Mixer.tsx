@@ -245,16 +245,6 @@ const Mixer: React.FC = () => {
 
             { showPreferences && (
                 <div ref={ bannerRef } className={ styles.preferencesBanner } data-testid="preferences-banner">
-                    <div className={ styles.preferenceRow }>
-                        <span>{ theme === 'dark' ? 'Dark mode' : 'Light mode' }</span>
-                        <button
-                            className={ styles.preferenceThemeButton }
-                            onClick={ toggleTheme }
-                            aria-label={ theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode' }
-                        >
-                            { theme === 'dark' ? <MdLightMode /> : <MdDarkMode /> }
-                        </button>
-                    </div>
                     <label className={ styles.preferencePrecisionLabel }>
                         <input
                             type="checkbox"
@@ -264,6 +254,16 @@ const Mixer: React.FC = () => {
                         />
                         Suggested Mix Precision mode
                     </label>
+                    <button
+                        className={ styles.preferenceThemeButton }
+                        onClick={ toggleTheme }
+                        aria-label={ theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode' }
+                    >
+                        <span className={ styles.preferenceThemeLabel }>
+                            { theme === 'dark' ? 'Light mode' : 'Dark mode' }
+                        </span>
+                        { theme === 'dark' ? <MdLightMode /> : <MdDarkMode /> }
+                    </button>
                 </div>
             ) }
 

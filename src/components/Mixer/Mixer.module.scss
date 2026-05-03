@@ -115,29 +115,24 @@
 
     .preferencesBanner {
         position: fixed;
-        bottom: 4rem;
-        right: 1rem;
+        bottom: 1rem;
+        left: 1rem;
+        right: calc(1rem + 2.5rem + 0.5rem);
+        height: 2.5rem;
         background: var(--color-surface);
         border: 1px solid var(--color-border);
         border-radius: 4px;
-        padding: 0.75rem 1rem;
+        padding: 0 1rem;
         display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        min-width: 14rem;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 1rem;
         z-index: 100;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
-        .preferenceRow {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.75rem;
-            font-size: 0.85rem;
-            color: var(--color-text-secondary);
-        }
-
         .preferenceThemeButton {
+            position: relative;
             background: transparent;
             border: none;
             cursor: pointer;
@@ -147,8 +142,24 @@
             align-items: center;
             padding: 0;
 
-            &:hover {
-                color: var(--color-text-secondary);
+            .preferenceThemeLabel {
+                position: absolute;
+                bottom: calc(100% + 0.4rem);
+                right: 0;
+                font-size: 0.75rem;
+                color: var(--color-text-primary);
+                background: var(--color-surface-alt);
+                border: 1px solid var(--color-border);
+                border-radius: 4px;
+                padding: 0.2rem 0.4rem;
+                white-space: nowrap;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.15s ease;
+            }
+
+            &:hover .preferenceThemeLabel {
+                opacity: 1;
             }
         }
 
@@ -159,6 +170,7 @@
             font-size: 0.8rem;
             color: var(--color-text-secondary);
             cursor: pointer;
+            white-space: nowrap;
 
             input[type='checkbox'] {
                 cursor: pointer;
