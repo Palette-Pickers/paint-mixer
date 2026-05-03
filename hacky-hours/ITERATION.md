@@ -1,3 +1,42 @@
+# Iteration Log — post v1.4.0
+
+## Captured
+
+### Dark mode: missing text color on Apply button and + button (bug)
+Two elements inherited black text color instead of using the theme variable in dark mode:
+- "Apply" button in the Suggested Mix solver banner (`Mixer.module.scss` `.solverApply`)
+- "+" add-to-palette button (`AddColorUiComponent.module.scss` `>button`)
+
+Both fixed by adding `color: var(--color-text-primary)`.
+
+## Synthesized
+
+| Item | Type | Design doc affected |
+|---|---|---|
+| Dark mode incomplete — missing color vars on two buttons | Bug fix | none (implementation-only) |
+
+## Prioritized
+
+- **Hotfix:** Both fixes applied directly; ready to commit.
+
+### Preferences panel (new feature)
+Replace the standalone Dark Mode toggle with a Preferences system:
+
+- A gear icon button, fixed bottom-right (same position as current theme toggle)
+- On desktop: button is visually muted at rest; becomes visible when the cursor is near or over the bottom-right corner of the screen
+- Clicking the gear opens a Preferences banner/panel
+- Clicking the gear opens a Preferences banner that slides in above the button
+- The banner contains:
+  - Dark/Light mode toggle (moved from its current standalone position)
+  - "Suggested Mix Precision mode" toggle (copied from the solver banner; "Precision mode" label stays in the solver banner)
+- When the Preferences banner is closed, neither toggle is visible in it
+- Desktop proximity behavior: gear button fades in when the cursor is within ~100px of the button; muted otherwise
+
+## Status
+Triaged. Hotfix committed. Preferences panel queued in BACKLOG.md as v1.5.0 (3 tasks). ROADMAP.md updated to reflect v1.1–v1.4 shipped.
+
+---
+
 # Iteration Log — post v1.2.0
 
 ## Captured

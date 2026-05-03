@@ -104,6 +104,7 @@
             border: 1px solid var(--color-border-subtle);
             border-radius: 4px;
             background: var(--color-input-bg);
+            color: var(--color-text-primary);
             white-space: nowrap;
 
             &:hover {
@@ -112,7 +113,81 @@
         }
     }
 
-    .themeToggle {
+    .preferencesBanner {
+        position: fixed;
+        bottom: 1rem;
+        left: 1rem;
+        right: calc(1rem + 2.5rem + 0.5rem);
+        height: 2.5rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 4px;
+        padding: 0 1rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 1rem;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+        .preferenceThemeButton {
+            position: relative;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            padding: 0;
+
+            .preferenceThemeLabel {
+                position: absolute;
+                bottom: calc(100% + 0.4rem);
+                right: 0;
+                font-size: 0.75rem;
+                color: var(--color-text-primary);
+                background: var(--color-surface-alt);
+                border: 1px solid var(--color-border);
+                border-radius: 4px;
+                padding: 0.2rem 0.4rem;
+                white-space: nowrap;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.15s ease;
+            }
+
+            &:hover .preferenceThemeLabel {
+                opacity: 1;
+            }
+        }
+
+        .preferencePrecisionLabel {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+
+            input[type='checkbox'] {
+                cursor: pointer;
+
+                &:disabled {
+                    cursor: not-allowed;
+                }
+            }
+
+            &:has(input:disabled) {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    .gearButton {
         position: fixed;
         bottom: 1rem;
         right: 1rem;
@@ -127,12 +202,20 @@
         cursor: pointer;
         font-size: 1.2rem;
         color: var(--color-text-primary);
-        opacity: 0.7;
+        opacity: 0;
         transition: opacity 0.2s;
         z-index: 100;
 
+        &.gearVisible {
+            opacity: 0.7;
+        }
+
         &:hover {
             opacity: 1;
+        }
+
+        @media (hover: none) {
+            opacity: 0.7;
         }
     }
 

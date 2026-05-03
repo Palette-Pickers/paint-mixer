@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import styles from './Mixer.module.scss'
 
 //components
@@ -24,7 +24,7 @@ import { useTheme } from '../../data/hooks/useTheme'
 import { defaultPalette } from '../../utils/palettes/defaultPalette'
 import { ColorPart } from '../../types/types'
 import { useColorSolver } from '../../data/hooks/useColorSolver'
-import { MdLightMode, MdDarkMode } from 'react-icons/md'
+import { MdSettings, MdLightMode, MdDarkMode } from 'react-icons/md'
 
 const getMixedRgbStringFromPalette = (palette: ColorPart[]): string => {
     const totalParts = palette.reduce((acc, color) => acc + color.partsInMix, 0)
@@ -69,6 +69,10 @@ const Mixer: React.FC = () => {
     const { theme, toggleTheme } = useTheme()
 
     const [ showAddColorPicker, setShowAddColorPicker ] = useState(false)
+    const [ showPreferences, setShowPreferences ] = useState(false)
+    const [ isNearGear, setIsNearGear ] = useState(false)
+    const gearRef = useRef<HTMLButtonElement>(null)
+    const bannerRef = useRef<HTMLDivElement>(null)
     const [ addColor, setAddColor ] = useState({ h: 214, s: 43, v: 90, a: 1 })
     const [ isUsingTargetColor, setIsUsingTargetColor ] = useState<boolean>(false)
     const [ targetColor, setTargetColor ] = useState({ h: 214, s: 43, v: 90, a: 1 })
@@ -109,6 +113,32 @@ const Mixer: React.FC = () => {
         isUsingTargetColor && palette.length > 0,
         precisionMode
     )
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (!gearRef.current) return
+            const rect = gearRef.current.getBoundingClientRect()
+            const cx = rect.left + rect.width / 2
+            const cy = rect.top + rect.height / 2
+            setIsNearGear(Math.sqrt((e.clientX - cx) ** 2 + (e.clientY - cy) ** 2) < 100)
+        }
+        window.addEventListener('mousemove', handleMouseMove)
+        return () => window.removeEventListener('mousemove', handleMouseMove)
+    }, [])
+
+    useEffect(() => {
+        if (!showPreferences) return
+        const handleClickOutside = (e: MouseEvent) => {
+            if (
+                bannerRef.current && !bannerRef.current.contains(e.target as Node) &&
+                gearRef.current && !gearRef.current.contains(e.target as Node)
+            ) {
+                setShowPreferences(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [ showPreferences ])
 
     const toggleIsUsingTargetColor = useCallback(() => {
         setIsUsingTargetColor(prev => !prev)
@@ -213,13 +243,38 @@ const Mixer: React.FC = () => {
                 totalParts={ totalParts }
             />
 
+            { showPreferences && (
+                <div ref={ bannerRef } className={ styles.preferencesBanner } data-testid="preferences-banner">
+                    <label className={ styles.preferencePrecisionLabel }>
+                        <input
+                            type="checkbox"
+                            checked={ precisionMode }
+                            disabled={ solverRunning }
+                            onChange={ e => setPrecisionMode(e.target.checked) }
+                        />
+                        Suggested Mix Precision mode
+                    </label>
+                    <button
+                        className={ styles.preferenceThemeButton }
+                        onClick={ toggleTheme }
+                        aria-label={ theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode' }
+                    >
+                        <span className={ styles.preferenceThemeLabel }>
+                            { theme === 'dark' ? 'Light mode' : 'Dark mode' }
+                        </span>
+                        { theme === 'dark' ? <MdLightMode /> : <MdDarkMode /> }
+                    </button>
+                </div>
+            ) }
+
             <button
-                className={ styles.themeToggle }
-                onClick={ toggleTheme }
-                aria-label={ theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode' }
-                data-testid="theme-toggle"
+                ref={ gearRef }
+                className={ `${ styles.gearButton }${ isNearGear || showPreferences ? ` ${ styles.gearVisible }` : '' }` }
+                onClick={ () => setShowPreferences(prev => !prev) }
+                aria-label="Preferences"
+                data-testid="gear-button"
             >
-                { theme === 'dark' ? <MdLightMode /> : <MdDarkMode /> }
+                <MdSettings />
             </button>
 
             <AddColorUIComponent
