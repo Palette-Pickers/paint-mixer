@@ -113,6 +113,22 @@
         }
     }
 
+    .preferencesBanner {
+        position: fixed;
+        bottom: 4rem;
+        right: 1rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 4px;
+        padding: 0.75rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        min-width: 14rem;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
     .gearButton {
         position: fixed;
         bottom: 1rem;

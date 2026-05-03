@@ -72,6 +72,7 @@ const Mixer: React.FC = () => {
     const [ showPreferences, setShowPreferences ] = useState(false)
     const [ isNearGear, setIsNearGear ] = useState(false)
     const gearRef = useRef<HTMLButtonElement>(null)
+    const bannerRef = useRef<HTMLDivElement>(null)
     const [ addColor, setAddColor ] = useState({ h: 214, s: 43, v: 90, a: 1 })
     const [ isUsingTargetColor, setIsUsingTargetColor ] = useState<boolean>(false)
     const [ targetColor, setTargetColor ] = useState({ h: 214, s: 43, v: 90, a: 1 })
@@ -124,6 +125,20 @@ const Mixer: React.FC = () => {
         window.addEventListener('mousemove', handleMouseMove)
         return () => window.removeEventListener('mousemove', handleMouseMove)
     }, [])
+
+    useEffect(() => {
+        if (!showPreferences) return
+        const handleClickOutside = (e: MouseEvent) => {
+            if (
+                bannerRef.current && !bannerRef.current.contains(e.target as Node) &&
+                gearRef.current && !gearRef.current.contains(e.target as Node)
+            ) {
+                setShowPreferences(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [ showPreferences ])
 
     const toggleIsUsingTargetColor = useCallback(() => {
         setIsUsingTargetColor(prev => !prev)
@@ -227,6 +242,12 @@ const Mixer: React.FC = () => {
                 updateColorName={ updateColorName }
                 totalParts={ totalParts }
             />
+
+            { showPreferences && (
+                <div ref={ bannerRef } className={ styles.preferencesBanner } data-testid="preferences-banner">
+                    {/* toggles added in task 3 */}
+                </div>
+            ) }
 
             <button
                 ref={ gearRef }
